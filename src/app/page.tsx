@@ -61,13 +61,12 @@ export default function Home() {
       <main className="flex-1 flex flex-col items-center justify-center max-w-7xl mx-auto px-6 py-20">
         <div className="text-center space-y-10 max-w-4xl mx-auto">
           <h1 className="text-6xl md:text-8xl font-extrabold tracking-tight text-gradient leading-[1.1]">
-            Build together, <br />
+            Design together, <br />
             faster than ever.
           </h1>
 
           <p className="text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed font-medium">
-            The multi-tenant operation system for modern teams. Streamline your collaboration,
-            manage your projects, and scale your foundation with ease.
+            The multi-tenant design system for modern businesses. Get your business listed and design your invoices with ease.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
