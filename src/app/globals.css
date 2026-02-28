@@ -1,21 +1,37 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@reference "tailwindcss";
+
 
 :root {
   --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --foreground: #111111;
+  --accent: #0070f3;
+  --secondary: #666666;
+  --border: #eaeaea;
 }
 
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-outfit), sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@layer components {
+  .glass-nav {
+    @apply sticky top-0 z-50 backdrop-blur-md bg-white/70 border-b border-gray-100;
+  }
+
+  .btn-primary {
+    @apply px-6 py-2.5 bg-black text-white rounded-full font-medium transition-all hover:bg-gray-800 active:scale-95 text-sm;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-2.5 border border-gray-200 text-black rounded-full font-medium transition-all hover:bg-gray-50 active:scale-95 text-sm;
+  }
+
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-black to-gray-500;
+  }
 }

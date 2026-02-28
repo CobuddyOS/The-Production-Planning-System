@@ -1,31 +1,64 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <h1 className="text-4xl font-bold">COBUDDY OS</h1>
-        <p className="text-lg text-gray-600 dark:text-gray-400">
-          Multi-tenant Foundation Proof (Milestone 1)
-        </p>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row mt-8">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="/debug/tenant"
-          >
-            Debug Tenant
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="/auth/login"
-          >
-            Login
-          </a>
+    <div className="min-h-screen bg-white selection:bg-black selection:text-white flex flex-col items-center">
+      {/* Navbar */}
+      <nav className="glass-nav px-6 py-4 flex items-center justify-between w-[95%] max-w-7xl mx-auto border-1 rounded-full mt-4 top-4">
+        <div className="flex items-center gap-2">
+          <Image
+            src="/logo.png"
+            alt="Cobuddy Logo"
+            width={40}
+            height={40}
+          />
+          <span className="text-xl font-bold tracking-tight">Cobuddy</span>
         </div>
+
+        <div className="flex items-center gap-3">
+          <Link href="/login" className="btn-secondary">
+            Log in
+          </Link>
+          <Link href="/signup" className="btn-primary">
+            Sign up
+          </Link>
+        </div>
+      </nav>
+
+      {/* Hero Section */}
+      <main className="flex-1 flex flex-col items-center justify-center max-w-7xl mx-auto px-6 py-20">
+        <div className="text-center space-y-10 max-w-4xl mx-auto">
+
+
+          <h1 className="text-6xl md:text-8xl font-extrabold tracking-tight text-gradient leading-[1.1]">
+            Build together, <br />
+            faster than ever.
+          </h1>
+
+          <p className="text-xl text-gray-500 max-w-2xl mx-auto leading-relaxed font-medium">
+            The multi-tenant operation system for modern teams. Streamline your collaboration,
+            manage your projects, and scale your foundation with ease.
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+            <Link href="/signup" className="btn-primary px-8 py-4 text-lg w-full sm:w-auto">
+              Get Started for Free
+            </Link>
+            <Link href="/login" className="btn-secondary px-8 py-4 text-lg w-full sm:w-auto flex items-center gap-2">
+              Watch Demo
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </Link>
+          </div>
+        </div>
+
+
       </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <p>© 2026 Cobuddy OS</p>
+
+      <footer className="py-8 text-gray-400 text-sm">
+        © 2026 Cobuddy OS. All rights reserved.
       </footer>
     </div>
   );
