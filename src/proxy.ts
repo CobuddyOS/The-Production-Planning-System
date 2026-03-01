@@ -14,7 +14,7 @@ export async function proxy(req: NextRequest) {
 
     // Domain logic: Adjust for production and localhost
     // Example for local: tenant.localhost:3000 -> slug is 'tenant'
-    // Example for prod:  tenant.cobuddy.os -> slug is 'tenant'
+    // Example for prod:  tennanta.cobuddy.net -> slug is 'tenanta'
 
     let slug = '';
 
@@ -39,6 +39,8 @@ export async function proxy(req: NextRequest) {
     if (slug) {
         requestHeaders.set('x-tenant-slug', slug);
     }
+    const protocol = req.headers.get('x-forwarded-proto') || (hostname.includes('localhost') ? 'http' : 'https');
+    requestHeaders.set('x-tenant-url', `${protocol}://${hostname}`);
 
     // You can also handle rewrites here if you want separate dashboards for each tenant
     // return NextResponse.rewrite(new URL(`/${slug}${url.pathname}`, req.url));
