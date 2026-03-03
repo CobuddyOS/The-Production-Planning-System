@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase/client';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -9,7 +10,15 @@ interface TenantData {
     tenant_slug: string;
     tenant_id: string | null;
     tenant_name: string | null;
+    authenticated: boolean;
+    user_id: string | null;
     status: 'found' | 'not_found';
+    debug: {
+        auth_error: string | null;
+        db_error: string | null;
+        has_session: boolean;
+        cookies_present: boolean;
+    };
 }
 
 export default function DebugTenantPage() {
@@ -19,7 +28,23 @@ export default function DebugTenantPage() {
     useEffect(() => {
         const fetchTenantData = async () => {
             try {
-                const response = await fetch('/api/debug/tenant');
+                // Get the session from the browser — the browser client works fine cross-subdomain
+                const { data: { session } } = await supabase.auth.getSession();
+
+                const headers: Record<string, string> = {
+                    'Content-Type': 'application/json',
+                };
+
+                // If the user is logged in, pass the JWT so the server can authenticate
+                // This is needed because cookies don't cross subdomains on localhost
+                if (session?.access_token) {
+                    headers['Authorization'] = `Bearer ${session.access_token}`;
+                    console.log('[DEBUG PAGE] Sending Authorization header with JWT');
+                } else {
+                    console.warn('[DEBUG PAGE] No session found — request will be unauthenticated');
+                }
+
+                const response = await fetch('/api/debug/tenant', { headers });
                 const result = await response.json();
                 setData(result);
             } catch (error) {
@@ -57,7 +82,7 @@ export default function DebugTenantPage() {
                         href="/debug/user"
                         className="px-4 py-2 text-sm font-bold text-gray-400 hover:text-black transition-colors"
                     >
-                        Debug User
+                        Debug User →
                     </Link>
                 </div>
 
@@ -69,10 +94,14 @@ export default function DebugTenantPage() {
                             </div>
                             <div>
                                 <h1 className="text-2xl font-extrabold tracking-tight">
-                                    Tenant Debug info
+                                    Tenant Debug Info
                                 </h1>
                                 <p className="text-gray-500 font-medium">
-                                    {data?.tenant_id ? 'Active Tenant Session' : 'No Tenant Found'}
+                                    {data?.tenant_id ? 'Active Tenant Found' : 'No Tenant Found'} · {data?.authenticated ? (
+                                        <span className="text-green-600 font-bold">Authenticated</span>
+                                    ) : (
+                                        <span className="text-orange-500 font-bold">Unauthenticated</span>
+                                    )}
                                 </p>
                             </div>
                         </div>
@@ -97,6 +126,15 @@ export default function DebugTenantPage() {
                                 </div>
                             </div>
 
+                            {data?.user_id && (
+                                <div className="space-y-1">
+                                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">User ID (from JWT)</p>
+                                    <code className="text-sm bg-green-50 text-green-700 px-3 py-1 rounded-lg border border-green-100 block font-mono">
+                                        {data.user_id}
+                                    </code>
+                                </div>
+                            )}
+
                             {data?.tenant_id ? (
                                 <>
                                     <div className="space-y-1">
@@ -115,15 +153,18 @@ export default function DebugTenantPage() {
                             ) : (
                                 <div className="p-6 bg-red-50 border border-red-100 rounded-2xl space-y-3">
                                     <div className="flex items-center gap-2 text-red-600">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 font-bold" viewBox="0 0 20 20" fill="currentColor">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                                             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
                                         </svg>
                                         <span className="font-extrabold uppercase tracking-tight text-sm">Tenant Not Found</span>
                                     </div>
                                     <p className="text-red-500 text-sm font-medium leading-relaxed">
-                                        Could not find a tenant with the slug <span className="font-bold underline">"{data?.tenant_slug || 'N/A'}"</span> in the database.
-                                        If this is the main portal, this is expected behavior.
+                                        Could not find a tenant with the slug <span className="font-bold underline">&quot;{data?.tenant_slug || 'N/A'}&quot;</span> in the database.
+                                        {!data?.authenticated && ' You are not authenticated — if your RLS requires auth, this is the cause.'}
                                     </p>
+                                    {data?.debug?.db_error && (
+                                        <code className="text-xs text-red-400 bg-red-100 px-2 py-1 rounded block font-mono">{data.debug.db_error}</code>
+                                    )}
                                 </div>
                             )}
 
