@@ -159,8 +159,8 @@ export default function DebugTenantPage() {
                                         <span className="font-extrabold uppercase tracking-tight text-sm">Tenant Not Found</span>
                                     </div>
                                     <p className="text-red-500 text-sm font-medium leading-relaxed">
-                                        Could not find a tenant with the slug <span className="font-bold underline">&quot;{data?.tenant_slug || 'N/A'}&quot;</span> in the database.
-                                        {!data?.authenticated && ' You are not authenticated — if your RLS requires auth, this is the cause.'}
+                                        You don't have access to this tennant <span className="font-bold underline">&quot;{data?.tenant_slug || 'N/A'}&quot;</span>
+                                        {!data?.authenticated && ' You are not authenticated, RLS is enabled and it requires authentication '}
                                     </p>
                                     {data?.debug?.db_error && (
                                         <code className="text-xs text-red-400 bg-red-100 px-2 py-1 rounded block font-mono">{data.debug.db_error}</code>
