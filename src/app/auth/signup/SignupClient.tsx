@@ -7,6 +7,11 @@ import Link from "next/link";
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 
+interface TenantInfo {
+    id: string;
+    name: string;
+}
+
 export default function SignupClient({ tenantUrl }: { tenantUrl: string }) {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -15,16 +20,58 @@ export default function SignupClient({ tenantUrl }: { tenantUrl: string }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [success, setSuccess] = useState(false);
+    const [tenantInfo, setTenantInfo] = useState<TenantInfo | null>(null);
     const router = useRouter();
 
     useEffect(() => {
-        const checkSession = async () => {
+        const initializeAuth = async () => {
+            // 1. Check existing session
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
                 router.push('/debug/user');
+                return;
             }
+
+            // 2. Extract slug from subdomain (logic adapted from proxy.ts)
+            const hostname = window.location.hostname;
+            const parts = hostname.split('.');
+            let slug = '';
+
+            // Basic logic: Get the first part of the hostname
+            if (parts.length > 2 || (parts.length === 2 && !hostname.includes('localhost'))) {
+                slug = parts[0];
+            } else if (hostname.includes('localhost') && parts.length === 2) {
+                // Support for developer-friendly tenant.localhost
+                slug = parts[0];
+            }
+
+            if (!slug) {
+                console.warn('No tenant slug found in subdomain');
+                // Optional: if generic signup is allowed, don't redirect
+                // For now, we'll allow generic if on main domain, otherwise redirect
+                // router.push('/404'); 
+                return;
+            }
+
+            // 3. Fetch tenant info via RPC
+            const { data, error: rpcError } = await supabase
+                .rpc('get_public_tenant_info', { lookup_slug: slug });
+
+            if (rpcError || !data) {
+                console.error('Failed to fetch tenant info:', rpcError);
+                // Redirect to 404 if slug is specified but invalid
+                router.push('/404');
+                return;
+            }
+
+            // 4. Store tenant info
+            setTenantInfo({
+                id: data.id,
+                name: data.name
+            });
         };
-        checkSession();
+
+        initializeAuth();
     }, [router]);
 
     const handleSignup = async (e: React.FormEvent) => {
@@ -39,6 +86,7 @@ export default function SignupClient({ tenantUrl }: { tenantUrl: string }) {
                 data: {
                     first_name: firstName,
                     last_name: lastName,
+                    tenant_id: tenantInfo?.id,
                 },
                 emailRedirectTo: `${tenantUrl}/`,
             },
@@ -69,8 +117,14 @@ export default function SignupClient({ tenantUrl }: { tenantUrl: string }) {
                         />
                     </Link>
                     <div className="space-y-2">
-                        <h1 className="text-3xl font-extrabold tracking-tight">Create an account</h1>
-                        <p className="text-gray-500 font-medium">Start your collaborative journey with Cobuddy</p>
+                        <h1 className="text-3xl font-extrabold tracking-tight">
+                            {tenantInfo ? `Join ${tenantInfo.name} Workspace` : 'Create an account'}
+                        </h1>
+                        <p className="text-gray-500 font-medium">
+                            {tenantInfo
+                                ? `Enter your details to join your team on Cobuddy`
+                                : 'Start your collaborative journey with Cobuddy'}
+                        </p>
                     </div>
                 </div>
 
