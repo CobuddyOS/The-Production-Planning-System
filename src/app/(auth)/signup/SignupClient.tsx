@@ -1,106 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { supabase } from '@/lib/supabase/client';
-import Image from "next/image";
-import Link from "next/link";
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-
-interface TenantInfo {
-    id: string;
-    name: string;
-}
+import Image from 'next/image';
+import Link from 'next/link';
+import { useTenantInit, useSignup } from '@/features/auth';
 
 export default function SignupClient({ tenantUrl }: { tenantUrl: string }) {
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [loading, setLoading] = useState(false);
-    const [error, setError] = useState<string | null>(null);
-    const [success, setSuccess] = useState(false);
-    const [tenantInfo, setTenantInfo] = useState<TenantInfo | null>(null);
-    const router = useRouter();
-
-    useEffect(() => {
-        const initializeAuth = async () => {
-            // 1. Check existing session
-            const { data: { session } } = await supabase.auth.getSession();
-            if (session) {
-                router.push('/debug/user');
-                return;
-            }
-
-            // 2. Extract slug from subdomain (logic adapted from proxy.ts)
-            const hostname = window.location.hostname;
-            const parts = hostname.split('.');
-            let slug = '';
-
-            // Basic logic: Get the first part of the hostname
-            if (parts.length > 2 || (parts.length === 2 && !hostname.includes('localhost'))) {
-                slug = parts[0];
-            } else if (hostname.includes('localhost') && parts.length === 2) {
-                // Support for developer-friendly tenant.localhost
-                slug = parts[0];
-            }
-
-            if (!slug) {
-                console.warn('No tenant slug found in subdomain');
-                // Optional: if generic signup is allowed, don't redirect
-                // For now, we'll allow generic if on main domain, otherwise redirect
-                // router.push('/404'); 
-                return;
-            }
-
-            // 3. Fetch tenant info via RPC
-            const { data, error: rpcError } = await supabase
-                .rpc('get_public_tenant_info', { lookup_slug: slug });
-
-            if (rpcError || !data) {
-                console.error('Failed to fetch tenant info:', rpcError);
-                // Redirect to 404 if slug is specified but invalid
-                router.push('/404');
-                return;
-            }
-
-            // 4. Store tenant info
-            setTenantInfo({
-                id: data.id,
-                name: data.name
-            });
-        };
-
-        initializeAuth();
-    }, [router]);
-
-    const handleSignup = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
-        setError(null);
-
-        const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-                data: {
-                    first_name: firstName,
-                    last_name: lastName,
-                    tenant_id: tenantInfo?.id,
-                },
-                emailRedirectTo: `${tenantUrl}/`,
-            },
-        });
-
-        setLoading(false);
-
-        if (error) {
-            setError(error.message);
-        } else {
-            setSuccess(true);
-            // Optional: redirect to login or show success message
-        }
-    };
+    const { tenantInfo } = useTenantInit();
+    const { formData, setField, loading, error, success, handleSubmit } = useSignup({ tenantInfo, tenantUrl });
 
     return (
         <div className="min-h-screen bg-white selection:bg-black selection:text-white flex flex-col items-center justify-center p-6 font-[family-name:var(--font-outfit)]">
@@ -122,7 +28,7 @@ export default function SignupClient({ tenantUrl }: { tenantUrl: string }) {
                         </h1>
                         <p className="text-gray-500 font-medium">
                             {tenantInfo
-                                ? `Enter your details to join your team on Cobuddy`
+                                ? 'Enter your details to join your team on Cobuddy'
                                 : 'Start your collaborative journey with Cobuddy'}
                         </p>
                     </div>
@@ -138,13 +44,13 @@ export default function SignupClient({ tenantUrl }: { tenantUrl: string }) {
                                 </svg>
                             </div>
                             <h2 className="text-xl font-bold">Check your email</h2>
-                            <p className="text-gray-500 text-sm">We've sent a confirmation link to {email}.</p>
-                            <Link href="/auth/login" className="btn-primary inline-block w-full py-3 mt-4">
+                            <p className="text-gray-500 text-sm">We've sent a confirmation link to {formData.email}.</p>
+                            <Link href="/login" className="btn-primary inline-block w-full py-3 mt-4">
                                 Go to Login
                             </Link>
                         </div>
                     ) : (
-                        <form onSubmit={handleSignup} className="space-y-5">
+                        <form onSubmit={handleSubmit} className="space-y-5">
                             {error && (
                                 <div className="p-4 bg-red-50 border border-red-100 text-red-600 text-sm rounded-xl font-medium">
                                     {error}
@@ -157,8 +63,8 @@ export default function SignupClient({ tenantUrl }: { tenantUrl: string }) {
                                     <input
                                         type="text"
                                         placeholder="Jane"
-                                        value={firstName}
-                                        onChange={(e) => setFirstName(e.target.value)}
+                                        value={formData.firstName}
+                                        onChange={(e) => setField('firstName', e.target.value)}
                                         className="w-full px-5 py-3 rounded-2xl border border-gray-100 bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-black/5 transition-all text-sm"
                                         required
                                     />
@@ -168,8 +74,8 @@ export default function SignupClient({ tenantUrl }: { tenantUrl: string }) {
                                     <input
                                         type="text"
                                         placeholder="Doe"
-                                        value={lastName}
-                                        onChange={(e) => setLastName(e.target.value)}
+                                        value={formData.lastName}
+                                        onChange={(e) => setField('lastName', e.target.value)}
                                         className="w-full px-5 py-3 rounded-2xl border border-gray-100 bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-black/5 transition-all text-sm"
                                         required
                                     />
@@ -181,8 +87,8 @@ export default function SignupClient({ tenantUrl }: { tenantUrl: string }) {
                                 <input
                                     type="email"
                                     placeholder="jane@example.com"
-                                    value={email}
-                                    onChange={(e) => setEmail(e.target.value)}
+                                    value={formData.email}
+                                    onChange={(e) => setField('email', e.target.value)}
                                     className="w-full px-5 py-3 rounded-2xl border border-gray-100 bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-black/5 transition-all text-sm"
                                     required
                                 />
@@ -193,8 +99,8 @@ export default function SignupClient({ tenantUrl }: { tenantUrl: string }) {
                                 <input
                                     type="password"
                                     placeholder="Min. 8 characters"
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
+                                    value={formData.password}
+                                    onChange={(e) => setField('password', e.target.value)}
                                     className="w-full px-5 py-3 rounded-2xl border border-gray-100 bg-gray-50/50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-black/5 transition-all text-sm"
                                     required
                                 />
@@ -236,7 +142,7 @@ export default function SignupClient({ tenantUrl }: { tenantUrl: string }) {
                 {/* Footer Link */}
                 <p className="text-center text-sm font-medium text-gray-500">
                     Already have an account?{" "}
-                    <Link href="/auth/login" className="text-black font-bold hover:underline decoration-2 underline-offset-4 tracking-tight">
+                    <Link href="/login" className="text-black font-bold hover:underline decoration-2 underline-offset-4 tracking-tight">
                         Log in
                     </Link>
                 </p>

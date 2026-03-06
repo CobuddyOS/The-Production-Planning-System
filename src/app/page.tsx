@@ -2,25 +2,10 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase/client';
+import { useSession } from '@/features/auth';
 
 export default function Home() {
-  const [session, setSession] = useState<any>(null);
-
-  useEffect(() => {
-    const getSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      setSession(session);
-    };
-    getSession();
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  const { session } = useSession();
 
   return (
     <div className="min-h-screen bg-white selection:bg-black selection:text-white flex flex-col items-center">
@@ -46,10 +31,10 @@ export default function Home() {
             </Link>
           ) : (
             <>
-              <Link href="/auth/login" className="btn-secondary">
+              <Link href="/login" className="btn-secondary">
                 Log in
               </Link>
-              <Link href="/auth/signup" className="btn-primary">
+              <Link href="/signup" className="btn-primary">
                 Sign up
               </Link>
             </>
@@ -70,10 +55,10 @@ export default function Home() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-            <Link href={session ? "/debug/user" : "/auth/signup"} className="btn-primary px-8 py-4 text-lg w-full sm:w-auto">
+            <Link href={session ? "/debug/user" : "/signup"} className="btn-primary px-8 py-4 text-lg w-full sm:w-auto">
               {session ? "Open Dashboard" : "Get Started for Free"}
             </Link>
-            <Link href="/auth/login" className="btn-secondary px-8 py-4 text-lg w-full sm:w-auto flex items-center gap-2">
+            <Link href="/login" className="btn-secondary px-8 py-4 text-lg w-full sm:w-auto flex items-center gap-2">
               Watch Demo
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M6 12L10 8L6 4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

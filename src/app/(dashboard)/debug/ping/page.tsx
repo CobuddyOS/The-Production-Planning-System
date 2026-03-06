@@ -4,21 +4,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import Link from 'next/link';
 import Image from 'next/image';
-
-interface PingResult {
-    ok: boolean;
-    tenant_slug?: string;
-    tenant_id?: string;
-    role?: string;
-    user_id?: string;
-    error?: string;
-}
-
-interface PingState {
-    status: 'idle' | 'loading' | 'done';
-    httpStatus: number | null;
-    result: PingResult | null;
-}
+import type { PingResult, PingState } from '@/features/auth';
 
 export default function DebugPingPage() {
     const [ping, setPing] = useState<PingState>({ status: 'idle', httpStatus: null, result: null });

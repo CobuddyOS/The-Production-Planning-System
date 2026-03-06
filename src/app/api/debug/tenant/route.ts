@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createClient as createServerClient } from '@/lib/supabase/server';
 import { createClient } from '@supabase/supabase-js';
 import { headers } from 'next/headers';
+import { getSlugFromHeaders } from '@/features/tenant';
 
 export async function GET(req: NextRequest) {
     const headerList = await headers();
@@ -53,18 +54,8 @@ export async function GET(req: NextRequest) {
         console.error('[DEBUG TENANT API] Auth Error:', authError.message);
     }
 
-    // --- SLUG EXTRACTION (from proxy.ts logic) ---
-    const parts = host.split('.');
-    let tenant_slug = '';
-    if (!host.includes('localhost')) {
-        tenant_slug = parts[0];
-    } else if (parts.length > 1) {
-        // e.g. tennanta.localhost:3000 → detect 'tennanta'
-        tenant_slug = parts[0];
-    }
-
-    // Fallback to header if already set by proxy/middleware
-    tenant_slug = headerList.get('x-tenant-slug') || tenant_slug;
+    // --- SLUG EXTRACTION (using centralized utility) ---
+    const tenant_slug = getSlugFromHeaders(headerList);
 
     console.log('[DEBUG TENANT API] Detected Slug:', tenant_slug);
 

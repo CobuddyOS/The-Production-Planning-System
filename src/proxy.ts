@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 /**
- * Next.js Proxy for Subdomain Tenant Detection (replaced Middleware)
+ * Next.js Proxy for Subdomain Tenant Detection
+ * 
+ * This is the official Next.js proxy entry point (must be at src/proxy.ts).
+ * Next.js 16+ uses the `proxy` convention instead of the deprecated `middleware`.
  * 
  * Flow:
  * 1. Extract hostname (e.g., tenant-a.localhost:3000)
@@ -52,7 +55,7 @@ export async function proxy(req: NextRequest) {
     });
 }
 
-// Add matcher to only run middleware on relevant paths
+// Add matcher to only run proxy on relevant paths
 export const config = {
     matcher: [
         /*

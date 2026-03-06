@@ -103,7 +103,7 @@ export default function DebugUserPage() {
                                 <p className="text-gray-500 max-w-sm mx-auto">
                                     No user session was found. Please log in to view the debug information.
                                 </p>
-                                <Link href="/auth/login" className="btn-primary inline-block px-12">
+                                <Link href="/login" className="btn-primary inline-block px-12">
                                     Go to Login
                                 </Link>
                             </div>

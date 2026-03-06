@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getSlugFromHeaders } from '@/features/tenant';
+import { ADMIN_ALLOWED_ROLES } from '@/features/admin';
 
 /**
  * GET /api/admin/ping
@@ -43,24 +45,11 @@ export async function GET(req: NextRequest) {
 
     console.log('[ADMIN PING] Authenticated user:', user.id, user.email);
 
-    // ─── 3. Detect tenant slug from Host header ───────────────────────────────
-    const host = req.headers.get('host') || '';
-    const parts = host.split('.');
-    let tenant_slug = '';
-
-    if (!host.includes('localhost')) {
-        // Production: tennanta.cobuddy.net → 'tennanta'
-        tenant_slug = parts[0];
-    } else if (parts.length > 1) {
-        // Local dev: tennanta.localhost:3000 → 'tennanta'
-        tenant_slug = parts[0];
-    }
-
-    // Also accept header set by proxy.ts
-    tenant_slug = req.headers.get('x-tenant-slug') || tenant_slug;
+    // ─── 3. Detect tenant slug using centralized utility ───────────────────
+    const tenant_slug = getSlugFromHeaders(req.headers);
 
     if (!tenant_slug) {
-        console.warn('[ADMIN PING] No tenant slug detected from host:', host);
+        console.warn('[ADMIN PING] No tenant slug detected from host:', req.headers.get('host'));
         return NextResponse.json(
             { ok: false, error: 'Forbidden — could not detect tenant from hostname' },
             { status: 403 }
@@ -98,8 +87,6 @@ export async function GET(req: NextRequest) {
     console.log('[ADMIN PING] Tenant resolved:', tenant.id);
 
     // ─── 6. Look up the user's membership in this tenant ───────────────────
-    //   membership table has composite PK (user_id, tenant_id).
-    //   If the user is NOT in this tenant, query returns 0 rows.
     const { data: membership, error: membershipError } = await authedClient
         .from('membership')
         .select('role')
@@ -118,8 +105,7 @@ export async function GET(req: NextRequest) {
     console.log('[ADMIN PING] User role in tenant:', membership.role);
 
     // ─── 7. Check role ───────────────────────────────────────────────────────
-    const ALLOWED_ROLES = ['owner', 'admin'];
-    if (!ALLOWED_ROLES.includes(membership.role)) {
+    if (!ADMIN_ALLOWED_ROLES.includes(membership.role as any)) {
         console.warn('[ADMIN PING] Insufficient role:', membership.role);
         return NextResponse.json(
             { ok: false, error: `Forbidden — role "${membership.role}" is not allowed. Required: owner or admin` },

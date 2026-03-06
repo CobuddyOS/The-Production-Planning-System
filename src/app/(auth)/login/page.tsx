@@ -133,7 +133,7 @@ export default function LoginPage() {
                 {/* Footer Link */}
                 <p className="text-center text-sm font-medium text-gray-500">
                     New to Cobuddy?{" "}
-                    <Link href="/auth/signup" className="text-black font-bold hover:underline decoration-2 underline-offset-4 tracking-tight">
+                    <Link href="/signup" className="text-black font-bold hover:underline decoration-2 underline-offset-4 tracking-tight">
                         Create an account
                     </Link>
                 </p>

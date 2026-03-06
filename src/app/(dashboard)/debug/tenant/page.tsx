@@ -4,25 +4,10 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase/client';
 import Link from 'next/link';
 import Image from 'next/image';
-
-interface TenantData {
-    host: string;
-    tenant_slug: string;
-    tenant_id: string | null;
-    tenant_name: string | null;
-    authenticated: boolean;
-    user_id: string | null;
-    status: 'found' | 'not_found';
-    debug: {
-        auth_error: string | null;
-        db_error: string | null;
-        has_session: boolean;
-        cookies_present: boolean;
-    };
-}
+import type { TenantDebugData } from '@/features/tenant';
 
 export default function DebugTenantPage() {
-    const [data, setData] = useState<TenantData | null>(null);
+    const [data, setData] = useState<TenantDebugData | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
