@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { User } from '@supabase/supabase-js';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -11,8 +11,9 @@ export default function DebugUserPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        const supabase = createClient();
         const fetchUser = async () => {
-            const { data: { user }, error } = await supabase.auth.getUser();
+            const { data: { user } } = await supabase.auth.getUser();
             setUser(user);
             setLoading(false);
         };
@@ -21,6 +22,7 @@ export default function DebugUserPage() {
     }, []);
 
     const handleLogout = async () => {
+        const supabase = createClient();
         await supabase.auth.signOut();
         window.location.reload();
     };

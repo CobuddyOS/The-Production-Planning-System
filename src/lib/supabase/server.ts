@@ -1,6 +1,17 @@
-import { createServerClient, type CookieOptions } from '@supabase/ssr';
+import { createServerClient } from '@supabase/ssr';
 import { cookies } from 'next/headers';
 
+/**
+ * Creates a Supabase client for use in Server Components,
+ * Server Actions, and Route Handlers.
+ *
+ * Uses the modern `getAll`/`setAll` cookie API as recommended by Supabase.
+ * The `setAll` call may silently fail when called from a Server Component
+ * (which is read-only), but that's expected — the proxy handles session
+ * refresh and cookie mutation.
+ *
+ * @see https://supabase.com/docs/guides/auth/server-side/nextjs
+ */
 export async function createClient() {
     const cookieStore = await cookies();
 
@@ -9,29 +20,17 @@ export async function createClient() {
         process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY!,
         {
             cookies: {
-                get(name: string) {
-                    const cookie = cookieStore.get(name);
-                    if (name.includes('auth-token') || name.includes('supabase-auth')) {
-                        console.log(`[DEBUG COOKIES] Getting cookie: ${name} (Value: ${cookie ? 'PRESENT' : 'MISSING'})`);
-                    }
-                    return cookie?.value;
+                getAll() {
+                    return cookieStore.getAll();
                 },
-                set(name: string, value: string, options: CookieOptions) {
+                setAll(cookiesToSet) {
                     try {
-                        cookieStore.set({ name, value, ...options });
-                    } catch (error) {
-                        // The `set` method was called from a Server Component.
-                        // This can be ignored if you have middleware refreshing
-                        // user sessions.
-                    }
-                },
-                remove(name: string, options: CookieOptions) {
-                    try {
-                        cookieStore.set({ name, value: '', ...options });
-                    } catch (error) {
-                        // The `remove` method was called from a Server Component.
-                        // This can be ignored if you have middleware refreshing
-                        // user sessions.
+                        cookiesToSet.forEach(({ name, value, options }) =>
+                            cookieStore.set(name, value, options)
+                        );
+                    } catch {
+                        // The `setAll` method was called from a Server Component.
+                        // This can be ignored if you have proxy refreshing user sessions.
                     }
                 },
             },

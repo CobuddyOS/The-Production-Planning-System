@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import type { TenantInfo } from '@/features/tenant';
 
 export interface SignupFormData {
@@ -53,6 +53,7 @@ export function useSignup({ tenantInfo, tenantUrl }: UseSignupOptions): UseSignu
         setLoading(true);
         setError(null);
 
+        const supabase = createClient();
         const { error: signUpError } = await supabase.auth.signUp({
             email: formData.email,
             password: formData.password,

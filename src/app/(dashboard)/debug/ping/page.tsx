@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { PingResult, PingState } from '@/features/auth';
@@ -11,26 +11,20 @@ export default function DebugPingPage() {
     const [userEmail, setUserEmail] = useState<string | null>(null);
 
     useEffect(() => {
-        supabase.auth.getSession().then(({ data: { session } }) => {
-            setUserEmail(session?.user?.email ?? null);
+        const supabase = createClient();
+        supabase.auth.getUser().then(({ data: { user } }) => {
+            setUserEmail(user?.email ?? null);
         });
     }, []);
 
     const runPing = async () => {
         setPing({ status: 'loading', httpStatus: null, result: null });
 
-        const { data: { session } } = await supabase.auth.getSession();
-
-        const headers: Record<string, string> = {
-            'Content-Type': 'application/json',
-        };
-
-        if (session?.access_token) {
-            headers['Authorization'] = `Bearer ${session.access_token}`;
-        }
-
         try {
-            const res = await fetch('/api/admin/ping', { headers });
+            // Cookies are automatically sent with same-origin fetch.
+            // No need to manually extract JWT and set Authorization headers —
+            // the proxy refreshes the session and the server reads cookies.
+            const res = await fetch('/api/admin/ping');
             const result = await res.json();
             setPing({ status: 'done', httpStatus: res.status, result });
         } catch (err) {

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import Link from 'next/link';
 import Image from 'next/image';
 import type { TenantDebugData } from '@/features/tenant';
@@ -13,23 +13,10 @@ export default function DebugTenantPage() {
     useEffect(() => {
         const fetchTenantData = async () => {
             try {
-                // Get the session from the browser — the browser client works fine cross-subdomain
-                const { data: { session } } = await supabase.auth.getSession();
-
-                const headers: Record<string, string> = {
-                    'Content-Type': 'application/json',
-                };
-
-                // If the user is logged in, pass the JWT so the server can authenticate
-                // This is needed because cookies don't cross subdomains on localhost
-                if (session?.access_token) {
-                    headers['Authorization'] = `Bearer ${session.access_token}`;
-                    console.log('[DEBUG PAGE] Sending Authorization header with JWT');
-                } else {
-                    console.warn('[DEBUG PAGE] No session found — request will be unauthenticated');
-                }
-
-                const response = await fetch('/api/debug/tenant', { headers });
+                // Cookies are automatically sent with same-origin fetch.
+                // The proxy refreshes the session so the server always has
+                // a valid cookie-based session — no manual JWT needed.
+                const response = await fetch('/api/debug/tenant');
                 const result = await response.json();
                 setData(result);
             } catch (error) {
@@ -113,7 +100,7 @@ export default function DebugTenantPage() {
 
                             {data?.user_id && (
                                 <div className="space-y-1">
-                                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">User ID (from JWT)</p>
+                                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">User ID</p>
                                     <code className="text-sm bg-green-50 text-green-700 px-3 py-1 rounded-lg border border-green-100 block font-mono">
                                         {data.user_id}
                                     </code>
@@ -144,7 +131,7 @@ export default function DebugTenantPage() {
                                         <span className="font-extrabold uppercase tracking-tight text-sm">Tenant Not Found</span>
                                     </div>
                                     <p className="text-red-500 text-sm font-medium leading-relaxed">
-                                        You don't have access to this tennant <span className="font-bold underline">&quot;{data?.tenant_slug || 'N/A'}&quot;</span>
+                                        You don&apos;t have access to this tenant <span className="font-bold underline">&quot;{data?.tenant_slug || 'N/A'}&quot;</span>
                                         {!data?.authenticated && ' You are not authenticated, RLS is enabled and it requires authentication '}
                                     </p>
                                     {data?.debug?.db_error && (

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import { extractSlugFromHostname } from '@/features/tenant';
 import type { TenantInfo } from '@/features/tenant';
 
@@ -22,6 +22,7 @@ export function useTenantInit() {
 
     useEffect(() => {
         const initializeAuth = async () => {
+            const supabase = createClient();
             // 1. Check existing session
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {

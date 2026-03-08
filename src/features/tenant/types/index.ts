@@ -1,6 +1,6 @@
 /**
  * Tenant feature types.
- * 
+ *
  * Shared TypeScript interfaces for the tenant domain.
  */
 
@@ -28,6 +28,5 @@ export interface TenantDebugData {
         auth_error: string | null;
         db_error: string | null;
         has_session: boolean;
-        cookies_present: boolean;
     };
 }

@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 
 /**
  * Hook to track the current Supabase auth session.
@@ -12,6 +12,8 @@ export function useSession() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        const supabase = createClient();
+
         const getSession = async () => {
             const { data: { session } } = await supabase.auth.getSession();
             setSession(session);

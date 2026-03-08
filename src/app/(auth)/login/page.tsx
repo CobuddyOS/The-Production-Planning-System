@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { supabase } from '@/lib/supabase/client';
+import { createClient } from '@/lib/supabase/client';
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
@@ -16,6 +16,7 @@ export default function LoginPage() {
 
     useEffect(() => {
         const checkSession = async () => {
+            const supabase = createClient();
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
                 router.push('/debug/user');
@@ -29,6 +30,7 @@ export default function LoginPage() {
         setLoading(true);
         setError(null);
 
+        const supabase = createClient();
         const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password,
