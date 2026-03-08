@@ -14,12 +14,26 @@ import {
     SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { requireRole } from "@/lib/api/auth-guard";
+import { ADMIN_ALLOWED_ROLES } from "@/features/admin";
+import { redirect } from "next/navigation";
 
-export default function NexusLayout({
+export default async function NexusLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
+    const result = await requireRole(ADMIN_ALLOWED_ROLES);
+
+    if (!result.ok) {
+        const status = result.response.status;
+        if (status === 401) {
+            redirect("/login");
+        }
+
+        redirect("/debug/user");
+    }
+
     return (
         <TooltipProvider>
             <SidebarProvider>

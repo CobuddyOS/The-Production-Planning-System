@@ -19,7 +19,7 @@ export default function LoginPage() {
             const supabase = createClient();
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
-                router.push('/debug/user');
+                router.push('/nexus');
             }
         };
         checkSession();
@@ -41,7 +41,7 @@ export default function LoginPage() {
         if (error) {
             setError(error.message);
         } else {
-            router.push('/debug/user');
+            router.push('/nexus');
             router.refresh();
         }
     };
