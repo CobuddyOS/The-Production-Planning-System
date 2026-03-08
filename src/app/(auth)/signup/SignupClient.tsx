@@ -44,7 +44,7 @@ export default function SignupClient({ tenantUrl }: { tenantUrl: string }) {
                                 </svg>
                             </div>
                             <h2 className="text-xl font-bold">Check your email</h2>
-                            <p className="text-gray-500 text-sm">We've sent a confirmation link to {formData.email}.</p>
+                            <p className="text-gray-500 text-sm">We&apos;ve sent a confirmation link to {formData.email}.</p>
                             <Link href="/login" className="btn-primary inline-block w-full py-3 mt-4">
                                 Go to Login
                             </Link>

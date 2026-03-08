@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
+import type { Session } from '@supabase/supabase-js';
 
 /**
  * Hook to track the current Supabase auth session.
  * Subscribes to auth state changes and auto-updates.
  */
 export function useSession() {
-    const [session, setSession] = useState<any>(null);
+    const [session, setSession] = useState<Session | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
