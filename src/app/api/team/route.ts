@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { requireTenant } from '@/lib/api/auth-guard';
+import { requireTenant, requireRole } from '@/lib/api/auth-guard';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { TEAM_ROLE_VALUES, type TeamRoleValue } from '@/features/team/constants';
 
@@ -52,9 +52,8 @@ export async function GET() {
     }
 
     // Map the results into the TeamMember interface.
-    // We filter out any memberships that might not have a profile (though our POST ensures they exist).
     const members: TeamMember[] = (memberships || [])
-        .map((m: any) => ({
+        .map((m: { user_id: string; role: string; profiles: any }) => ({
             userId: m.user_id,
             email: m.profiles?.email ?? null,
             name: m.profiles?.full_name ?? null,
@@ -71,12 +70,19 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-    const result = await (await import('@/lib/api/auth-guard')).requireRole(['admin']);
+    const result = await requireRole(['admin']);
     if (!result.ok) return result.response;
 
     const { supabase, tenant } = result.ctx;
 
-    const body = await req.json();
+    // 1. Safe JSON Parsing
+    let body;
+    try {
+        body = await req.json();
+    } catch {
+        return NextResponse.json({ ok: false, error: 'Invalid JSON body' }, { status: 400 });
+    }
+
     const { name, email, password, role } = body as {
         name?: string;
         email?: string;
@@ -86,7 +92,7 @@ export async function POST(req: Request) {
 
     if (!email || !password || !role) {
         return NextResponse.json(
-            { ok: false, error: 'email, password and role are required' },
+            { ok: false, error: 'Email, password and role are required' },
             { status: 400 }
         );
     }
@@ -99,44 +105,74 @@ export async function POST(req: Request) {
     }
 
     const adminClient = createAdminClient();
+    let userId: string;
+    let isNewUser = false;
 
-    const { data: created, error: createError } =
-        await adminClient.auth.admin.createUser({
-            email,
-            password,
-            email_confirm: true,
-            user_metadata:
-                typeof name === 'string' && name.trim()
-                    ? { full_name: name.trim() }
-                    : undefined,
-        });
+    // 2. Existing User Handling
+    // Check if user already exists in profiles (efficient lookup)
+    const { data: profileData } = await adminClient
+        .from('profiles')
+        .select('id')
+        .eq('email', email)
+        .single();
 
-    if (createError || !created.user) {
-        return NextResponse.json(
-            {
-                ok: false,
-                error:
-                    createError?.message ||
-                    'Failed to create user. Make sure the email is not already in use.',
-            },
-            { status: 400 }
-        );
+    if (profileData) {
+        userId = profileData.id;
+
+        // Check if already a member of this tenant
+        const { data: existingMembership } = await adminClient
+            .from('membership')
+            .select('role')
+            .eq('user_id', userId)
+            .eq('tenant_id', tenant.id)
+            .single();
+
+        if (existingMembership) {
+            return NextResponse.json(
+                { ok: false, error: 'User is already a member of this team.' },
+                { status: 400 }
+            );
+        }
+    } else {
+        // Create new auth user
+        const { data: created, error: createError } =
+            await adminClient.auth.admin.createUser({
+                email,
+                password,
+                email_confirm: true,
+                user_metadata:
+                    typeof name === 'string' && name.trim()
+                        ? { full_name: name.trim() }
+                        : undefined,
+            });
+
+        if (createError || !created.user) {
+            return NextResponse.json(
+                {
+                    ok: false,
+                    error: createError?.message || 'Failed to create user.',
+                },
+                { status: 400 }
+            );
+        }
+        userId = created.user.id;
+        isNewUser = true;
     }
 
-    const userId = created.user.id;
-
-    // Insert profile row
-    const { error: profileError } = await supabase
+    // Insert or Update profile row (Upsert to handle existing users without profiles)
+    const { error: profileError } = await adminClient
         .from('profiles')
-        .insert({
+        .upsert({
             id: userId,
             email: email,
             full_name: name?.trim() || null,
         });
 
     if (profileError) {
-        // Rollback: Delete the auth user if profile insertion fails
-        await adminClient.auth.admin.deleteUser(userId);
+        // Rollback: Delete the auth user ONLY if we just created them
+        if (isNewUser) {
+            await adminClient.auth.admin.deleteUser(userId);
+        }
         return NextResponse.json(
             { ok: false, error: `Failed to create profile: ${profileError.message}` },
             { status: 500 }
@@ -144,7 +180,7 @@ export async function POST(req: Request) {
     }
 
     // Insert membership row
-    const { error: membershipInsertError } = await supabase
+    const { error: membershipInsertError } = await adminClient
         .from('membership')
         .insert({
             user_id: userId,
@@ -153,8 +189,10 @@ export async function POST(req: Request) {
         });
 
     if (membershipInsertError) {
-        // Rollback: Delete the auth user if membership insertion fails
-        await adminClient.auth.admin.deleteUser(userId);
+        // Rollback: Delete the auth user ONLY if we just created them
+        if (isNewUser) {
+            await adminClient.auth.admin.deleteUser(userId);
+        }
         return NextResponse.json(
             { ok: false, error: `Failed to create membership: ${membershipInsertError.message}` },
             { status: 500 }
