@@ -28,10 +28,19 @@ export async function GET() {
     const currentUserRole = currentMembership?.role ?? null;
     const canManage = currentUserRole === 'admin';
 
-    // Fetch all memberships for this tenant.
+    // Fetch all memberships for this tenant joined with profile data.
+    // This solves the N+1 query problem by getting everything in one go.
     const { data: memberships, error: membershipError } = await supabase
         .from('membership')
-        .select('user_id, role')
+        .select(`
+            user_id,
+            role,
+            profiles (
+                email,
+                full_name,
+                created_at
+            )
+        `)
         .eq('tenant_id', tenant.id)
         .order('user_id', { ascending: true });
 
@@ -42,34 +51,16 @@ export async function GET() {
         );
     }
 
-    const adminClient = createAdminClient();
-
-    const members: TeamMember[] = [];
-
-    for (const membership of memberships || []) {
-        const { data, error } = await adminClient.auth.admin.getUserById(
-            membership.user_id
-        );
-
-        if (error) {
-            // Skip users that cannot be loaded, but continue building the list.
-            continue;
-        }
-
-        const u = data.user;
-
-        const name =
-            (u.user_metadata &&
-                (u.user_metadata.full_name || u.user_metadata.name)) ||
-            (u.email ? u.email.split('@')[0] : null);
-        members.push({
-            userId: u.id,
-            email: u.email ?? null,
-            name: name ?? null,
-            role: membership.role,
-            createdAt: u.created_at ?? null,
-        });
-    }
+    // Map the results into the TeamMember interface.
+    // We filter out any memberships that might not have a profile (though our POST ensures they exist).
+    const members: TeamMember[] = (memberships || [])
+        .map((m: any) => ({
+            userId: m.user_id,
+            email: m.profiles?.email ?? null,
+            name: m.profiles?.full_name ?? null,
+            role: m.role,
+            createdAt: m.profiles?.created_at ?? null,
+        }));
 
     return NextResponse.json({
         ok: true,
@@ -80,17 +71,10 @@ export async function GET() {
 }
 
 export async function POST(req: Request) {
-    const { ok, ctx, response } = await (async () => {
-        const result = await import('@/lib/api/auth-guard').then((m) =>
-            m.requireRole(['admin'])
-        );
-        if (!result.ok) return { ok: false as const, response: result.response, ctx: null };
-        return { ok: true as const, response: null, ctx: result.ctx };
-    })();
+    const result = await (await import('@/lib/api/auth-guard')).requireRole(['admin']);
+    if (!result.ok) return result.response;
 
-    if (!ok || !ctx) return response!;
-
-    const { supabase, tenant } = ctx;
+    const { supabase, tenant } = result.ctx;
 
     const body = await req.json();
     const { name, email, password, role } = body as {
@@ -141,6 +125,25 @@ export async function POST(req: Request) {
 
     const userId = created.user.id;
 
+    // Insert profile row
+    const { error: profileError } = await supabase
+        .from('profiles')
+        .insert({
+            id: userId,
+            email: email,
+            full_name: name?.trim() || null,
+        });
+
+    if (profileError) {
+        // Rollback: Delete the auth user if profile insertion fails
+        await adminClient.auth.admin.deleteUser(userId);
+        return NextResponse.json(
+            { ok: false, error: `Failed to create profile: ${profileError.message}` },
+            { status: 500 }
+        );
+    }
+
+    // Insert membership row
     const { error: membershipInsertError } = await supabase
         .from('membership')
         .insert({
@@ -150,8 +153,10 @@ export async function POST(req: Request) {
         });
 
     if (membershipInsertError) {
+        // Rollback: Delete the auth user if membership insertion fails
+        await adminClient.auth.admin.deleteUser(userId);
         return NextResponse.json(
-            { ok: false, error: membershipInsertError.message },
+            { ok: false, error: `Failed to create membership: ${membershipInsertError.message}` },
             { status: 500 }
         );
     }
