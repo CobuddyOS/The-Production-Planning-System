@@ -1,14 +1,13 @@
 import { NextResponse } from 'next/server';
 import { requireTenant } from '@/lib/api/auth-guard';
 import { createAdminClient } from '@/lib/supabase/admin';
-
-type MemberRole = 'owner' | 'admin' | 'editor' | 'viewer';
+import { TEAM_ROLE_VALUES, type TeamRoleValue } from '@/features/team/constants';
 
 interface TeamMember {
     userId: string;
     email: string | null;
     name: string | null;
-    role: MemberRole;
+    role: string;
     createdAt: string | null;
 }
 
@@ -26,7 +25,7 @@ export async function GET() {
         .eq('tenant_id', tenant.id)
         .single();
 
-    const currentUserRole = (currentMembership?.role ?? null) as MemberRole | null;
+    const currentUserRole = currentMembership?.role ?? null;
     const canManage = currentUserRole === 'admin';
 
     // Fetch all memberships for this tenant.
@@ -59,13 +58,15 @@ export async function GET() {
 
         const u = data.user;
 
+        const name =
+            (u.user_metadata &&
+                (u.user_metadata.full_name || u.user_metadata.name)) ||
+            (u.email ? u.email.split('@')[0] : null);
         members.push({
             userId: u.id,
-            email: u.email,
-            name:
-                (u.user_metadata && (u.user_metadata.full_name || u.user_metadata.name)) ||
-                (u.email ? u.email.split('@')[0] : null),
-            role: membership.role as MemberRole,
+            email: u.email ?? null,
+            name: name ?? null,
+            role: membership.role,
             createdAt: u.created_at ?? null,
         });
     }
@@ -92,10 +93,11 @@ export async function POST(req: Request) {
     const { supabase, tenant } = ctx;
 
     const body = await req.json();
-    const { email, password, role } = body as {
+    const { name, email, password, role } = body as {
+        name?: string;
         email?: string;
         password?: string;
-        role?: MemberRole;
+        role?: string;
     };
 
     if (!email || !password || !role) {
@@ -105,7 +107,7 @@ export async function POST(req: Request) {
         );
     }
 
-    if (!['owner', 'admin', 'editor', 'viewer'].includes(role)) {
+    if (!TEAM_ROLE_VALUES.includes(role as TeamRoleValue)) {
         return NextResponse.json(
             { ok: false, error: 'Invalid role' },
             { status: 400 }
@@ -119,6 +121,10 @@ export async function POST(req: Request) {
             email,
             password,
             email_confirm: true,
+            user_metadata:
+                typeof name === 'string' && name.trim()
+                    ? { full_name: name.trim() }
+                    : undefined,
         });
 
     if (createError || !created.user) {
