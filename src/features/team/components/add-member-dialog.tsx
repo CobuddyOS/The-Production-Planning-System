@@ -9,9 +9,11 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Loader2Icon } from 'lucide-react';
+import { Loader2Icon, AlertCircleIcon } from 'lucide-react';
 import { TEAM_ROLES, type TeamRoleValue } from '../constants';
 import { CreateMemberData } from '../types';
+import { addMemberSchema } from '../schemas';
+import { z } from 'zod';
 
 interface AddMemberDialogProps {
     open: boolean;
@@ -30,15 +32,32 @@ export function AddMemberDialog({
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [role, setRole] = useState<TeamRoleValue>('sales');
+    const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        const success = await onConfirm({ name, email, password, role });
+        setFieldErrors({});
+
+        const validation = addMemberSchema.safeParse({ name, email, password, role });
+
+        if (!validation.success) {
+            const errors: Record<string, string> = {};
+            validation.error.issues.forEach((issue) => {
+                if (issue.path[0]) {
+                    errors[issue.path[0].toString()] = issue.message;
+                }
+            });
+            setFieldErrors(errors);
+            return;
+        }
+
+        const success = await onConfirm(validation.data as CreateMemberData);
         if (success) {
             setName('');
             setEmail('');
             setPassword('');
             setRole('sales');
+            setFieldErrors({});
             onOpenChange(false);
         }
     };
@@ -63,7 +82,14 @@ export function AddMemberDialog({
                             placeholder="Jane Doe"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
+                            className={fieldErrors.name ? "border-destructive focus-visible:ring-destructive" : ""}
                         />
+                        {fieldErrors.name && (
+                            <p className="flex items-center gap-1.5 text-xs text-destructive">
+                                <AlertCircleIcon className="size-3" />
+                                {fieldErrors.name}
+                            </p>
+                        )}
                     </div>
                     <div className="space-y-2">
                         <label htmlFor="add-email" className="text-sm font-medium">
@@ -76,7 +102,14 @@ export function AddMemberDialog({
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                             required
+                            className={fieldErrors.email ? "border-destructive focus-visible:ring-destructive" : ""}
                         />
+                        {fieldErrors.email && (
+                            <p className="flex items-center gap-1.5 text-xs text-destructive">
+                                <AlertCircleIcon className="size-3" />
+                                {fieldErrors.email}
+                            </p>
+                        )}
                     </div>
                     <div className="space-y-2">
                         <label htmlFor="add-password" className="text-sm font-medium">
@@ -89,10 +122,19 @@ export function AddMemberDialog({
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             required
+                            className={fieldErrors.password ? "border-destructive focus-visible:ring-destructive" : ""}
                         />
-                        <p className="text-xs text-muted-foreground">
-                            They can change this after first login.
-                        </p>
+                        {fieldErrors.password && (
+                            <p className="flex items-center gap-1.5 text-xs text-destructive">
+                                <AlertCircleIcon className="size-3" />
+                                {fieldErrors.password}
+                            </p>
+                        )}
+                        {!fieldErrors.password && (
+                            <p className="text-xs text-muted-foreground">
+                                They can change this after first login.
+                            </p>
+                        )}
                     </div>
                     <div className="space-y-2">
                         <label htmlFor="add-role" className="text-sm font-medium">
@@ -100,7 +142,7 @@ export function AddMemberDialog({
                         </label>
                         <select
                             id="add-role"
-                            className="h-9 w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            className={`h-9 w-full rounded-lg border border-input bg-transparent px-3 py-2 text-sm outline-none focus-visible:ring-2 focus-visible:ring-ring ${fieldErrors.role ? "border-destructive ring-destructive" : ""}`}
                             value={role}
                             onChange={(e) => setRole(e.target.value as TeamRoleValue)}
                         >
@@ -110,6 +152,12 @@ export function AddMemberDialog({
                                 </option>
                             ))}
                         </select>
+                        {fieldErrors.role && (
+                            <p className="flex items-center gap-1.5 text-xs text-destructive">
+                                <AlertCircleIcon className="size-3" />
+                                {fieldErrors.role}
+                            </p>
+                        )}
                     </div>
                     <DialogFooter className="mt-4 gap-2 sm:gap-0">
                         <Button
