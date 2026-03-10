@@ -1,11 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
 
 export default function LoginPage() {
     const [email, setEmail] = useState('');
@@ -14,16 +13,31 @@ export default function LoginPage() {
     const [error, setError] = useState<string | null>(null);
     const router = useRouter();
 
+    const redirectAfterLogin = useCallback(async () => {
+        try {
+            const res = await fetch('/api/auth/me', { method: 'GET' });
+            const json = (await res.json()) as { ok?: boolean; role?: string };
+            if (json?.role === 'cobuddyadmin') {
+                router.push('/platform');
+                return;
+            }
+        } catch {
+            // fall back to default redirect below
+        }
+
+        router.push('/nexus');
+    }, [router]);
+
     useEffect(() => {
         const checkSession = async () => {
             const supabase = createClient();
             const { data: { session } } = await supabase.auth.getSession();
             if (session) {
-                router.push('/nexus');
+                await redirectAfterLogin();
             }
         };
         checkSession();
-    }, [router]);
+    }, [redirectAfterLogin]);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -41,7 +55,7 @@ export default function LoginPage() {
         if (error) {
             setError(error.message);
         } else {
-            router.push('/nexus');
+            await redirectAfterLogin();
             router.refresh();
         }
     };

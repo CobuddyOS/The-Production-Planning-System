@@ -13,7 +13,6 @@ import { Loader2Icon, AlertCircleIcon } from 'lucide-react';
 import { TEAM_ROLES, type TeamRoleValue } from '../constants';
 import { CreateMemberData } from '../types';
 import { addMemberSchema } from '../schemas';
-import { z } from 'zod';
 
 interface AddMemberDialogProps {
     open: boolean;
