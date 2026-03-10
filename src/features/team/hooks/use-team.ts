@@ -29,8 +29,8 @@ export function useTeam() {
                 return;
             }
 
-            setMembers(data.members);
-            setCanManage(data.canManage);
+            setMembers(data.members || []);
+            setCanManage(data.canManage || false);
         } catch {
             setError('Network error while loading team');
         } finally {
@@ -39,7 +39,17 @@ export function useTeam() {
     }, []);
 
     useEffect(() => {
-        loadTeam();
+        let mounted = true;
+
+        async function fetchInitialData() {
+            if (mounted) await loadTeam();
+        };
+
+        fetchInitialData();
+
+        return () => {
+            mounted = false;
+        };
     }, [loadTeam]);
 
     // Auto-dismiss success after 4 seconds

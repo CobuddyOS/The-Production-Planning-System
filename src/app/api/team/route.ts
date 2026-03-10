@@ -12,25 +12,16 @@ interface TeamMember {
 }
 
 export async function GET() {
+    // Phase 1: Authentication & Tenant Resolution (Includes Auth verify + Tenant select)
     const tenantResult = await requireTenant();
     if (!tenantResult.ok) return tenantResult.response;
 
     const { supabase, tenant, user } = tenantResult.ctx;
 
-    // Fetch current user's role in this tenant for UI permissions.
-    const { data: currentMembership } = await supabase
-        .from('membership')
-        .select('role')
-        .eq('user_id', user.id)
-        .eq('tenant_id', tenant.id)
-        .single();
-
-    const currentUserRole = currentMembership?.role ?? null;
-    const canManage = currentUserRole === 'admin';
-
-    // Fetch all memberships for this tenant joined with profile data.
-    // This solves the N+1 query problem by getting everything in one go.
-    const { data: memberships, error: membershipError } = await supabase
+    // Phase 2: Fetch all memberships joined with profile data in ONE optimized query.
+    // We fetch the entire team directory at once and will find the current user's
+    // permission within this dataset to avoid a redundant extra DB round-trip.
+    const { data: membershipsData, error: membershipError } = await supabase
         .from('membership')
         .select(`
             user_id,
@@ -51,15 +42,20 @@ export async function GET() {
         );
     }
 
-    // Map the results into the TeamMember interface.
-    const members: TeamMember[] = (memberships || [])
-        .map((m: { user_id: string; role: string; profiles: any }) => ({
+    // Phase 3: Processing & Permission Resolution
+    const members: TeamMember[] = (membershipsData || [])
+        .map((m: any) => ({
             userId: m.user_id,
             email: m.profiles?.email ?? null,
             name: m.profiles?.full_name ?? null,
             role: m.role,
             createdAt: m.profiles?.created_at ?? null,
         }));
+
+    // Find current user's role from the in-memory list we just fetched.
+    const currentMember = members.find(m => m.userId === user.id);
+    const currentUserRole = currentMember?.role ?? null;
+    const canManage = currentUserRole === 'admin';
 
     return NextResponse.json({
         ok: true,

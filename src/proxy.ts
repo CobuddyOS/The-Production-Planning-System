@@ -9,7 +9,7 @@ import { extractSlugFromHostname } from '@/features/tenant';
  * Next.js 16+ uses the `proxy` convention instead of the deprecated `middleware`.
  *
  * Responsibilities:
- * 1. Refresh the Supabase auth session using `getClaims()` (JWT-verified)
+ * 1. Refresh the Supabase auth session using `getSession()` (Passive)
  * 2. Extract tenant slug from the hostname subdomain
  * 3. Inject `x-tenant-slug` and `x-tenant-url` headers for downstream use
  * 4. Sync cookies between request and response
@@ -29,51 +29,78 @@ export async function proxy(req: NextRequest) {
     }
 
     // ─── 1. Supabase Session Refresh ─────────────────────────────────────
-    // Create a proxy-aware Supabase client that can read and write cookies
-    // on both the request and response objects.
+    // Initialize headers with existing request headers
+    const requestHeaders = new Headers(req.headers);
 
-    let supabaseResponse = NextResponse.next({ request: req });
+    // EXTREMELY IMPORTANT: We bypass auth session management for Prefetching.
+    // Next.js Link components prefetch in the background which causes bursts of 
+    // network calls. This is the primary driver of 429 errors.
+    const isPrefetch =
+        req.headers.get('x-middleware-prefetch') === '1' ||
+        req.headers.get('purpose') === 'prefetch';
 
-    const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY!,
-        {
-            cookies: {
-                getAll() {
-                    return req.cookies.getAll();
+    // Create the initial response that we will return or modify
+    let supabaseResponse = NextResponse.next({
+        request: {
+            headers: requestHeaders,
+        },
+    });
+
+    if (!isPrefetch) {
+        const supabase = createServerClient(
+            process.env.NEXT_PUBLIC_SUPABASE_URL!,
+            process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_DEFAULT_KEY!,
+            {
+                cookies: {
+                    getAll() {
+                        return req.cookies.getAll();
+                    },
+                    setAll(cookiesToSet) {
+                        // FIX: We must update the request cookies so downstream 
+                        // Server Components (layouts/pages) see the new tokens.
+                        cookiesToSet.forEach(({ name, value }) =>
+                            req.cookies.set(name, value)
+                        );
+
+                        // FIX: Instead of re-instantiating NextResponse.next, we 
+                        // update the session cookies on the existing response object.
+                        // This prevents race conditions and redundant header duplication.
+                        cookiesToSet.forEach(({ name, value, options }) =>
+                            supabaseResponse.cookies.set(name, value, options)
+                        );
+                    },
                 },
-                setAll(cookiesToSet) {
-                    // Update the request cookies so downstream Server Components
-                    // see the refreshed session.
-                    cookiesToSet.forEach(({ name, value }) =>
-                        req.cookies.set(name, value)
-                    );
-                    supabaseResponse = NextResponse.next({ request: req });
-                    // Update the response cookies so the browser stores the
-                    // refreshed session.
-                    cookiesToSet.forEach(({ name, value, options }) =>
-                        supabaseResponse.cookies.set(name, value, options)
-                    );
-                },
-            },
+            }
+        );
+
+        // API routes handle their own auth. Bypassing here saves network calls.
+        const isApi = url.pathname.startsWith('/api/');
+        if (!isApi) {
+            /** 
+             * getSession() is used for passive session management in the proxy.
+             * Unlike getUser(), it avoids a heavy network round-trip to the
+             * auth server if the local token is valid, drastically reducing 
+             * 429 Rate Limit errors.
+             */
+            await supabase.auth.getSession();
         }
-    );
-
-    // getClaims() validates the JWT signature and refreshes expired tokens.
-    // Do not place any code between createServerClient and this call.
-    await supabase.auth.getClaims();
+    }
 
     // ─── 2. Tenant Slug Injection ────────────────────────────────────────
     const slug = extractSlugFromHostname(hostname);
 
     if (slug) {
+        requestHeaders.set('x-tenant-slug', slug);
         supabaseResponse.headers.set('x-tenant-slug', slug);
     }
 
     const protocol =
         req.headers.get('x-forwarded-proto') ||
         (hostname.includes('localhost') ? 'http' : 'https');
-    supabaseResponse.headers.set('x-tenant-url', `${protocol}://${hostname}`);
+
+    const tenantUrl = `${protocol}://${hostname}`;
+    requestHeaders.set('x-tenant-url', tenantUrl);
+    supabaseResponse.headers.set('x-tenant-url', tenantUrl);
 
     return supabaseResponse;
 }
@@ -87,6 +114,6 @@ export const config = {
          * - favicon.ico (favicon file)
          * - static assets (.svg, .png, .jpg, .jpeg, .gif, .webp)
          */
-        '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+        '/((?!_next/static|_next/image|favicon.ico|api/auth|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
     ],
 };
