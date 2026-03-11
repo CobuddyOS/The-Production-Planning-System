@@ -38,6 +38,15 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet";
+import { Search, Plus, Filter, Package, Zap, Scale, Layout, Box, MoreHorizontal, Layers } from "lucide-react";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
 type Bundle = {
     id: string;
@@ -84,88 +93,110 @@ export default function AtlasBundlesPage() {
     const bundles = useMemo(() => mockBundles, []);
 
     return (
-        <div className="space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="space-y-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-xl font-semibold tracking-tight">Bundles</h2>
+                    <h2 className="text-2xl font-bold tracking-tight">Bundles</h2>
                     <p className="text-sm text-muted-foreground">
                         Curated packages of assets that tenants can import as presets.
                     </p>
                 </div>
                 <Dialog>
                     <DialogTrigger asChild>
-                        <Button size="sm">Create Bundle</Button>
+                        <Button size="sm" className="gap-2">
+                            <Plus className="h-4 w-4" />
+                            Create Bundle
+                        </Button>
                     </DialogTrigger>
                     <CreateBundleDialog />
                 </Dialog>
             </div>
 
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between gap-3">
-                    <CardTitle className="text-sm font-medium">
+            <Card className="border-none shadow-sm bg-muted/30">
+                <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between pb-6">
+                    <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                        <Layers className="h-5 w-5 text-primary" />
                         Bundle Library
                     </CardTitle>
-                    <Input
-                        placeholder="Search bundles..."
-                        className="h-8 max-w-xs"
-                    />
+                    <div className="flex flex-wrap gap-2 items-center">
+                        <div className="relative w-full md:w-64">
+                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <Input
+                                placeholder="Search bundles..."
+                                className="pl-8 h-9 rounded-lg"
+                            />
+                        </div>
+                    </div>
                 </CardHeader>
-                <CardContent>
-                    <div className="rounded-md border">
+                <CardContent className="p-0">
+                    <div className="overflow-hidden rounded-b-xl border-t">
                         <Table>
-                            <TableHeader>
+                            <TableHeader className="bg-muted/50">
                                 <TableRow>
-                                    <TableHead>Bundle Name</TableHead>
+                                    <TableHead>Bundle Details</TableHead>
                                     <TableHead>Category</TableHead>
                                     <TableHead># of Assets</TableHead>
                                     <TableHead>Status</TableHead>
-                                    <TableHead>Created</TableHead>
-                                    <TableHead className="text-right">
-                                        Actions
-                                    </TableHead>
+                                    <TableHead className="text-right">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
-                            <TableBody>
+                            <TableBody className="bg-background">
                                 {bundles.map((bundle) => (
-                                    <TableRow key={bundle.id}>
+                                    <TableRow key={bundle.id} className="group hover:bg-muted/30 transition-colors">
                                         <TableCell className="max-w-xs">
                                             <div className="space-y-0.5">
-                                                <div className="font-medium">
-                                                    {bundle.name}
-                                                </div>
-                                                <div className="text-xs text-muted-foreground">
+                                                <div className="font-semibold">{bundle.name}</div>
+                                                <div className="text-xs text-muted-foreground leading-tight">
                                                     {bundle.description}
                                                 </div>
                                             </div>
                                         </TableCell>
-                                        <TableCell>{bundle.category}</TableCell>
-                                        <TableCell>{bundle.assetCount}</TableCell>
+                                        <TableCell>
+                                            <Badge variant="outline" className="font-normal border-primary/20 bg-primary/5 text-primary">
+                                                {bundle.category}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell>
+                                            <div className="flex items-center gap-1.5 font-medium">
+                                                <Box className="h-4 w-4 text-blue-500" />
+                                                {bundle.assetCount}
+                                            </div>
+                                        </TableCell>
                                         <TableCell>
                                             <Badge
-                                                variant={
-                                                    bundle.status === "Active"
-                                                        ? "secondary"
-                                                        : "outline"
-                                                }
+                                                className={bundle.status === "Active"
+                                                    ? "bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border-emerald-500/20"
+                                                    : "bg-red-500/10 text-red-600 hover:bg-red-500/20 border-red-500/20"}
                                             >
                                                 {bundle.status}
                                             </Badge>
                                         </TableCell>
-                                        <TableCell className="text-xs text-muted-foreground">
-                                            {bundle.createdAt}
-                                        </TableCell>
-                                        <TableCell className="text-right space-x-2">
-                                            <Sheet>
-                                                <SheetTrigger asChild>
-                                                    <Button size="xs" variant="outline">
-                                                        View assets
-                                                    </Button>
-                                                </SheetTrigger>
-                                                <BundleAssetsSheet />
-                                            </Sheet>
-                                            <Button size="xs" variant="outline">
-                                                Edit
-                                            </Button>
+                                        <TableCell className="text-right">
+                                            <div className="flex justify-end gap-2">
+                                                <Sheet>
+                                                    <SheetTrigger asChild>
+                                                        <Button size="xs" variant="outline">
+                                                            View assets
+                                                        </Button>
+                                                    </SheetTrigger>
+                                                    <BundleAssetsSheet />
+                                                </Sheet>
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger asChild>
+                                                        <Button variant="ghost" size="icon" className="h-8 w-8">
+                                                            <MoreHorizontal className="h-4 w-4" />
+                                                        </Button>
+                                                    </DropdownMenuTrigger>
+                                                    <DropdownMenuContent align="end" className="w-40">
+                                                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                        <DropdownMenuSeparator />
+                                                        <DropdownMenuItem>Edit Bundle</DropdownMenuItem>
+                                                        <DropdownMenuItem>Duplicate</DropdownMenuItem>
+                                                        <DropdownMenuSeparator />
+                                                        <DropdownMenuItem className="text-destructive">Archive</DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
+                                            </div>
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -180,15 +211,15 @@ export default function AtlasBundlesPage() {
 
 function CreateBundleDialog() {
     return (
-        <DialogContent>
-            <DialogHeader>
-                <DialogTitle>Create Bundle</DialogTitle>
+        <DialogContent className="sm:max-w-[600px] overflow-hidden flex flex-col p-0 border-none shadow-2xl">
+            <DialogHeader className="p-6 pb-2 bg-muted/20 text-left">
+                <DialogTitle className="text-xl">Create Bundle</DialogTitle>
                 <DialogDescription>
                     Group multiple assets into a reusable bundle that tenants can
                     import as a package.
                 </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4 py-2 max-h-[70vh] overflow-y-auto pr-1">
+            <div className="p-6 space-y-5 overflow-y-auto max-h-[70vh]">
                 <div className="space-y-1">
                     <label className="text-xs font-medium">Bundle Name</label>
                     <Input placeholder="e.g. Wedding Lighting Package" />
@@ -261,13 +292,13 @@ function CreateBundleDialog() {
                     </Select>
                 </div>
             </div>
-            <DialogFooter>
+            <DialogFooter className="p-6 bg-muted/20 border-t">
                 <Button variant="outline" size="sm">
                     Cancel
                 </Button>
                 <Button size="sm">Create Bundle</Button>
             </DialogFooter>
-        </DialogContent>
+        </DialogContent >
     );
 }
 

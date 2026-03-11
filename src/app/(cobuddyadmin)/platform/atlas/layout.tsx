@@ -9,6 +9,7 @@ const atlasNav = [
     { label: "Overview", href: "/platform/atlas" },
     { label: "Categories", href: "/platform/atlas/categories" },
     { label: "Assets", href: "/platform/atlas/assets" },
+    { label: "Ballrooms", href: "/platform/atlas/ballrooms" },
     { label: "Bundles", href: "/platform/atlas/bundles" },
 ];
 
@@ -63,7 +64,7 @@ function AtlasNavLink({
                 "inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
                 "hover:bg-muted hover:text-foreground",
                 active &&
-                    "bg-foreground text-background hover:bg-foreground hover:text-background"
+                "bg-foreground text-background hover:bg-foreground hover:text-background"
             )}
         >
             {children}

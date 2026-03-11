@@ -22,6 +22,15 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { Search, Plus, Filter, Tag, Layout, MoreHorizontal, Grid } from "lucide-react";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu";
 
 type Category = {
     id: string;
@@ -87,101 +96,107 @@ export default function AtlasCategoriesPage() {
     );
 
     return (
-        <div className="space-y-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="space-y-6">
+            <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-xl font-semibold tracking-tight">
-                        Categories
-                    </h2>
+                    <h2 className="text-2xl font-bold tracking-tight">Categories</h2>
                     <p className="text-sm text-muted-foreground">
                         Define global groupings for all Atlas assets.
                     </p>
                 </div>
                 <Dialog>
                     <DialogTrigger asChild>
-                        <Button size="sm">Create Category</Button>
+                        <Button size="sm" className="gap-2">
+                            <Plus className="h-4 w-4" />
+                            Create Category
+                        </Button>
                     </DialogTrigger>
                     <CategoryFormDialog />
                 </Dialog>
+
+                <Dialog
+                    open={!!selectedCategory}
+                    onOpenChange={(open) => !open && setSelectedCategory(null)}
+                >
+                    {selectedCategory && (
+                        <CategoryFormDialog category={selectedCategory} />
+                    )}
+                </Dialog>
             </div>
 
-            <Card>
-                <CardHeader className="flex flex-row items-center justify-between gap-3">
-                    <CardTitle className="text-sm font-medium">
+            <Card className="border-none shadow-sm bg-muted/30">
+                <CardHeader className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between pb-6">
+                    <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                        <Grid className="h-5 w-5 text-primary" />
                         Category Library
                     </CardTitle>
-                    <Input
-                        placeholder="Search categories..."
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="h-8 max-w-xs"
-                    />
+                    <div className="flex flex-wrap gap-2 items-center">
+                        <div className="relative w-full md:w-64">
+                            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                            <Input
+                                placeholder="Search categories..."
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
+                                className="pl-8 h-9 rounded-lg"
+                            />
+                        </div>
+                    </div>
                 </CardHeader>
-                <CardContent>
-                    <div className="rounded-md border">
+                <CardContent className="p-0">
+                    <div className="overflow-hidden rounded-b-xl border-t">
                         <Table>
-                            <TableHeader>
+                            <TableHeader className="bg-muted/50">
                                 <TableRow>
                                     <TableHead>Category Name</TableHead>
                                     <TableHead>Description</TableHead>
                                     <TableHead>Asset Count</TableHead>
                                     <TableHead>Created</TableHead>
-                                    <TableHead className="text-right">
-                                        Actions
-                                    </TableHead>
+                                    <TableHead className="text-right">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
-                            <TableBody>
+                            <TableBody className="bg-background">
                                 {filtered.map((cat) => (
-                                    <TableRow key={cat.id}>
-                                        <TableCell className="font-medium">
+                                    <TableRow key={cat.id} className="group hover:bg-muted/30 transition-colors">
+                                        <TableCell className="font-semibold">
                                             <span className="mr-2">{cat.icon}</span>
                                             {cat.name}
                                             {!cat.active && (
                                                 <Badge
                                                     variant="outline"
-                                                    className="ml-2 text-[10px]"
+                                                    className="ml-2 text-[10px] bg-red-500/10 text-red-600 border-red-500/20"
                                                 >
                                                     Inactive
                                                 </Badge>
                                             )}
                                         </TableCell>
-                                        <TableCell className="max-w-md truncate">
+                                        <TableCell className="max-w-md truncate text-muted-foreground">
                                             {cat.description}
                                         </TableCell>
-                                        <TableCell>{cat.assetCount}</TableCell>
-                                        <TableCell className="text-xs text-muted-foreground">
+                                        <TableCell>
+                                            <Badge variant="outline" className="font-normal border-primary/20 bg-primary/5 text-primary">
+                                                {cat.assetCount} Assets
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell className="text-xs text-muted-foreground font-mono">
                                             {cat.createdAt}
                                         </TableCell>
-                                        <TableCell className="text-right space-x-2">
-                                            <Dialog
-                                                onOpenChange={(open) =>
-                                                    !open && setSelectedCategory(null)
-                                                }
-                                                open={selectedCategory?.id === cat.id}
-                                            >
-                                                <DialogTrigger asChild>
-                                                    <Button
-                                                        size="xs"
-                                                        variant="outline"
-                                                        onClick={() => setSelectedCategory(cat)}
-                                                    >
-                                                        Edit
+                                        <TableCell className="text-right">
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8">
+                                                        <MoreHorizontal className="h-4 w-4" />
                                                     </Button>
-                                                </DialogTrigger>
-                                                {selectedCategory && (
-                                                    <CategoryFormDialog
-                                                        category={selectedCategory}
-                                                    />
-                                                )}
-                                            </Dialog>
-                                            <Button
-                                                size="xs"
-                                                variant="outline"
-                                                className="text-destructive border-destructive/40"
-                                            >
-                                                Delete
-                                            </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end" className="w-40">
+                                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem onClick={() => setSelectedCategory(cat)}>
+                                                        Edit Category
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -198,18 +213,18 @@ function CategoryFormDialog({ category }: { category?: Category }) {
     const isEdit = Boolean(category);
 
     return (
-        <DialogContent>
-            <DialogHeader>
-                <DialogTitle>
+        <DialogContent className="sm:max-w-[500px] overflow-hidden flex flex-col p-0 border-none shadow-2xl">
+            <DialogHeader className="p-6 pb-2 bg-muted/20 text-left">
+                <DialogTitle className="text-xl">
                     {isEdit ? "Edit Category" : "Create Category"}
                 </DialogTitle>
                 <DialogDescription>
                     {isEdit
-                        ? "Update the global category definition. These changes will affect all tenants importing from Atlas."
-                        : "Define a new global category for Atlas assets. Tenants will use these categories when importing inventory."}
+                        ? "Update the global category definition. These changes will affect all tenants."
+                        : "Define a new global category for Atlas assets. Tenants will use these for their inventory."}
                 </DialogDescription>
             </DialogHeader>
-            <div className="space-y-4 py-2">
+            <div className="p-6 space-y-5 overflow-y-auto max-h-[70vh]">
                 <div className="space-y-1">
                     <label className="text-xs font-medium">Category Name</label>
                     <Input
@@ -256,7 +271,7 @@ function CategoryFormDialog({ category }: { category?: Category }) {
                     </button>
                 </div>
             </div>
-            <DialogFooter>
+            <DialogFooter className="p-6 bg-muted/20 border-t">
                 <Button variant="outline" size="sm">
                     Cancel
                 </Button>
@@ -264,7 +279,7 @@ function CategoryFormDialog({ category }: { category?: Category }) {
                     {isEdit ? "Save Changes" : "Create Category"}
                 </Button>
             </DialogFooter>
-        </DialogContent>
+        </DialogContent >
     );
 }
 

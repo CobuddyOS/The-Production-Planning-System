@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Plus, Package, Layers, Grid, Zap, Activity, ChevronRight, Layout } from "lucide-react";
 
 const overviewStats = {
     totalAssets: 248,
@@ -75,149 +76,125 @@ const recentActivity = [
 export default function AtlasPage() {
     return (
         <div className="space-y-6">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-                <h2 className="text-xl font-semibold tracking-tight">Overview</h2>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                    <h2 className="text-2xl font-bold tracking-tight">Atlas Overview</h2>
+                    <p className="text-sm text-muted-foreground">
+                        Central management for global assets, categories, and bundles.
+                    </p>
+                </div>
                 <div className="flex flex-wrap gap-2">
-                    <Button size="sm" variant="outline">
+                    <Button size="sm" variant="outline" className="gap-2">
+                        <Plus className="h-4 w-4" />
                         Create Category
                     </Button>
-                    <Button size="sm" variant="outline">
+                    <Button size="sm" variant="outline" className="gap-2">
+                        <Plus className="h-4 w-4" />
                         Create Bundle
                     </Button>
-                    <Button size="sm">Add Asset</Button>
+                    <Button size="sm" className="gap-2 shadow-lg shadow-primary/20">
+                        <Package className="h-4 w-4" />
+                        Add Asset
+                    </Button>
                 </div>
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium">
-                            Total Assets
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-semibold">
-                            {overviewStats.totalAssets.toLocaleString()}
-                        </div>
-                        <p className="mt-1 text-xs text-muted-foreground">
-                            Across all global categories
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium">
-                            Total Categories
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-semibold">
-                            {overviewStats.totalCategories}
-                        </div>
-                        <p className="mt-1 text-xs text-muted-foreground">
-                            Logical groupings for assets
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium">
-                            Total Bundles
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-semibold">
-                            {overviewStats.totalBundles}
-                        </div>
-                        <p className="mt-1 text-xs text-muted-foreground">
-                            Reusable packages for tenants
-                        </p>
-                    </CardContent>
-                </Card>
-                <Card>
-                    <CardHeader className="pb-2">
-                        <CardTitle className="text-sm font-medium">
-                            Recently Added
-                        </CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-semibold">
-                            {overviewStats.recentAssets}
-                        </div>
-                        <p className="mt-1 text-xs text-muted-foreground">
-                            Assets added in the last 7 days
-                        </p>
-                    </CardContent>
-                </Card>
+                {[
+                    { title: "Total Assets", value: overviewStats.totalAssets, icon: Package, desc: "Across all categories", color: "text-blue-500", bg: "bg-blue-500/10" },
+                    { title: "Total Categories", value: overviewStats.totalCategories, icon: Grid, desc: "Logical asset groups", color: "text-emerald-500", bg: "bg-emerald-500/10" },
+                    { title: "Total Bundles", value: overviewStats.totalBundles, icon: Layers, desc: "Reusable packages", color: "text-purple-500", bg: "bg-purple-500/10" },
+                    { title: "Recently Added", value: overviewStats.recentAssets, icon: Zap, desc: "Added last 7 days", color: "text-amber-500", bg: "bg-amber-500/10" },
+                ].map((stat, i) => (
+                    <Card key={i} className="border-none shadow-sm bg-muted/30">
+                        <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+                            <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+                            <div className={`${stat.bg} p-2 rounded-lg`}>
+                                <stat.icon className={`h-4 w-4 ${stat.color}`} />
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">{stat.value.toLocaleString()}</div>
+                            <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
+                                {stat.desc}
+                            </p>
+                        </CardContent>
+                    </Card>
+                ))}
             </div>
 
-            <div className="grid gap-4 lg:grid-cols-3">
-                <Card className="lg:col-span-2">
-                    <CardHeader className="flex flex-row items-center justify-between gap-2">
-                        <CardTitle className="text-sm font-medium">
-                            Recent Assets
+            <div className="grid gap-6 lg:grid-cols-3">
+                <Card className="lg:col-span-2 border-none shadow-sm bg-muted/30 overflow-hidden">
+                    <CardHeader className="flex flex-row items-center justify-between gap-4 pb-6 px-6 pt-6">
+                        <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                            <Activity className="h-5 w-5 text-primary" />
+                            Recent Asset Definitions
                         </CardTitle>
-                        <Button size="xs" variant="outline">
-                            View all
+                        <Button size="xs" variant="ghost" className="text-primary hover:bg-primary/5 gap-1">
+                            View library <ChevronRight className="h-4 w-4" />
                         </Button>
                     </CardHeader>
-                    <CardContent>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Asset</TableHead>
-                                    <TableHead>Category</TableHead>
-                                    <TableHead>Status</TableHead>
-                                    <TableHead className="text-right">
-                                        Created
-                                    </TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {recentAssets.map((asset) => (
-                                    <TableRow key={asset.id}>
-                                        <TableCell className="font-medium">
-                                            {asset.name}
-                                        </TableCell>
-                                        <TableCell>{asset.category}</TableCell>
-                                        <TableCell>
-                                            <Badge
-                                                variant={
-                                                    asset.status === "Active"
-                                                        ? "secondary"
-                                                        : "outline"
-                                                }
-                                            >
-                                                {asset.status}
-                                            </Badge>
-                                        </TableCell>
-                                        <TableCell className="text-right text-xs text-muted-foreground">
-                                            {asset.createdAt}
-                                        </TableCell>
+                    <CardContent className="p-0">
+                        <div className="border-t">
+                            <Table>
+                                <TableHeader className="bg-muted/50">
+                                    <TableRow>
+                                        <TableHead className="pl-6">Asset Name</TableHead>
+                                        <TableHead>Category</TableHead>
+                                        <TableHead>Status</TableHead>
+                                        <TableHead className="text-right pr-6">Created</TableHead>
                                     </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
+                                </TableHeader>
+                                <TableBody className="bg-background/50">
+                                    {recentAssets.map((asset) => (
+                                        <TableRow key={asset.id} className="hover:bg-muted/30 transition-colors">
+                                            <TableCell className="font-medium pl-6">{asset.name}</TableCell>
+                                            <TableCell>
+                                                <Badge variant="outline" className="font-normal border-primary/20 bg-primary/5 text-primary">
+                                                    {asset.category}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge
+                                                    className={asset.status === "Active"
+                                                        ? "bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border-emerald-500/20"
+                                                        : "bg-red-500/10 text-red-600 hover:bg-red-500/20 border-red-500/20"}
+                                                >
+                                                    {asset.status}
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell className="text-right text-xs text-muted-foreground font-mono pr-6">
+                                                {asset.createdAt}
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </div>
                     </CardContent>
                 </Card>
 
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="text-sm font-medium">
-                            Recent Activity
+                <Card className="border-none shadow-sm bg-muted/30">
+                    <CardHeader className="pb-4">
+                        <CardTitle className="text-lg font-semibold flex items-center gap-2">
+                            <Layout className="h-5 w-5 text-primary" />
+                            Global Activity Feed
                         </CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4 text-sm">
-                        {recentActivity.map((item) => (
-                            <div key={item.id} className="flex gap-3">
-                                <div className="mt-1 h-2 w-2 rounded-full bg-foreground" />
+                    <CardContent className="space-y-6">
+                        {recentActivity.map((item, i) => (
+                            <div key={item.id} className="relative flex gap-4">
+                                {i !== recentActivity.length - 1 && (
+                                    <div className="absolute left-2.5 top-8 bottom-0 w-px bg-border" />
+                                )}
+                                <div className="z-10 mt-1 h-5 w-5 rounded-full bg-background border-2 border-primary/40 flex items-center justify-center shrink-0 shadow-sm" />
                                 <div className="space-y-1">
-                                    <p className="font-medium">{item.title}</p>
-                                    <p className="text-xs text-muted-foreground">
+                                    <p className="font-semibold text-sm">{item.title}</p>
+                                    <p className="text-xs text-muted-foreground leading-relaxed">
                                         {item.description}
                                     </p>
-                                    <p className="text-[11px] text-muted-foreground">
-                                        {item.timestamp}
+                                    <p className="text-[10px] font-medium text-muted-foreground pt-1 flex items-center gap-1">
+                                        <Zap className="h-3 w-3" /> {item.timestamp}
                                     </p>
                                 </div>
                             </div>
