@@ -1,19 +1,12 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { Sheet } from "@/components/ui/sheet";
 import {
     Table,
     TableBody,
@@ -29,16 +22,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetFooter,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from "@/components/ui/sheet";
-import { Search, Plus, Filter, Package, Zap, Scale, Layout, Box, MoreHorizontal, Layers } from "lucide-react";
+import { Search, Plus, Package, MoreHorizontal, Layers } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -48,68 +32,76 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 
-type Bundle = {
-    id: string;
-    name: string;
-    description: string;
-    category: string;
-    assetCount: number;
-    imageUrl?: string;
-    status: "Active" | "Inactive";
-    createdAt: string;
-};
-
-const mockBundleCategories = ["Lighting Packages", "Audio Packages", "Full Show"];
-
-const mockBundleAssets = [
-    { id: "A-1023", name: "LED Uplight Pro", category: "Lighting" },
-    { id: "A-1024", name: "Moving Head Spot 300W", category: "Lighting" },
-    { id: "A-2051", name: "Wireless Handheld Mic", category: "Audio" },
-    { id: "A-3050", name: "2x18\" Subwoofer", category: "Audio" },
-];
-
-const mockBundles: Bundle[] = [
-    {
-        id: "B-001",
-        name: "Wedding Lighting Package",
-        description: "16x uplights, 4x moving heads, control console.",
-        category: "Lighting Packages",
-        assetCount: 24,
-        status: "Active",
-        createdAt: "2026-02-21",
-    },
-    {
-        id: "B-002",
-        name: "Conference Audio Essentials",
-        description: "4x speakers, 4x wireless mics, mixer.",
-        category: "Audio Packages",
-        assetCount: 12,
-        status: "Active",
-        createdAt: "2026-02-28",
-    },
-];
+import {
+    useAtlasBundles,
+    BundleFormDialog,
+    DeleteBundleDialog,
+    BundleDetailsSheet,
+    type AtlasBundle
+} from "@/features/atlas/bundles";
 
 export default function AtlasBundlesPage() {
-    const bundles = useMemo(() => mockBundles, []);
+    const [search, setSearch] = useState("");
+    const [statusFilter, setStatusFilter] = useState<"all" | "active" | "inactive">("all");
+
+    const [selectedBundle, setSelectedBundle] = useState<AtlasBundle | null>(null);
+    const [viewingBundle, setViewingBundle] = useState<AtlasBundle | null>(null);
+    const [bundleToDelete, setBundleToDelete] = useState<AtlasBundle | null>(null);
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    const { bundles, loading, refresh, deleteBundle } = useAtlasBundles();
+
+    const handleDelete = async (id: string) => {
+        const result = await deleteBundle(id);
+        if (!result.success) {
+            alert(result.error?.message || "Failed to delete bundle");
+        }
+    };
+
+    const filtered = useMemo(() => {
+        return bundles.filter((b) => {
+            const matchesSearch = b.name.toLowerCase().includes(search.toLowerCase()) ||
+                (b.description?.toLowerCase().includes(search.toLowerCase()) || false) ||
+                (b.category?.toLowerCase().includes(search.toLowerCase()) || false);
+            const matchesStatus = statusFilter === "all" || b.status === statusFilter;
+
+            return matchesSearch && matchesStatus;
+        });
+    }, [bundles, search, statusFilter]);
+
+    if (!mounted) return null;
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 px-4 md:px-6 lg:px-10">
             <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-2xl font-bold tracking-tight">Bundles</h2>
+                    <h2 className="text-2xl font-bold tracking-tight">Equipment Bundles</h2>
                     <p className="text-sm text-muted-foreground">
-                        Curated packages of assets that tenants can import as presets.
+                        Manage pre-configured sets of items for rapid deployment.
                     </p>
                 </div>
-                <Dialog>
-                    <DialogTrigger asChild>
-                        <Button size="sm" className="gap-2">
-                            <Plus className="h-4 w-4" />
-                            Create Bundle
-                        </Button>
-                    </DialogTrigger>
-                    <CreateBundleDialog />
-                </Dialog>
+                <div className="flex items-center gap-3">
+                    <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+                        <DialogTrigger asChild>
+                            <Button size="sm" className="gap-2 cursor-pointer">
+                                <Plus className="h-4 w-4" />
+                                Create Bundle
+                            </Button>
+                        </DialogTrigger>
+                        <BundleFormDialog
+                            onSuccess={() => {
+                                setIsCreateOpen(false);
+                                refresh();
+                            }}
+                            onCancel={() => setIsCreateOpen(false)}
+                        />
+                    </Dialog>
+                </div>
             </div>
 
             <Card className="border-none shadow-sm bg-muted/30">
@@ -123,9 +115,24 @@ export default function AtlasBundlesPage() {
                             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                             <Input
                                 placeholder="Search bundles..."
+                                value={search}
+                                onChange={(e) => setSearch(e.target.value)}
                                 className="pl-8 h-9 rounded-lg"
                             />
                         </div>
+                        <Select
+                            value={statusFilter}
+                            onValueChange={(value) => setStatusFilter(value as any)}
+                        >
+                            <SelectTrigger className="h-9 w-[130px] rounded-lg cursor-pointer">
+                                <SelectValue placeholder="Status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="all">All Status</SelectItem>
+                                <SelectItem value="active">Active</SelectItem>
+                                <SelectItem value="inactive">Inactive</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
                 </CardHeader>
                 <CardContent className="p-0">
@@ -133,70 +140,110 @@ export default function AtlasBundlesPage() {
                         <Table>
                             <TableHeader className="bg-muted/50">
                                 <TableRow>
-                                    <TableHead>Bundle Details</TableHead>
+                                    <TableHead>Bundle Name</TableHead>
                                     <TableHead>Category</TableHead>
-                                    <TableHead># of Assets</TableHead>
+                                    <TableHead>Included Items</TableHead>
                                     <TableHead>Status</TableHead>
+                                    <TableHead>Created</TableHead>
                                     <TableHead className="text-right">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody className="bg-background">
-                                {bundles.map((bundle) => (
-                                    <TableRow key={bundle.id} className="group hover:bg-muted/30 transition-colors">
-                                        <TableCell className="max-w-xs">
-                                            <div className="space-y-0.5">
-                                                <div className="font-semibold">{bundle.name}</div>
-                                                <div className="text-xs text-muted-foreground leading-tight">
-                                                    {bundle.description}
-                                                </div>
+                                {loading && bundles.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
+                                            Loading bundles...
+                                        </TableCell>
+                                    </TableRow>
+                                ) : filtered.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={6} className="text-center py-10 text-muted-foreground">
+                                            {search || statusFilter !== 'all'
+                                                ? "No bundles match your filters."
+                                                : "No bundles found. Build your first bundle to streamline bookings."}
+                                        </TableCell>
+                                    </TableRow>
+                                ) : filtered.map((b) => (
+                                    <TableRow
+                                        key={b.id}
+                                        className="group hover:bg-muted/30 transition-colors cursor-pointer"
+                                        onClick={() => setViewingBundle(b)}
+                                    >
+                                        <TableCell>
+                                            <div className="font-semibold">{b.name}</div>
+                                            <div className="text-xs text-muted-foreground truncate max-w-[200px]">
+                                                {b.description || "No description"}
                                             </div>
                                         </TableCell>
                                         <TableCell>
-                                            <Badge variant="outline" className="font-normal border-primary/20 bg-primary/5 text-primary">
-                                                {bundle.category}
+                                            <Badge variant="secondary" className="bg-primary/5 text-primary border-primary/10 font-normal">
+                                                {b.category || "General"}
                                             </Badge>
                                         </TableCell>
                                         <TableCell>
-                                            <div className="flex items-center gap-1.5 font-medium">
-                                                <Box className="h-4 w-4 text-blue-500" />
-                                                {bundle.assetCount}
+                                            <div className="flex -space-x-2 overflow-hidden">
+                                                {b.items?.slice(0, 4).map((item) => (
+                                                    <div
+                                                        key={item.id}
+                                                        className="inline-flex items-center justify-center size-8 rounded-full bg-background border ring-2 ring-background ring-offset-0 overflow-hidden"
+                                                        title={`${item.asset?.name} (x${item.quantity})`}
+                                                    >
+                                                        {item.asset?.image ? (
+                                                            <img src={item.asset.image} alt={item.asset.name} className="size-full object-cover" />
+                                                        ) : (
+                                                            <span className="text-[10px] font-bold">{item.asset?.name.charAt(0)}</span>
+                                                        )}
+                                                    </div>
+                                                ))}
+                                                {(b.items?.length || 0) > 4 && (
+                                                    <div className="inline-flex items-center justify-center size-8 rounded-full bg-muted border text-[10px] font-bold ring-2 ring-background">
+                                                        +{(b.items?.length || 0) - 4}
+                                                    </div>
+                                                )}
+                                                {(!b.items || b.items.length === 0) && (
+                                                    <span className="text-xs text-muted-foreground italic">No items</span>
+                                                )}
                                             </div>
                                         </TableCell>
                                         <TableCell>
                                             <Badge
-                                                className={bundle.status === "Active"
-                                                    ? "bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border-emerald-500/20"
-                                                    : "bg-red-500/10 text-red-600 hover:bg-red-500/20 border-red-500/20"}
+                                                variant="outline"
+                                                className={`font-normal ${b.status === 'active'
+                                                    ? 'border-emerald-500/20 bg-emerald-500/5 text-emerald-600'
+                                                    : 'border-red-500/20 bg-red-500/5 text-red-600'
+                                                    }`}
                                             >
-                                                {bundle.status}
+                                                {b.status.charAt(0).toUpperCase() + b.status.slice(1)}
                                             </Badge>
                                         </TableCell>
-                                        <TableCell className="text-right">
-                                            <div className="flex justify-end gap-2">
-                                                <Sheet>
-                                                    <SheetTrigger asChild>
-                                                        <Button size="xs" variant="outline">
-                                                            View assets
-                                                        </Button>
-                                                    </SheetTrigger>
-                                                    <BundleAssetsSheet />
-                                                </Sheet>
-                                                <DropdownMenu>
-                                                    <DropdownMenuTrigger asChild>
-                                                        <Button variant="ghost" size="icon" className="h-8 w-8">
-                                                            <MoreHorizontal className="h-4 w-4" />
-                                                        </Button>
-                                                    </DropdownMenuTrigger>
-                                                    <DropdownMenuContent align="end" className="w-40">
-                                                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                                        <DropdownMenuSeparator />
-                                                        <DropdownMenuItem>Edit Bundle</DropdownMenuItem>
-                                                        <DropdownMenuItem>Duplicate</DropdownMenuItem>
-                                                        <DropdownMenuSeparator />
-                                                        <DropdownMenuItem className="text-destructive">Archive</DropdownMenuItem>
-                                                    </DropdownMenuContent>
-                                                </DropdownMenu>
-                                            </div>
+                                        <TableCell className="text-xs text-muted-foreground font-mono">
+                                            {new Date(b.created_at).toLocaleDateString()}
+                                        </TableCell>
+                                        <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button variant="ghost" size="icon" className="h-8 w-8 cursor-pointer">
+                                                        <MoreHorizontal className="h-4 w-4" />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end" className="w-40">
+                                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem onClick={() => setSelectedBundle(b)} className="cursor-pointer">
+                                                        Edit Bundle
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem onClick={() => setViewingBundle(b)} className="cursor-pointer">
+                                                        View Details
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem
+                                                        className="text-destructive cursor-pointer"
+                                                        onClick={() => setBundleToDelete(b)}
+                                                    >
+                                                        Delete
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
                                         </TableCell>
                                     </TableRow>
                                 ))}
@@ -205,135 +252,39 @@ export default function AtlasBundlesPage() {
                     </div>
                 </CardContent>
             </Card>
+
+            {/* Edit Bundle Dialog */}
+            <Dialog
+                open={!!selectedBundle}
+                onOpenChange={(open) => !open && setSelectedBundle(null)}
+            >
+                {selectedBundle && (
+                    <BundleFormDialog
+                        bundle={selectedBundle}
+                        onSuccess={() => {
+                            setSelectedBundle(null);
+                            refresh();
+                        }}
+                        onCancel={() => setSelectedBundle(null)}
+                    />
+                )}
+            </Dialog>
+
+            {/* Details Sheet */}
+            <Sheet
+                open={!!viewingBundle}
+                onOpenChange={(open) => !open && setViewingBundle(null)}
+            >
+                <BundleDetailsSheet bundle={viewingBundle} />
+            </Sheet>
+
+            {/* Delete Confirmation */}
+            <DeleteBundleDialog
+                bundle={bundleToDelete}
+                open={!!bundleToDelete}
+                onOpenChange={(open) => !open && setBundleToDelete(null)}
+                onConfirm={handleDelete}
+            />
         </div>
     );
 }
-
-function CreateBundleDialog() {
-    return (
-        <DialogContent className="sm:max-w-[600px] overflow-hidden flex flex-col p-0 border-none shadow-2xl">
-            <DialogHeader className="p-6 pb-2 bg-muted/20 text-left">
-                <DialogTitle className="text-xl">Create Bundle</DialogTitle>
-                <DialogDescription>
-                    Group multiple assets into a reusable bundle that tenants can
-                    import as a package.
-                </DialogDescription>
-            </DialogHeader>
-            <div className="p-6 space-y-5 overflow-y-auto max-h-[70vh]">
-                <div className="space-y-1">
-                    <label className="text-xs font-medium">Bundle Name</label>
-                    <Input placeholder="e.g. Wedding Lighting Package" />
-                </div>
-                <div className="space-y-1">
-                    <label className="text-xs font-medium">Description</label>
-                    <Input placeholder="Short description of what this bundle includes" />
-                </div>
-                <div className="space-y-1">
-                    <label className="text-xs font-medium">Category</label>
-                    <Select>
-                        <SelectTrigger size="sm" className="w-full">
-                            <SelectValue placeholder="Select category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {mockBundleCategories.map((cat) => (
-                                <SelectItem key={cat} value={cat}>
-                                    {cat}
-                                </SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                </div>
-                <div className="space-y-1">
-                    <label className="text-xs font-medium">Bundle Image</label>
-                    <Input type="file" />
-                    <p className="text-[11px] text-muted-foreground">
-                        Mock upload field for now. Connect to Supabase storage later.
-                    </p>
-                </div>
-
-                <div className="space-y-2">
-                    <label className="text-xs font-medium">Select Assets</label>
-                    <div className="rounded-md border bg-muted/40 p-3 space-y-2">
-                        {mockBundleAssets.map((asset) => (
-                            <div
-                                key={asset.id}
-                                className="flex items-center justify-between gap-2 rounded-md bg-background px-3 py-2 text-xs"
-                            >
-                                <div>
-                                    <div className="font-medium text-sm">
-                                        {asset.name}
-                                    </div>
-                                    <div className="text-[11px] text-muted-foreground">
-                                        {asset.category}
-                                    </div>
-                                </div>
-                                <Button size="xs" variant="outline">
-                                    Add
-                                </Button>
-                            </div>
-                        ))}
-                    </div>
-                    <p className="text-[11px] text-muted-foreground">
-                        Multi-select UI is mocked. Backend will later persist the
-                        selected asset IDs.
-                    </p>
-                </div>
-
-                <div className="space-y-1">
-                    <label className="text-xs font-medium">Status</label>
-                    <Select defaultValue="Active">
-                        <SelectTrigger size="sm" className="w-32">
-                            <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="Active">Active</SelectItem>
-                            <SelectItem value="Inactive">Inactive</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
-            </div>
-            <DialogFooter className="p-6 bg-muted/20 border-t">
-                <Button variant="outline" size="sm">
-                    Cancel
-                </Button>
-                <Button size="sm">Create Bundle</Button>
-            </DialogFooter>
-        </DialogContent >
-    );
-}
-
-function BundleAssetsSheet() {
-    return (
-        <SheetContent side="right">
-            <SheetHeader>
-                <SheetTitle>Bundle Assets</SheetTitle>
-                <SheetDescription>
-                    Preview of assets included in this bundle. Backend will later
-                    populate this dynamically.
-                </SheetDescription>
-            </SheetHeader>
-            <div className="flex-1 space-y-3 overflow-y-auto px-4 pb-4 pt-2">
-                {mockBundleAssets.map((asset) => (
-                    <div
-                        key={asset.id}
-                        className="flex items-center justify-between gap-2 rounded-md border px-3 py-2 text-xs"
-                    >
-                        <div>
-                            <div className="font-medium text-sm">{asset.name}</div>
-                            <div className="text-[11px] text-muted-foreground">
-                                {asset.category}
-                            </div>
-                        </div>
-                        <Badge variant="outline">Included</Badge>
-                    </div>
-                ))}
-            </div>
-            <SheetFooter>
-                <Button size="sm" variant="outline">
-                    Close
-                </Button>
-            </SheetFooter>
-        </SheetContent>
-    );
-}
-

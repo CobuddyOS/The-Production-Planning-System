@@ -63,9 +63,6 @@ export function AssetDetailsSheet({
                             </Badge>
                         </div>
                         <SheetTitle className="text-2xl font-bold tracking-tight text-left">{asset.name}</SheetTitle>
-                        <SheetDescription className="mt-4 text-muted-foreground leading-relaxed text-sm text-left">
-                            Global asset definition for {asset.name}. This template is available for all tenants.
-                        </SheetDescription>
                     </div>
 
                     <div className="space-y-4">

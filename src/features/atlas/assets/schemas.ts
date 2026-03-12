@@ -10,7 +10,7 @@ export const assetSchema = z.object({
     default_scale: z.enum(['low', 'medium', 'large'] as const, {
         error: "Please select a default scale",
     }),
-    status: z.enum(['active', 'inactive'] as const).default('active'),
+    status: z.enum(['active', 'inactive'] as const).default('active')
 });
 
 export type AssetSchemaValues = z.infer<typeof assetSchema>;
