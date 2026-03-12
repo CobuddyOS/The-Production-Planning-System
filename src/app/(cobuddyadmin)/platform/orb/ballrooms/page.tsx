@@ -22,17 +22,25 @@ import {
 } from "@/components/ui/select";
 import { Search, Home, CheckCircle2, XCircle, Clock, Building2, Ruler, Users } from "lucide-react";
 import { useBallroomRequests } from "@/features/orb/hooks/useBallroomRequests";
+import { BallroomRequestSheet } from "@/features/orb/components/BallroomRequestSheet";
 import type { BallroomRequest } from "@/features/orb/types";
 
 export default function OrbBallroomsPage() {
     const [search, setSearch] = useState("");
     const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "approved" | "rejected">("all");
     const [tenantFilter, setTenantFilter] = useState("all");
+    const [viewingRequest, setViewingRequest] = useState<BallroomRequest | null>(null);
     const [mounted, setMounted] = useState(false);
 
     useEffect(() => { setMounted(true); }, []);
 
     const { requests, loading, updateStatus } = useBallroomRequests();
+
+    const handleUpdateStatus = async (id: string, status: "approved" | "rejected") => {
+        await updateStatus(id, status);
+        // Keep the sheet in sync after status change
+        setViewingRequest((prev) => prev ? { ...prev, status } : null);
+    };
 
     /* Derive unique tenants from the data itself */
     const tenants = useMemo(() => {
@@ -147,7 +155,11 @@ export default function OrbBallroomsPage() {
                                         </TableCell>
                                     </TableRow>
                                 ) : filtered.map((req) => (
-                                    <TableRow key={req.id} className="group hover:bg-muted/30 transition-colors">
+                                    <TableRow
+                                        key={req.id}
+                                        className="group hover:bg-muted/30 transition-colors cursor-pointer"
+                                        onClick={() => setViewingRequest(req)}
+                                    >
                                         <TableCell>
                                             <div className="h-10 w-10 rounded-md bg-muted overflow-hidden border border-border/50">
                                                 {req.image ? (
@@ -190,14 +202,14 @@ export default function OrbBallroomsPage() {
                                         <TableCell className="text-xs text-muted-foreground font-mono">
                                             {new Date(req.created_at).toLocaleDateString()}
                                         </TableCell>
-                                        <TableCell className="text-right">
+                                        <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                                             {req.status === "pending" ? (
                                                 <div className="flex items-center justify-end gap-1.5">
                                                     <Button
                                                         size="sm"
                                                         variant="outline"
                                                         className="h-8 gap-1 cursor-pointer border-emerald-500/30 text-emerald-600 hover:bg-emerald-500/10"
-                                                        onClick={() => updateStatus(req.id, "approved")}
+                                                        onClick={() => handleUpdateStatus(req.id, "approved")}
                                                     >
                                                         <CheckCircle2 className="h-3.5 w-3.5" />
                                                         Approve
@@ -206,7 +218,7 @@ export default function OrbBallroomsPage() {
                                                         size="sm"
                                                         variant="outline"
                                                         className="h-8 gap-1 cursor-pointer border-red-500/30 text-red-600 hover:bg-red-500/10"
-                                                        onClick={() => updateStatus(req.id, "rejected")}
+                                                        onClick={() => handleUpdateStatus(req.id, "rejected")}
                                                     >
                                                         <XCircle className="h-3.5 w-3.5" />
                                                         Reject
@@ -223,6 +235,13 @@ export default function OrbBallroomsPage() {
                     </div>
                 </CardContent>
             </Card>
+
+            <BallroomRequestSheet
+                request={viewingRequest}
+                open={!!viewingRequest}
+                onOpenChange={(open) => !open && setViewingRequest(null)}
+                onUpdateStatus={handleUpdateStatus}
+            />
         </div>
     );
 }
