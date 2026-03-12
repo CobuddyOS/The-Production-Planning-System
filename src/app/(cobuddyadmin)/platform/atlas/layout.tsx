@@ -7,8 +7,9 @@ import { cn } from "@/lib/utils";
 
 const atlasNav = [
     { label: "Overview", href: "/platform/atlas" },
-    { label: "Categories", href: "/platform/atlas/categories" },
+    { label: "Assets Categories", href: "/platform/atlas/categories" },
     { label: "Assets", href: "/platform/atlas/assets" },
+    { label: "Ballroom Categories", href: "/platform/atlas/ballroom-categories" },
     { label: "Ballrooms", href: "/platform/atlas/ballrooms" },
     { label: "Bundles", href: "/platform/atlas/bundles" },
 ];
