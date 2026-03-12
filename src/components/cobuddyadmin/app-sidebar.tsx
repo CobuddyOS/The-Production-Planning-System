@@ -58,7 +58,7 @@ export function CobuddyAdminSidebar({
                         <SidebarMenuItem key={item.title}>
                             <SidebarMenuButton
                                 asChild
-                                isActive={pathname === item.url}
+                                isActive={pathname.startsWith(item.url)}
                                 tooltip={item.title}
                             >
                                 <Link href={item.url}>
