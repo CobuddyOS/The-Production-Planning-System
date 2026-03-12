@@ -1,4 +1,5 @@
 "use client";
+import { useEffect, useState } from "react";
 
 import {
     BadgeCheck,
@@ -40,6 +41,13 @@ export function NavUser({
     };
 }) {
     const { isMobile } = useSidebar();
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
+    if (!mounted) return null;
 
     return (
         <SidebarMenu>
