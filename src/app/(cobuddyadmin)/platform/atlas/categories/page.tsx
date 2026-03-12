@@ -5,15 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
-} from "@/components/ui/dialog";
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 import {
     Table,
     TableBody,
@@ -22,7 +14,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Search, Plus, Filter, Tag, Layout, MoreHorizontal, Grid } from "lucide-react";
+import { Search, Plus, MoreHorizontal, Grid } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -31,65 +23,27 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
-
-type Category = {
-    id: string;
-    name: string;
-    description: string;
-    icon: string;
-    displayOrder: number;
-    active: boolean;
-    assetCount: number;
-    createdAt: string;
-};
-
-const mockCategories: Category[] = [
-    {
-        id: "lighting",
-        name: "Lighting",
-        description: "Static and intelligent lighting fixtures.",
-        icon: "💡",
-        displayOrder: 1,
-        active: true,
-        assetCount: 82,
-        createdAt: "2026-01-12",
-    },
-    {
-        id: "audio",
-        name: "Audio",
-        description: "Speakers, microphones and consoles.",
-        icon: "🔊",
-        displayOrder: 2,
-        active: true,
-        assetCount: 54,
-        createdAt: "2026-01-13",
-    },
-    {
-        id: "visual",
-        name: "Visual",
-        description: "Projectors, LED walls and displays.",
-        icon: "📽️",
-        displayOrder: 3,
-        active: true,
-        assetCount: 31,
-        createdAt: "2026-01-18",
-    },
-    {
-        id: "fx",
-        name: "Special FX",
-        description: "Atmospherics, pyrotechnics and effects.",
-        icon: "✨",
-        displayOrder: 4,
-        active: false,
-        assetCount: 9,
-        createdAt: "2026-02-02",
-    },
-];
+import {
+    useAtlasCategories,
+    CategoryFormDialog,
+    DeleteCategoryDialog,
+    type AtlasCategory
+} from "@/features/atlas/categories";
 
 export default function AtlasCategoriesPage() {
     const [search, setSearch] = useState("");
-    const [categories] = useState<Category[]>(mockCategories);
-    const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+    const [selectedCategory, setSelectedCategory] = useState<AtlasCategory | null>(null);
+    const [isCreateOpen, setIsCreateOpen] = useState(false);
+    const [categoryToDelete, setCategoryToDelete] = useState<AtlasCategory | null>(null);
+
+    const { categories, loading, refresh, deleteCategory } = useAtlasCategories();
+
+    const handleDelete = async (id: string) => {
+        const result = await deleteCategory(id);
+        if (!result.success) {
+            alert(result.error?.message || "Failed to delete category");
+        }
+    };
 
     const filtered = categories.filter((cat) =>
         cat.name.toLowerCase().includes(search.toLowerCase())
@@ -104,14 +58,20 @@ export default function AtlasCategoriesPage() {
                         Define global groupings for all Atlas assets.
                     </p>
                 </div>
-                <Dialog>
+                <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
                     <DialogTrigger asChild>
                         <Button size="sm" className="gap-2">
                             <Plus className="h-4 w-4" />
                             Create Category
                         </Button>
                     </DialogTrigger>
-                    <CategoryFormDialog />
+                    <CategoryFormDialog
+                        onSuccess={() => {
+                            setIsCreateOpen(false);
+                            refresh();
+                        }}
+                        onCancel={() => setIsCreateOpen(false)}
+                    />
                 </Dialog>
 
                 <Dialog
@@ -119,9 +79,23 @@ export default function AtlasCategoriesPage() {
                     onOpenChange={(open) => !open && setSelectedCategory(null)}
                 >
                     {selectedCategory && (
-                        <CategoryFormDialog category={selectedCategory} />
+                        <CategoryFormDialog
+                            category={selectedCategory}
+                            onSuccess={() => {
+                                setSelectedCategory(null);
+                                refresh();
+                            }}
+                            onCancel={() => setSelectedCategory(null)}
+                        />
                     )}
                 </Dialog>
+
+                <DeleteCategoryDialog
+                    category={categoryToDelete}
+                    open={!!categoryToDelete}
+                    onOpenChange={(open) => !open && setCategoryToDelete(null)}
+                    onConfirm={handleDelete}
+                />
             </div>
 
             <Card className="border-none shadow-sm bg-muted/30">
@@ -149,36 +123,45 @@ export default function AtlasCategoriesPage() {
                                 <TableRow>
                                     <TableHead>Category Name</TableHead>
                                     <TableHead>Description</TableHead>
-                                    <TableHead>Asset Count</TableHead>
+                                    <TableHead>Status</TableHead>
                                     <TableHead>Created</TableHead>
                                     <TableHead className="text-right">Actions</TableHead>
                                 </TableRow>
                             </TableHeader>
                             <TableBody className="bg-background">
-                                {filtered.map((cat) => (
+                                {loading && categories.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+                                            Loading categories...
+                                        </TableCell>
+                                    </TableRow>
+                                ) : filtered.length === 0 ? (
+                                    <TableRow>
+                                        <TableCell colSpan={5} className="text-center py-10 text-muted-foreground">
+                                            {search ? "No categories match your search." : "No categories found."}
+                                        </TableCell>
+                                    </TableRow>
+                                ) : filtered.map((cat) => (
                                     <TableRow key={cat.id} className="group hover:bg-muted/30 transition-colors">
                                         <TableCell className="font-semibold">
-                                            <span className="mr-2">{cat.icon}</span>
                                             {cat.name}
-                                            {!cat.active && (
-                                                <Badge
-                                                    variant="outline"
-                                                    className="ml-2 text-[10px] bg-red-500/10 text-red-600 border-red-500/20"
-                                                >
-                                                    Inactive
-                                                </Badge>
-                                            )}
                                         </TableCell>
                                         <TableCell className="max-w-md truncate text-muted-foreground">
-                                            {cat.description}
+                                            {cat.description || "—"}
                                         </TableCell>
                                         <TableCell>
-                                            <Badge variant="outline" className="font-normal border-primary/20 bg-primary/5 text-primary">
-                                                {cat.assetCount} Assets
+                                            <Badge
+                                                variant="outline"
+                                                className={`font-normal ${cat.status === 'active'
+                                                    ? 'border-emerald-500/20 bg-emerald-500/5 text-emerald-600'
+                                                    : 'border-red-500/20 bg-red-500/5 text-red-600'
+                                                    }`}
+                                            >
+                                                {cat.status.charAt(0).toUpperCase() + cat.status.slice(1)}
                                             </Badge>
                                         </TableCell>
                                         <TableCell className="text-xs text-muted-foreground font-mono">
-                                            {cat.createdAt}
+                                            {new Date(cat.created_at).toLocaleDateString()}
                                         </TableCell>
                                         <TableCell className="text-right">
                                             <DropdownMenu>
@@ -194,7 +177,12 @@ export default function AtlasCategoriesPage() {
                                                         Edit Category
                                                     </DropdownMenuItem>
                                                     <DropdownMenuSeparator />
-                                                    <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                                                    <DropdownMenuItem
+                                                        className="text-destructive"
+                                                        onClick={() => setCategoryToDelete(cat)}
+                                                    >
+                                                        Delete
+                                                    </DropdownMenuItem>
                                                 </DropdownMenuContent>
                                             </DropdownMenu>
                                         </TableCell>
@@ -206,80 +194,6 @@ export default function AtlasCategoriesPage() {
                 </CardContent>
             </Card>
         </div>
-    );
-}
-
-function CategoryFormDialog({ category }: { category?: Category }) {
-    const isEdit = Boolean(category);
-
-    return (
-        <DialogContent className="sm:max-w-[500px] overflow-hidden flex flex-col p-0 border-none shadow-2xl">
-            <DialogHeader className="p-6 pb-2 bg-muted/20 text-left">
-                <DialogTitle className="text-xl">
-                    {isEdit ? "Edit Category" : "Create Category"}
-                </DialogTitle>
-                <DialogDescription>
-                    {isEdit
-                        ? "Update the global category definition. These changes will affect all tenants."
-                        : "Define a new global category for Atlas assets. Tenants will use these for their inventory."}
-                </DialogDescription>
-            </DialogHeader>
-            <div className="p-6 space-y-5 overflow-y-auto max-h-[70vh]">
-                <div className="space-y-1">
-                    <label className="text-xs font-medium">Category Name</label>
-                    <Input
-                        defaultValue={category?.name}
-                        placeholder="e.g. Lighting"
-                    />
-                </div>
-                <div className="space-y-1">
-                    <label className="text-xs font-medium">Description</label>
-                    <Input
-                        defaultValue={category?.description}
-                        placeholder="Short description for internal admins"
-                    />
-                </div>
-                <div className="grid gap-3 md:grid-cols-2">
-                    <div className="space-y-1">
-                        <label className="text-xs font-medium">Icon</label>
-                        <Input
-                            defaultValue={category?.icon}
-                            placeholder="Emoji or icon name, e.g. 💡"
-                        />
-                    </div>
-                    <div className="space-y-1">
-                        <label className="text-xs font-medium">Display Order</label>
-                        <Input
-                            type="number"
-                            defaultValue={category?.displayOrder ?? 1}
-                            min={1}
-                        />
-                    </div>
-                </div>
-                <div className="flex items-center justify-between rounded-md border px-3 py-2">
-                    <div className="space-y-0.5">
-                        <p className="text-xs font-medium">Active</p>
-                        <p className="text-[11px] text-muted-foreground">
-                            Inactive categories will be hidden from tenant imports.
-                        </p>
-                    </div>
-                    {/* Placeholder toggle, to be wired later */}
-                    <button className="inline-flex h-6 w-11 items-center rounded-full border border-input bg-muted px-0.5 text-[10px]">
-                        <span className="inline-flex h-4 w-4 items-center justify-center rounded-full bg-background shadow">
-                            {category?.active === false ? "Off" : "On"}
-                        </span>
-                    </button>
-                </div>
-            </div>
-            <DialogFooter className="p-6 bg-muted/20 border-t">
-                <Button variant="outline" size="sm">
-                    Cancel
-                </Button>
-                <Button size="sm">
-                    {isEdit ? "Save Changes" : "Create Category"}
-                </Button>
-            </DialogFooter>
-        </DialogContent >
     );
 }
 
