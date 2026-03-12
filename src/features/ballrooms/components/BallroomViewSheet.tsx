@@ -3,21 +3,20 @@
 import {
     Sheet,
     SheetContent,
-    SheetHeader,
-    SheetTitle,
     SheetDescription,
+    SheetTitle,
 } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import {
-    Maximize2,
-    Users,
     Calendar,
     Info,
-    Box,
+    Home,
+    Ruler,
+    Users,
     CheckCircle2,
-    AlertCircle,
-    Archive
+    Clock,
+    XCircle,
+    Box,
 } from "lucide-react";
 import { TenantBallroom } from "../types";
 
@@ -27,116 +26,137 @@ interface BallroomViewSheetProps {
     onOpenChange: (open: boolean) => void;
 }
 
+const statusConfig: Record<string, { label: string; className: string; icon: typeof Clock }> = {
+    pending: { label: "Pending", className: "bg-amber-500 text-white border-none shadow-lg", icon: Clock },
+    approved: { label: "Approved", className: "bg-emerald-500 text-white border-none shadow-lg", icon: CheckCircle2 },
+    rejected: { label: "Rejected", className: "bg-red-500 text-white border-none shadow-lg", icon: XCircle },
+};
+
 export function BallroomViewSheet({ ballroom, open, onOpenChange }: BallroomViewSheetProps) {
     if (!ballroom) return null;
 
-    const statusConfig = {
-        approved: { icon: CheckCircle2, color: "text-emerald-500", bg: "bg-emerald-500/10" },
-        pending: { icon: Info, color: "text-amber-500", bg: "bg-amber-500/10" },
-        rejected: { icon: AlertCircle, color: "text-red-500", bg: "bg-red-500/10" },
-    };
-
-    const config = statusConfig[ballroom.status as keyof typeof statusConfig] || statusConfig.pending;
+    const status = statusConfig[ballroom.status] || statusConfig.pending;
+    const imageUrl = ballroom.image || ballroom.atlas_ballroom?.image || null;
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="sm:max-w-xl p-0 border-l border-border/40 bg-background flex flex-col">
-                <SheetHeader className="sr-only">
-                    <SheetTitle>{ballroom.name}</SheetTitle>
-                    <SheetDescription>View technical specifications and details for this ballroom space.</SheetDescription>
-                </SheetHeader>
-                <div className="flex-1 overflow-y-auto">
-                    {/* Visual Hero */}
-                    <div className="relative h-72 bg-muted/20 flex items-center justify-center p-12 overflow-hidden border-b border-border/40">
-                        {ballroom.image ? (
-                            <img src={ballroom.image} alt={ballroom.name} className="h-full w-full object-contain drop-shadow-2xl z-10" />
-                        ) : (
-                            <Box className="size-24 text-muted-foreground/10" />
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
+            <SheetContent className="sm:max-w-[450px] gap-0 p-0 overflow-y-auto">
+                {/* Image preview */}
+                {imageUrl ? (
+                    <div className="w-full aspect-video relative bg-muted overflow-hidden shrink-0">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                            src={imageUrl}
+                            alt={ballroom.name}
+                            className="h-full w-full object-cover"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent pointer-events-none" />
+                        <div className="absolute top-4 left-4">
+                            <Badge className={status.className}>{status.label}</Badge>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="w-full h-48 flex items-center justify-center bg-gradient-to-br from-muted to-muted/50 shrink-0 relative">
+                        <Home className="h-20 w-20 text-primary/10" />
+                        <div className="absolute top-4 left-4">
+                            <Badge className={status.className}>{status.label}</Badge>
+                        </div>
+                    </div>
+                )}
+
+                <div className="p-8 space-y-8">
+                    {/* Title */}
+                    <div>
+                        <div className="flex items-center gap-2 mb-1">
+                            <Badge variant="secondary" className="font-semibold px-2 py-0 border-primary/20 bg-primary/10 text-primary uppercase text-[10px] tracking-widest">
+                                Ballroom Space
+                            </Badge>
+                        </div>
+                        <SheetTitle className="text-2xl font-bold tracking-tight text-left">
+                            {ballroom.name}
+                        </SheetTitle>
+                        <SheetDescription className="text-sm mt-1">
+                            Technical specifications and layout details.
+                        </SheetDescription>
                     </div>
 
-                    <div className="p-8 space-y-8">
-                        {/* Header Info */}
-                        <div className="space-y-4">
-                            <div className="flex items-center justify-between">
-                                <Badge variant="outline" className={`${config.bg} ${config.color} border-none text-[10px] font-black uppercase px-2.5 py-0.5 rounded-lg flex items-center gap-1.5`}>
-                                    <config.icon className="size-3" />
-                                    {ballroom.status}
-                                </Badge>
-                                <div className="flex items-center gap-1.5 text-muted-foreground">
-                                    <Calendar className="size-3.5" />
-                                    <span className="text-[10px] font-bold uppercase tracking-widest">
-                                        Imported {new Date(ballroom.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <h2 className="text-4xl font-black tracking-tighter leading-none">{ballroom.name}</h2>
-                            <p className="text-sm text-muted-foreground font-medium leading-relaxed">
-                                {ballroom.description || "No description provided for this space."}
-                            </p>
-                        </div>
-
-                        <Separator className="bg-border/40" />
-
-                        {/* Specs Grid */}
+                    {/* Specs */}
+                    <div className="space-y-4">
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+                            <Info className="h-3 w-3" /> Technical Specs
+                        </h4>
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="bg-muted/30 p-5 rounded-2xl border border-border/40 space-y-3">
-                                <div className="flex items-center gap-2 text-primary">
-                                    <Maximize2 className="size-4" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">Dimensions</span>
+                            <div className="p-4 rounded-xl bg-muted/30 border space-y-1">
+                                <div className="flex items-center gap-2 text-muted-foreground mb-1">
+                                    <Ruler className="size-4" />
+                                    <span className="text-xs font-medium uppercase tracking-wider">Dimensions</span>
                                 </div>
-                                <div>
-                                    <p className="text-2xl font-black tracking-tighter leading-none">
-                                        {ballroom.width} <span className="text-sm text-muted-foreground font-bold">W</span> × {ballroom.depth} <span className="text-sm text-muted-foreground font-bold">D</span>
-                                    </p>
-                                    <p className="text-[10px] font-bold text-muted-foreground uppercase mt-1">{ballroom.unit_type === 'ft' ? 'Feet' : 'Meters'}</p>
-                                </div>
+                                <p className="text-lg font-bold">
+                                    {ballroom.width} × {ballroom.depth} <span className="text-sm font-normal text-muted-foreground">{ballroom.unit_type}</span>
+                                </p>
+                                <p className="text-[10px] text-muted-foreground">
+                                    Area: {(ballroom.width * ballroom.depth).toFixed(2)} {ballroom.unit_type}²
+                                </p>
                             </div>
 
-                            <div className="bg-muted/30 p-5 rounded-2xl border border-border/40 space-y-3">
-                                <div className="flex items-center gap-2 text-primary">
+                            <div className="p-4 rounded-xl bg-muted/30 border space-y-1">
+                                <div className="flex items-center gap-2 text-muted-foreground mb-1">
                                     <Users className="size-4" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">Capacity</span>
+                                    <span className="text-xs font-medium uppercase tracking-wider">Max Capacity</span>
                                 </div>
-                                <div>
-                                    <p className="text-2xl font-black tracking-tighter leading-none">{ballroom.capacity || "—"}</p>
-                                    <p className="text-[10px] font-bold text-muted-foreground uppercase mt-1">Maximum Guests</p>
-                                </div>
+                                <p className="text-lg font-bold">
+                                    {ballroom.capacity || "—"} <span className="text-sm font-normal text-muted-foreground">pax</span>
+                                </p>
                             </div>
                         </div>
+                    </div>
 
-                        <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10 relative overflow-hidden group">
-                            <div className="flex items-center gap-3 relative z-10">
-                                <div className="size-10 rounded-xl bg-primary/10 flex items-center justify-center">
-                                    <Info className="size-5 text-primary" />
-                                </div>
-                                <div>
-                                    <p className="text-[10px] font-black text-primary/60 uppercase tracking-widest mb-0.5">Asset Reference</p>
-                                    <p className="text-sm font-black text-primary truncate leading-none">
-                                        {ballroom.atlas_ballroom?.name || "Independent Local Space"}
-                                    </p>
-                                </div>
+                    {/* Atlas reference */}
+                    {ballroom.atlas_ballroom && (
+                        <div className="flex items-center gap-3 p-4 rounded-xl bg-primary/5 border border-primary/10">
+                            <div className="p-2 rounded-lg bg-primary/10">
+                                <Box className="h-4 w-4 text-primary" />
                             </div>
-                            <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
-                                <Box className="size-16 rotate-12" />
+                            <div>
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Template Reference</span>
+                                <p className="text-sm font-semibold text-primary">{ballroom.atlas_ballroom.name}</p>
                             </div>
                         </div>
+                    )}
 
-                        {ballroom.status === 'pending' && (
-                            <div className="bg-amber-500/10 border border-amber-500/20 rounded-3xl p-6 flex gap-4 items-start animate-in fade-in slide-in-from-bottom-2">
-                                <div className="size-10 rounded-2xl bg-amber-500/20 flex items-center justify-center shrink-0">
-                                    <Info className="size-5 text-amber-500" />
-                                </div>
-                                <div className="space-y-1">
-                                    <p className="text-xs font-black text-amber-600 uppercase tracking-widest leading-none">Awaiting Admin Approval</p>
-                                    <p className="text-xs text-amber-700/70 font-medium leading-relaxed">
-                                        This space is currently pending review. You will be able to use it in your layouts once an admin approves the request.
-                                    </p>
-                                </div>
+                    {/* Description */}
+                    <div className="space-y-3">
+                        <div className="flex items-center gap-2 text-sm font-semibold border-b pb-2">
+                            <Info className="size-4 text-primary" />
+                            Description
+                        </div>
+                        <p className="text-sm text-muted-foreground leading-relaxed">
+                            {ballroom.description || "No description provided for this space."}
+                        </p>
+                    </div>
+
+                    {/* Pending notice */}
+                    {ballroom.status === 'pending' && (
+                        <div className="flex items-start gap-3 p-4 rounded-xl bg-amber-500/5 border border-amber-500/20">
+                            <Clock className="h-4 w-4 text-amber-500 mt-0.5 shrink-0" />
+                            <div>
+                                <p className="text-xs font-semibold text-amber-600">Awaiting Admin Approval</p>
+                                <p className="text-[11px] text-amber-600/70 mt-0.5">
+                                    This space is pending review. You&apos;ll be able to use it in layouts once approved.
+                                </p>
                             </div>
-                        )}
+                        </div>
+                    )}
+
+                    {/* Date */}
+                    <div className="space-y-4 pt-4 border-t">
+                        <div className="flex items-center justify-between text-sm">
+                            <div className="flex items-center gap-2 text-muted-foreground">
+                                <Calendar className="h-4 w-4" />
+                                <span>Imported</span>
+                            </div>
+                            <span className="font-mono font-medium">{new Date(ballroom.created_at).toLocaleDateString()}</span>
+                        </div>
                     </div>
                 </div>
             </SheetContent>

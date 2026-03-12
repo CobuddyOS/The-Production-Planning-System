@@ -16,15 +16,16 @@ import {
     Edit3,
     Eye,
     Maximize2,
-    Users,
     ArrowRight,
     SlidersHorizontal,
     Check,
-    Home
+    Home,
+    MoreVertical,
 } from "lucide-react";
 import {
     DropdownMenu,
     DropdownMenuContent,
+    DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
@@ -59,7 +60,7 @@ export function BallroomsPage() {
     const [editingBallroom, setEditingBallroom] = useState<TenantBallroom | null>(null);
     const [deletingBallroom, setDeletingBallroom] = useState<TenantBallroom | null>(null);
 
-    // Filter states for catalog
+    // Filter states
     const [catCategory, setCatCategory] = useState<string | null>(null);
     const [catUnit, setCatUnit] = useState<string | null>(null);
 
@@ -120,39 +121,40 @@ export function BallroomsPage() {
     return (
         <div className="space-y-6">
             <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="space-y-1">
-                    <h2 className="text-3xl font-black tracking-tighter text-foreground">Ballrooms Hub</h2>
-                    <p className="text-sm text-muted-foreground font-medium">
+                <div>
+                    <h2 className="text-2xl font-bold tracking-tight">Ballrooms Hub</h2>
+                    <p className="text-sm text-muted-foreground">
                         Import global space templates or manage your local ballroom inventory.
                     </p>
                 </div>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-4 items-start md:items-center justify-between bg-card/50 p-2 rounded-2xl border border-border/50 shadow-sm backdrop-blur-sm">
-                <div className="flex p-1 bg-muted/50 rounded-xl w-fit">
+            {/* Toolbar */}
+            <div className="flex flex-col md:flex-row gap-3 items-start md:items-center justify-between">
+                <div className="flex p-1 bg-muted/40 rounded-lg w-fit border border-border/50">
                     <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => setActiveTab("catalog")}
-                        className={`h-9 px-4 text-xs font-bold gap-2 transition-all cursor-pointer rounded-lg ${activeTab === "catalog"
-                            ? "bg-background text-primary shadow-sm"
-                            : "text-muted-foreground hover:text-foreground hover:bg-background/50"
+                        className={`h-8 px-4 text-xs font-medium gap-2 transition-all cursor-pointer rounded-md ${activeTab === "catalog"
+                            ? "bg-background text-foreground shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
                             }`}
                     >
-                        <Store className="size-4" /> Space Catalog
+                        <Store className="size-3.5" /> Space Catalog
                     </Button>
                     <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => setActiveTab("warehouse")}
-                        className={`h-9 px-4 text-xs font-bold gap-2 transition-all cursor-pointer rounded-lg ${activeTab === "warehouse"
-                            ? "bg-background text-primary shadow-sm"
-                            : "text-muted-foreground hover:text-foreground hover:bg-background/50"
+                        className={`h-8 px-4 text-xs font-medium gap-2 transition-all cursor-pointer rounded-md ${activeTab === "warehouse"
+                            ? "bg-background text-foreground shadow-sm"
+                            : "text-muted-foreground hover:text-foreground"
                             }`}
                     >
-                        <LayoutList className="size-4" /> My Spaces
+                        <LayoutList className="size-3.5" /> My Spaces
                         {ballrooms.length > 0 && (
-                            <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-[10px] font-black bg-primary/10 text-primary border-none">
+                            <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-[10px] font-semibold bg-primary/10 text-primary border-none">
                                 {ballrooms.length}
                             </Badge>
                         )}
@@ -163,40 +165,36 @@ export function BallroomsPage() {
                     {activeTab === 'catalog' && (
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>
-                                <Button variant="outline" size="sm" className="h-10 rounded-xl gap-2 cursor-pointer border-border/50 bg-background/50 hover:bg-background relative transition-all active:scale-95 group">
-                                    <SlidersHorizontal className="size-4 text-muted-foreground group-hover:text-primary transition-colors" />
-                                    <span className="hidden sm:inline font-bold">Filters</span>
+                                <Button variant="outline" size="sm" className="h-9 rounded-lg gap-2 cursor-pointer relative">
+                                    <SlidersHorizontal className="size-3.5 text-muted-foreground" />
+                                    <span className="hidden sm:inline text-sm font-medium">Filters</span>
                                     {activeFiltersCount > 0 && (
-                                        <Badge variant="default" className="h-5 min-w-5 p-0 flex items-center justify-center text-[10px] font-black rounded-full absolute -top-2 -right-2 shadow-lg shadow-primary/20 border-2 border-background animate-in zoom-in">
+                                        <Badge variant="default" className="h-4 min-w-4 p-0 flex items-center justify-center text-[9px] rounded-full absolute -top-1.5 -right-1.5 border border-background">
                                             {activeFiltersCount}
                                         </Badge>
                                     )}
                                 </Button>
                             </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end" className="w-56 rounded-xl border-border/50 shadow-xl">
-                                <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground pb-1">Filter Spaces</DropdownMenuLabel>
+                            <DropdownMenuContent align="end" className="w-52 rounded-lg">
+                                <DropdownMenuLabel className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Filter Spaces</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
-
                                 <div className="p-2 space-y-3">
                                     <div className="space-y-1">
-                                        <p className="text-[9px] font-black uppercase text-primary/60 px-2 tracking-tighter">Category</p>
-                                        <div className="grid grid-cols-1 gap-1">
-                                            {categories.map(cat => (
-                                                <button
-                                                    key={cat}
-                                                    onClick={() => setCatCategory(catCategory === cat ? null : cat)}
-                                                    className={`text-left px-2 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center justify-between ${catCategory === cat ? 'bg-primary/10 text-primary' : 'hover:bg-muted text-muted-foreground'
-                                                        }`}
-                                                >
-                                                    {cat}
-                                                    {catCategory === cat && <Check className="size-3" />}
-                                                </button>
-                                            ))}
-                                        </div>
+                                        <p className="text-[10px] font-bold uppercase text-muted-foreground px-2 tracking-wider">Category</p>
+                                        {categories.map(cat => (
+                                            <button
+                                                key={cat}
+                                                onClick={() => setCatCategory(catCategory === cat ? null : cat)}
+                                                className={`w-full text-left px-2 py-1.5 rounded-md text-xs font-medium transition-colors flex items-center justify-between ${catCategory === cat ? 'bg-primary/10 text-primary' : 'hover:bg-muted text-muted-foreground'
+                                                    }`}
+                                            >
+                                                {cat}
+                                                {catCategory === cat && <Check className="size-3" />}
+                                            </button>
+                                        ))}
                                     </div>
-
                                     <div className="space-y-1">
-                                        <p className="text-[9px] font-black uppercase text-primary/60 px-2 tracking-tighter">Unit</p>
+                                        <p className="text-[10px] font-bold uppercase text-muted-foreground px-2 tracking-wider">Unit</p>
                                         <div className="flex flex-wrap gap-1 px-1">
                                             {['ft', 'm'].map(u => (
                                                 <Button
@@ -204,23 +202,19 @@ export function BallroomsPage() {
                                                     variant={catUnit === u ? "default" : "outline"}
                                                     size="sm"
                                                     onClick={() => setCatUnit(catUnit === u ? null : u)}
-                                                    className="h-7 text-[10px] font-extrabold uppercase px-2 rounded-md transition-all active:scale-95"
+                                                    className="h-7 text-[10px] font-semibold uppercase px-2.5 rounded-md"
                                                 >
                                                     {u === 'ft' ? 'Feet' : 'Meters'}
                                                 </Button>
                                             ))}
                                         </div>
                                     </div>
-
                                     {(catCategory || catUnit) && (
                                         <Button
                                             variant="ghost"
                                             size="sm"
-                                            className="w-full h-8 text-[10px] font-black uppercase tracking-widest text-red-500 hover:text-red-600 hover:bg-red-50"
-                                            onClick={() => {
-                                                setCatCategory(null);
-                                                setCatUnit(null);
-                                            }}
+                                            className="w-full h-7 text-[10px] font-semibold uppercase text-red-500 hover:text-red-600 hover:bg-red-500/5"
+                                            onClick={() => { setCatCategory(null); setCatUnit(null); }}
                                         >
                                             Clear All
                                         </Button>
@@ -229,72 +223,74 @@ export function BallroomsPage() {
                             </DropdownMenuContent>
                         </DropdownMenu>
                     )}
-                    <div className="relative flex-1 md:w-72 group">
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <div className="relative flex-1 md:w-64">
+                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
                             placeholder={activeTab === 'catalog' ? "Search global templates..." : "Search your spaces..."}
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            className="pl-9 h-10 rounded-xl bg-background/50 border-border/50 focus-visible:ring-primary focus-visible:border-primary"
+                            className="pl-8 h-9 rounded-lg"
                         />
                     </div>
                 </div>
             </div>
 
+            {/* Content */}
             {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                     {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                        <Card key={i} className="border-none shadow-sm overflow-hidden bg-muted/10 rounded-2xl">
-                            <Skeleton className="h-44 w-full" />
-                            <CardHeader className="p-4 space-y-3">
-                                <Skeleton className="h-5 w-2/3" />
-                                <Skeleton className="h-4 w-full" />
+                        <Card key={i} className="border-none shadow-sm overflow-hidden bg-muted/10 rounded-xl">
+                            <Skeleton className="h-40 w-full" />
+                            <CardHeader className="p-4 space-y-2">
+                                <Skeleton className="h-4 w-2/3" />
+                                <Skeleton className="h-3 w-full" />
                             </CardHeader>
                         </Card>
                     ))}
                 </div>
             ) : activeTab === "catalog" ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                     {filteredCatalog.map((asset) => (
-                        <Card key={asset.id} className="group overflow-hidden border border-border/40 shadow-sm hover:border-primary/30 transition-all duration-300 bg-card rounded-2xl flex flex-col">
-                            <div className="h-48 w-full bg-muted/20 relative flex items-center justify-center p-8 overflow-hidden">
+                        <Card key={asset.id} className="group overflow-hidden border border-border/50 shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-300 bg-card rounded-xl flex flex-col">
+                            <div className="h-44 w-full bg-muted/20 relative flex items-center justify-center p-6 overflow-hidden">
                                 {asset.image ? (
+                                    // eslint-disable-next-line @next/next/no-img-element
                                     <img
                                         src={asset.image}
                                         alt={asset.name}
-                                        className="size-full object-contain drop-shadow-xl transition-all duration-500"
+                                        className="size-full object-contain opacity-70 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500"
                                     />
                                 ) : (
-                                    <Home className="size-16 text-muted-foreground/20" />
+                                    <Home className="size-12 text-muted-foreground/15" />
                                 )}
                                 <div className="absolute top-3 right-3">
-                                    <Badge variant="secondary" className="bg-background/90 backdrop-blur shadow-sm text-[10px] font-black py-0.5 px-2 rounded-lg border-none uppercase tracking-tighter">
+                                    <Badge variant="outline" className="bg-background/90 backdrop-blur-sm text-[10px] font-semibold py-0.5 px-2 rounded-md border-border/50">
                                         {asset.atlas_ballroom_categories?.name || "Global Template"}
                                     </Badge>
                                 </div>
                             </div>
-                            <CardContent className="p-5 flex-1 flex flex-col">
-                                <div className="space-y-1 mb-5">
-                                    <h3 className="font-black text-base truncate leading-tight group-hover:text-primary transition-colors">{asset.name}</h3>
-                                    <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest flex items-center gap-1.5">
-                                        {asset.width}x{asset.depth} {asset.unit_type} <span className="text-primary/20">•</span> Cap. {asset.capacity || '—'}
+                            <CardContent className="p-4 flex-1 flex flex-col border-t border-border/30">
+                                <div className="space-y-1 mb-4">
+                                    <h3 className="font-semibold text-sm truncate leading-tight group-hover:text-primary transition-colors">{asset.name}</h3>
+                                    <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-wider flex items-center gap-1.5">
+                                        {asset.width}×{asset.depth} {asset.unit_type} <span className="text-border">•</span> Cap. {asset.capacity || '—'}
                                     </p>
                                 </div>
                                 <div className="mt-auto space-y-2">
                                     <Button
                                         onClick={() => setImportingBallroom(asset)}
-                                        className="w-full h-10 gap-2 rounded-xl cursor-pointer shadow-lg shadow-primary/10 hover:shadow-primary/20 group-hover:bg-primary transition-all font-bold"
+                                        className="w-full h-9 gap-2 rounded-lg cursor-pointer shadow-sm shadow-primary/10 font-medium text-xs"
                                         size="sm"
                                     >
-                                        <Plus className="size-4" /> Import Space
+                                        <Plus className="size-3.5" /> Import Space
                                     </Button>
                                     <Button
                                         variant="ghost"
                                         size="sm"
-                                        className="w-full h-8 rounded-lg text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all"
+                                        className="w-full h-7 rounded-md text-[10px] font-medium text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all"
                                         onClick={() => setViewingCatalogBallroom(asset)}
                                     >
-                                        View <ArrowRight className="size-3 ml-1.5" />
+                                        View Details <ArrowRight className="size-3 ml-1" />
                                     </Button>
                                 </div>
                             </CardContent>
@@ -304,105 +300,91 @@ export function BallroomsPage() {
             ) : (
                 <div className="space-y-6">
                     {filteredBallrooms.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center py-24 border-2 border-dashed border-border/50 rounded-[2.5rem] bg-muted/5">
-                            <div className="size-20 rounded-full bg-primary/5 flex items-center justify-center mb-6">
-                                <Home className="size-10 text-primary/20" />
+                        <div className="flex flex-col items-center justify-center py-20 border border-dashed border-border/50 rounded-xl bg-muted/5">
+                            <div className="size-16 rounded-full bg-primary/5 flex items-center justify-center mb-5">
+                                <Home className="size-8 text-primary/20" />
                             </div>
-                            <h3 className="text-xl font-black tracking-tight">No Ballroom Spaces Yet</h3>
-                            <p className="text-sm text-muted-foreground mt-2 mb-8 max-w-[280px] text-center font-medium">
+                            <h3 className="text-lg font-semibold tracking-tight">No Ballroom Spaces Yet</h3>
+                            <p className="text-sm text-muted-foreground mt-1.5 mb-6 max-w-[280px] text-center">
                                 Start building your local space inventory by importing templates from the Global Catalog.
                             </p>
-                            <Button onClick={() => setActiveTab("catalog")} variant="default" className="gap-2 cursor-pointer rounded-2xl px-8 h-12 shadow-xl shadow-primary/20 font-bold">
-                                <Store className="size-5" /> Explore Global Catalog
+                            <Button onClick={() => setActiveTab("catalog")} className="gap-2 cursor-pointer rounded-lg px-6 h-10 shadow-sm font-medium">
+                                <Store className="size-4" /> Explore Global Catalog
                             </Button>
                         </div>
                     ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
                             {filteredBallrooms.map((item) => (
-                                <Card key={item.id} className="group flex flex-col overflow-hidden border border-border/40 shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 bg-card rounded-2xl">
-                                    {/* Card Visual Header */}
-                                    <div className="h-40 w-full bg-muted/10 relative flex items-center justify-center p-6 group/image">
+                                <Card
+                                    key={item.id}
+                                    className="group flex flex-col overflow-hidden border border-border/50 shadow-sm hover:shadow-md hover:border-primary/20 transition-all duration-300 bg-card rounded-xl cursor-pointer"
+                                    onClick={() => setViewingBallroom(item)}
+                                >
+                                    {/* Image */}
+                                    <div className="h-40 w-full bg-muted/10 relative flex items-center justify-center p-6 overflow-hidden">
                                         {item.image || item.atlas_ballroom?.image ? (
-                                            <img src={(item.image || item.atlas_ballroom?.image) || ""} alt={item.name} className="size-full object-contain opacity-80 group-hover:opacity-100 transition-all duration-500" />
+                                            // eslint-disable-next-line @next/next/no-img-element
+                                            <img src={(item.image || item.atlas_ballroom?.image) || ""} alt={item.name} className="size-full object-contain opacity-50 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500" />
                                         ) : (
-                                            <Home className="size-16 text-muted-foreground/20" />
+                                            <Home className="size-12 text-muted-foreground/15" />
                                         )}
 
-                                        {/* Status Badge */}
-                                        <div className="absolute top-3 right-3">
-                                            <Badge className={`text-[10px] uppercase font-black tracking-tighter rounded-lg px-2 py-0 border-none shadow-sm ${item.status === 'approved' ? 'bg-emerald-500 hover:bg-emerald-600' :
-                                                item.status === 'pending' ? 'bg-amber-500 hover:bg-amber-600' : 'bg-red-500 hover:bg-red-600'
-                                                }`}>
-                                                {item.status}
-                                            </Badge>
+                                        {/* Status */}
+                                        <div className="absolute top-3 left-3">
+                                            <StatusBadge status={item.status} />
                                         </div>
 
-                                        {/* Hover Overlay Actions */}
-                                        <div className="absolute inset-0 bg-background/60 backdrop-blur-sm opacity-0 group-hover:opacity-100 transition-all duration-300 flex items-center justify-center gap-3">
-                                            <Button
-                                                size="icon"
-                                                variant="secondary"
-                                                className="size-10 rounded-xl cursor-pointer shadow-lg hover:bg-primary hover:text-white transition-colors"
-                                                onClick={() => setViewingBallroom(item)}
-                                            >
-                                                <Eye className="size-5" />
-                                            </Button>
-                                            <Button
-                                                size="icon"
-                                                variant="secondary"
-                                                className="size-10 rounded-xl cursor-pointer shadow-lg hover:bg-primary hover:text-white transition-colors"
-                                                onClick={() => setEditingBallroom(item)}
-                                            >
-                                                <Edit3 className="size-5" />
-                                            </Button>
-                                            <Button
-                                                size="icon"
-                                                variant="destructive"
-                                                className="size-10 rounded-xl cursor-pointer shadow-lg transition-transform hover:scale-110"
-                                                onClick={() => setDeletingBallroom(item)}
-                                            >
-                                                <Trash2 className="size-5" />
-                                            </Button>
+                                        {/* Actions dropdown */}
+                                        <div className="absolute top-2.5 right-2.5 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => e.stopPropagation()}>
+                                            <DropdownMenu>
+                                                <DropdownMenuTrigger asChild>
+                                                    <Button
+                                                        size="icon"
+                                                        variant="secondary"
+                                                        className="size-8 rounded-lg bg-background/90 backdrop-blur-sm border border-border/50 shadow-sm cursor-pointer hover:bg-background"
+                                                    >
+                                                        <MoreVertical className="size-4" />
+                                                    </Button>
+                                                </DropdownMenuTrigger>
+                                                <DropdownMenuContent align="end" className="w-40 rounded-lg">
+                                                    <DropdownMenuItem className="gap-2 text-xs cursor-pointer" onClick={() => setViewingBallroom(item)}>
+                                                        <Eye className="size-3.5" /> View Details
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuItem className="gap-2 text-xs cursor-pointer" onClick={() => setEditingBallroom(item)}>
+                                                        <Edit3 className="size-3.5" /> Edit Space
+                                                    </DropdownMenuItem>
+                                                    <DropdownMenuSeparator />
+                                                    <DropdownMenuItem className="gap-2 text-xs text-red-600 focus:text-red-600 cursor-pointer" onClick={() => setDeletingBallroom(item)}>
+                                                        <Trash2 className="size-3.5" /> Delete
+                                                    </DropdownMenuItem>
+                                                </DropdownMenuContent>
+                                            </DropdownMenu>
                                         </div>
                                     </div>
 
-                                    {/* Card Content */}
-                                    <CardContent className="p-5 flex-1 flex flex-col">
-                                        <div className="flex items-start justify-between gap-3 mb-4">
+                                    {/* Content */}
+                                    <CardContent className="p-4 flex-1 flex flex-col border-t border-border/30">
+                                        <div className="flex items-start justify-between gap-2 mb-3">
                                             <div className="min-w-0 space-y-0.5">
-                                                <h3 className="font-black text-sm truncate leading-none text-foreground group-hover:text-primary transition-colors">{item.name}</h3>
-                                                <p className="text-[10px] text-muted-foreground font-bold truncate uppercase tracking-tight">
+                                                <h3 className="font-semibold text-sm truncate leading-tight group-hover:text-primary transition-colors">{item.name}</h3>
+                                                <p className="text-[10px] text-muted-foreground font-medium truncate uppercase tracking-wider">
                                                     {item.atlas_ballroom?.atlas_ballroom_categories?.name || "Private Space"}
                                                 </p>
                                             </div>
-                                            <div className="bg-primary/5 px-2.5 py-1.5 rounded-xl border border-primary/10 flex flex-col items-center min-w-[50px] shadow-sm">
-                                                <span className="text-xs font-black leading-none text-primary">{item.capacity || '—'}</span>
-                                                <span className="text-[8px] font-black text-primary/40 uppercase tracking-tighter mt-0.5">Cap</span>
-                                            </div>
+                                            <Badge variant="outline" className="font-medium border-primary/20 bg-primary/5 text-primary text-[10px] px-2 shrink-0">
+                                                {item.capacity || "—"} pax
+                                            </Badge>
                                         </div>
 
-                                        <div className="mt-auto pt-4 border-t border-border/40 grid grid-cols-1 gap-4">
+                                        <div className="mt-auto pt-3 border-t border-border/30">
                                             <div className="flex items-center gap-2 min-w-0">
-                                                <div className="size-7 rounded-lg bg-muted/40 flex items-center justify-center flex-shrink-0">
-                                                    <Maximize2 className="size-3.5 text-muted-foreground" />
-                                                </div>
+                                                <Maximize2 className="size-3.5 text-muted-foreground shrink-0" />
                                                 <div className="min-w-0">
-                                                    <p className="text-[8px] font-black text-muted-foreground uppercase leading-none mb-0.5">Dimensions</p>
-                                                    <p className="text-[10px] font-bold text-foreground truncate">
-                                                        {item.width}x{item.depth} {item.unit_type}
-                                                    </p>
+                                                    <p className="text-[9px] font-medium text-muted-foreground uppercase">Dimensions</p>
+                                                    <p className="text-[11px] font-medium truncate">{item.width}×{item.depth} {item.unit_type}</p>
                                                 </div>
                                             </div>
                                         </div>
-
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="w-full mt-4 h-8 rounded-lg text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all group-hover:border-primary/20"
-                                            onClick={() => setViewingBallroom(item)}
-                                        >
-                                            View <ArrowRight className="size-3 ml-1.5" />
-                                        </Button>
                                     </CardContent>
                                 </Card>
                             ))}
@@ -445,9 +427,6 @@ export function BallroomsPage() {
                 onOpenChange={(open) => !open && setViewingBallroom(null)}
             />
 
-            {/* Reuse AssetDetailsSheet for Catalog Ballrooms or equivalent if needed */}
-            {/* For now we stick to standard catalog view */}
-
             <DeleteBallroomDialog
                 ballroom={deletingBallroom}
                 open={!!deletingBallroom}
@@ -455,5 +434,19 @@ export function BallroomsPage() {
                 onConfirm={handleDelete}
             />
         </div>
+    );
+}
+
+/* ── Status Badge reusable ── */
+function StatusBadge({ status }: { status: string }) {
+    const styles: Record<string, string> = {
+        approved: "bg-emerald-500 text-white",
+        pending: "bg-amber-500 text-white",
+        rejected: "bg-red-500 text-white",
+    };
+    return (
+        <Badge className={`text-[10px] font-medium capitalize px-2 py-0 border-none shadow-sm rounded-md ${styles[status] || styles.pending}`}>
+            {status}
+        </Badge>
     );
 }
