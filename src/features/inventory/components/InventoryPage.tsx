@@ -15,13 +15,28 @@ import {
     Edit3,
     Eye,
     MapPin,
+    LayoutList,
+    Filter,
+    Check,
+    X,
+    SlidersHorizontal,
     ArrowRight
 } from "lucide-react";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+    DropdownMenuCheckboxItem,
+} from "@/components/ui/dropdown-menu";
 import { useInventory } from "../hooks/useInventory";
 import { ImportAssetDialog } from "./ImportAssetDialog";
 import { UpdateInventoryItemDialog } from "./UpdateInventoryItemDialog";
 import { DeleteInventoryItemDialog } from "./DeleteInventoryItemDialog";
 import { WarehouseItemViewSheet } from "./WarehouseItemViewSheet";
+import { AssetDetailsSheet } from "@/features/atlas/assets/components/AssetDetailsSheet";
 import { WarehouseItemSchemaValues } from "../schemas";
 import { AtlasAsset } from "@/features/atlas/assets/types";
 import { WarehouseItem } from "../types";
@@ -34,16 +49,36 @@ export function InventoryPage() {
 
     // Selection states
     const [importingAsset, setImportingAsset] = useState<AtlasAsset | null>(null);
+    const [viewingAsset, setViewingAsset] = useState<AtlasAsset | null>(null);
     const [viewingItem, setViewingItem] = useState<WarehouseItem | null>(null);
     const [editingItem, setEditingItem] = useState<WarehouseItem | null>(null);
     const [deletingItem, setDeletingItem] = useState<WarehouseItem | null>(null);
 
+    // Filter states for catalog
+    const [catCategory, setCatCategory] = useState<string | null>(null);
+    const [catScale, setCatScale] = useState<string | null>(null);
+    const [catPlacement, setCatPlacement] = useState<string | null>(null);
+
+    const categories = useMemo(() => {
+        const unique = Array.from(new Set(catalog.map(a => a.atlas_categories?.name).filter(Boolean)));
+        return unique as string[];
+    }, [catalog]);
+
     const filteredCatalog = useMemo(() => {
-        return catalog.filter(asset =>
-            asset.name.toLowerCase().includes(search.toLowerCase()) ||
-            (asset.atlas_categories?.name?.toLowerCase().includes(search.toLowerCase()) ?? false)
-        );
-    }, [catalog, search]);
+        return catalog.filter(asset => {
+            const matchesSearch = asset.name.toLowerCase().includes(search.toLowerCase()) ||
+                (asset.atlas_categories?.name?.toLowerCase().includes(search.toLowerCase()) ?? false);
+
+            const matchesCategory = !catCategory || asset.atlas_categories?.name === catCategory;
+            const matchesScale = !catScale || asset.default_scale === catScale;
+            const matchesPlacement = !catPlacement || asset.placement_type === catPlacement;
+
+            return matchesSearch && matchesCategory && matchesScale && matchesPlacement;
+        });
+    }, [catalog, search, catCategory, catScale, catPlacement]);
+
+    const activeFiltersCount = [catCategory, catScale, catPlacement].filter(Boolean).length;
+
 
     const filteredInventory = useMemo(() => {
         return inventory.filter(item =>
@@ -125,6 +160,93 @@ export function InventoryPage() {
                 </div>
 
                 <div className="flex items-center gap-2 w-full md:w-auto">
+                    {activeTab === 'catalog' && (
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline" size="sm" className="h-10 rounded-xl gap-2 cursor-pointer border-border/50 bg-background/50 hover:bg-background relative transition-all active:scale-95 group">
+                                    <SlidersHorizontal className="size-4 text-muted-foreground group-hover:text-primary transition-colors" />
+                                    <span className="hidden sm:inline font-bold">Filters</span>
+                                    {activeFiltersCount > 0 && (
+                                        <Badge variant="default" className="h-5 min-w-5 p-0 flex items-center justify-center text-[10px] font-black rounded-full absolute -top-2 -right-2 shadow-lg shadow-primary/20 border-2 border-background animate-in zoom-in">
+                                            {activeFiltersCount}
+                                        </Badge>
+                                    )}
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-56 rounded-xl border-border/50 shadow-xl">
+                                <DropdownMenuLabel className="text-[10px] font-black uppercase tracking-widest text-muted-foreground pb-1">Filter Assets</DropdownMenuLabel>
+                                <DropdownMenuSeparator />
+
+                                <div className="p-2 space-y-3">
+                                    <div className="space-y-1">
+                                        <p className="text-[9px] font-black uppercase text-primary/60 px-2 tracking-tighter">Category</p>
+                                        <div className="grid grid-cols-1 gap-1">
+                                            {categories.map(cat => (
+                                                <button
+                                                    key={cat}
+                                                    onClick={() => setCatCategory(catCategory === cat ? null : cat)}
+                                                    className={`text-left px-2 py-1.5 rounded-lg text-xs font-bold transition-colors flex items-center justify-between ${catCategory === cat ? 'bg-primary/10 text-primary' : 'hover:bg-muted text-muted-foreground'
+                                                        }`}
+                                                >
+                                                    {cat}
+                                                    {catCategory === cat && <Check className="size-3" />}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <p className="text-[9px] font-black uppercase text-primary/60 px-2 tracking-tighter">Scale</p>
+                                        <div className="flex flex-wrap gap-1 px-1">
+                                            {['low', 'medium', 'large'].map(s => (
+                                                <Button
+                                                    key={s}
+                                                    variant={catScale === s ? "default" : "outline"}
+                                                    size="sm"
+                                                    onClick={() => setCatScale(catScale === s ? null : s)}
+                                                    className="h-7 text-[10px] font-extrabold uppercase px-2 rounded-md transition-all active:scale-95"
+                                                >
+                                                    {s}
+                                                </Button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div className="space-y-1">
+                                        <p className="text-[9px] font-black uppercase text-primary/60 px-2 tracking-tighter">Placement</p>
+                                        <div className="flex flex-wrap gap-1 px-1">
+                                            {['click', 'drag'].map(p => (
+                                                <Button
+                                                    key={p}
+                                                    variant={catPlacement === p ? "default" : "outline"}
+                                                    size="sm"
+                                                    onClick={() => setCatPlacement(catPlacement === p ? null : p)}
+                                                    className="h-7 text-[10px] font-extrabold uppercase px-2 rounded-md transition-all active:scale-95"
+                                                >
+                                                    {p}
+                                                </Button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {(catCategory || catScale || catPlacement) && (
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="w-full h-8 text-[10px] font-black uppercase tracking-widest text-red-500 hover:text-red-600 hover:bg-red-50"
+                                            onClick={() => {
+                                                setCatCategory(null);
+                                                setCatScale(null);
+                                                setCatPlacement(null);
+                                            }}
+                                        >
+                                            Clear All
+                                        </Button>
+                                    )}
+                                </div>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    )}
                     <div className="relative flex-1 md:w-72 group">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
                         <Input
@@ -135,6 +257,7 @@ export function InventoryPage() {
                         />
                     </div>
                 </div>
+
             </div>
 
             {loading ? (
@@ -152,12 +275,12 @@ export function InventoryPage() {
             ) : activeTab === "catalog" ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {filteredCatalog.map((asset) => (
-                        <Card key={asset.id} className="group overflow-hidden border border-border/40 shadow-sm hover:shadow-xl hover:shadow-primary/5 transition-all duration-300 bg-card rounded-2xl">
+                        <Card key={asset.id} className="group overflow-hidden border border-border/40 shadow-sm hover:border-primary/30 transition-all duration-300 bg-card rounded-2xl flex flex-col">
                             <div className="h-48 w-full bg-muted/20 relative flex items-center justify-center p-8 overflow-hidden">
                                 <img
                                     src={asset.image}
                                     alt={asset.name}
-                                    className="size-full object-contain drop-shadow-xl group-hover:scale-110 transition-transform duration-500"
+                                    className="size-full object-contain drop-shadow-xl transition-all duration-500"
                                 />
                                 <div className="absolute top-3 right-3">
                                     <Badge variant="secondary" className="bg-background/90 backdrop-blur shadow-sm text-[10px] font-black py-0.5 px-2 rounded-lg border-none uppercase tracking-tighter">
@@ -165,20 +288,30 @@ export function InventoryPage() {
                                     </Badge>
                                 </div>
                             </div>
-                            <CardContent className="p-5">
+                            <CardContent className="p-5 flex-1 flex flex-col">
                                 <div className="space-y-1 mb-5">
-                                    <h3 className="font-black text-base truncate leading-tight">{asset.name}</h3>
+                                    <h3 className="font-black text-base truncate leading-tight group-hover:text-primary transition-colors">{asset.name}</h3>
                                     <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest flex items-center gap-1.5">
                                         {asset.placement_type} <span className="text-primary/20">•</span> Scale {asset.default_scale}
                                     </p>
                                 </div>
-                                <Button
-                                    onClick={() => setImportingAsset(asset)}
-                                    className="w-full h-10 gap-2 rounded-xl cursor-pointer shadow-lg shadow-primary/10 hover:shadow-primary/20 group-hover:bg-primary transition-all font-bold"
-                                    size="sm"
-                                >
-                                    <Plus className="size-4" /> Import Asset
-                                </Button>
+                                <div className="mt-auto space-y-2">
+                                    <Button
+                                        onClick={() => setImportingAsset(asset)}
+                                        className="w-full h-10 gap-2 rounded-xl cursor-pointer shadow-lg shadow-primary/10 hover:shadow-primary/20 group-hover:bg-primary transition-all font-bold"
+                                        size="sm"
+                                    >
+                                        <Plus className="size-4" /> Import Asset
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className="w-full h-8 rounded-lg text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all"
+                                        onClick={() => setViewingAsset(asset)}
+                                    >
+                                        View <ArrowRight className="size-3 ml-1.5" />
+                                    </Button>
+                                </div>
                             </CardContent>
                         </Card>
                     ))}
@@ -286,7 +419,7 @@ export function InventoryPage() {
                                             className="w-full mt-4 h-8 rounded-lg text-[10px] font-black uppercase tracking-widest text-muted-foreground hover:text-primary hover:bg-primary/5 transition-all group-hover:border-primary/20"
                                             onClick={() => setViewingItem(item)}
                                         >
-                                            View Details <ArrowRight className="size-3 ml-1.5" />
+                                            View <ArrowRight className="size-3 ml-1.5" />
                                         </Button>
                                     </CardContent>
                                 </Card>
@@ -316,6 +449,12 @@ export function InventoryPage() {
                     />
                 )}
             </Dialog>
+
+            <AssetDetailsSheet
+                asset={viewingAsset}
+                open={!!viewingAsset}
+                onOpenChange={(open) => !open && setViewingAsset(null)}
+            />
 
             <WarehouseItemViewSheet
                 item={viewingItem}
