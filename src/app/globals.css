@@ -62,6 +62,16 @@ body {
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-r from-black to-gray-500;
   }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+    height: 0;
+    width: 0;
+  }
 }
 
 .dark {

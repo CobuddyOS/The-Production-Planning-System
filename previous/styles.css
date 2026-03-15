@@ -1,0 +1,118 @@
+   /* Global Font */
+   body {
+    font-family: "Alegreya SC", serif;
+}
+
+.selected-asset {
+    outline: 2px dashed red;
+}
+
+canvas {
+    width: 100%;
+    height: 80%;
+}
+
+.table-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.table-asset-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 50%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0;
+    margin: 0;
+}
+
+.case-asset-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 80%;
+    height: 50%;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: center;
+    padding: 0;
+    margin: 3;
+}
+
+.table-item {
+    width: 100px;
+    height: 100px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 5px;
+    max-width: 600px;
+    width: 80%;
+    text-align: center;
+}
+
+img {
+  background-color: transparent !important;
+}
+
+
+#assets-container > div {
+
+  background-color: white;
+}
+
+
+.scrollbar-hide {
+    -ms-overflow-style: none;  
+    scrollbar-width: none;  
+}
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;  
+}
+
+
+.scrollbar-hide-vertical {
+    -ms-overflow-style: none;  
+    scrollbar-width: none;  
+}
+.scrollbar-hide-vertical::-webkit-scrollbar {
+    display: none;  
+}
+
+
+#categoriesNav::-webkit-scrollbar {
+    height: 0;
+    width: 0;
+    display: none;
+}
+
+
+#categoriesNav {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}

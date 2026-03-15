@@ -1,178 +1,568 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { useState, useEffect } from "react";
+import { Inter, Alegreya_SC } from "next/font/google"; // Adding Inter for UI
 import {
-    LayoutDashboard,
-    Users,
-    Clock,
-    Calendar,
-    CheckCircle2,
-    Workflow,
-    ArrowLeft,
-    Boxes,
-    Truck,
-    Zap
+  ChevronLeft,
+  ChevronRight,
+  ZoomIn,
+  ZoomOut,
+  PanelLeft,
+  PanelRight,
+  ArrowUp,
+  ArrowDown,
+  FlipVertical,
+  FlipHorizontal,
+  ArrowDownToLine,
+  ArrowUpFromLine,
+  Trash2,
+  Info,
+  Maximize2,
+  Save,
+  Upload,
+  Box,
+  X,
+  DollarSign,
+  CalendarDays,
+  FileText,
+  LayoutGrid,
+  Mic2,
+  Video,
+  Lightbulb,
+  Cable,
+  Briefcase,
+  History,
+  Settings,
+  Layers,
+  Search,
 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+
+const inter = Inter({ subsets: ["latin"] });
+const alegreyaSC = Alegreya_SC({ weight: ["400", "700"], subsets: ["latin"] });
+
+const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+  Audio: Mic2,
+  Video: Video,
+  Lighting: Lightbulb,
+  "Tech Table Items": LayoutGrid,
+  "Cable Trunk Hardware": Cable,
+};
+
+const CATEGORIES = [
+  "Audio",
+  "Video",
+  "Lighting",
+  "Tech Table Items",
+  "Cable Trunk Hardware",
+];
+
+const MOCK_ASSETS = [
+  { name: "Speaker A", price: 45, category: "Audio" },
+  { name: "Mic Wireless", price: 25, category: "Audio" },
+  { name: "Mixer 8ch", price: 80, category: "Audio" },
+  { name: "LED Par", price: 35, category: "Lighting" },
+  { name: "Projector", price: 120, category: "Video" },
+  { name: "Stand", price: 15, category: "Tech Table Items" },
+];
 
 export default function AxisProductionPage() {
-    const [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [leftSidebarOpen, setLeftSidebarOpen] = useState(true);
+  const [rightSidebarOpen, setRightSidebarOpen] = useState(true);
+  const [activeCategory, setActiveCategory] = useState("Audio");
+  const [totalDailyAmount, setTotalDailyAmount] = useState("0.00");
+  const [numberOfDays, setNumberOfDays] = useState(1);
+  const [infoModalOpen, setInfoModalOpen] = useState(false);
+  const [summaryOpen, setSummaryOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
-    useEffect(() => {
-        setMounted(true);
-    }, []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
-    if (!mounted) return null;
+  if (!mounted) return null;
 
-    return (
-        <div className="min-h-screen bg-background">
-            {/* Header Area */}
-            <header className="border-b bg-muted/40 backdrop-blur-md sticky top-0 z-10">
-                <div className="max-w-[1400px] mx-auto px-6 h-16 flex items-center justify-between">
-                    <div className="flex items-center gap-4">
-                        <Button
-                            variant="ghost"
-                            size="icon"
-                            className="rounded-full"
-                            onClick={() => window.location.href = '/cue'}
-                        >
-                            <ArrowLeft className="size-4" />
-                        </Button>
-                        <Separator orientation="vertical" className="h-6" />
-                        <div className="flex items-center gap-2">
-                            <Workflow className="size-5 text-primary" />
-                            <span className="font-bold tracking-tight">Axis Production</span>
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <Badge variant="secondary" className="bg-primary/10 text-primary border-none font-bold uppercase tracking-tighter text-[10px]">
-                            Live View
-                        </Badge>
-                        <div className="size-8 rounded-full bg-muted border border-border/50" />
-                    </div>
-                </div>
-            </header>
+  const toolBtnClass = "p-2 hover:bg-blue-50 text-slate-600 hover:text-blue-600 rounded-md transition-all duration-200 border border-transparent hover:border-blue-100";
 
-            <main className="max-w-[1400px] mx-auto p-6 md:p-10 space-y-8">
-                {/* Project Overview Card */}
-                <div className="flex flex-col md:flex-row gap-6 items-start">
-                    <div className="flex-1 space-y-2">
-                        <Badge variant="outline" className="text-primary border-primary/20 bg-primary/5 font-bold text-[10px] uppercase tracking-widest px-3">
-                            Currently Active
-                        </Badge>
-                        <h1 className="text-4xl font-extrabold tracking-tight">Ali & Sara Wedding</h1>
-                        <p className="text-muted-foreground text-lg">Detailed production management and live execution tracking.</p>
-                    </div>
-                    <div className="flex gap-2">
-                        <Button className="rounded-xl font-bold px-6 shadow-lg shadow-primary/20">Finalize Specs</Button>
-                        <Button variant="outline" className="rounded-xl font-bold px-6">Export PDF</Button>
-                    </div>
-                </div>
+  return (
+    <div className={cn("flex flex-col h-screen bg-[#f8fafc] overflow-hidden text-slate-900", inter.className)}>
+      {/* Top Header Section */}
+      <header className="flex flex-col shrink-0 z-30">
+        {/* Superior Branding Bar */}
+        <div className="flex justify-between items-center py-2 px-6 bg-white border-b border-slate-200 h-14">
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold shadow-sm">
+                B
+              </div>
+              <span className={cn("text-xl tracking-tight text-slate-800", alegreyaSC.className)}>
+                BAEBOARD <span className="text-blue-600">AXIS</span>
+              </span>
+            </div>
+            <Badge variant="outline" className="text-[10px] uppercase tracking-wider font-bold py-0 h-5 border-blue-200 text-blue-700 bg-blue-50">
+              Production
+            </Badge>
+          </div>
 
-                {/* Dashboard Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {[
-                        { title: "Personnel", value: "12 Staff", icon: Users, sub: "4 Techs, 8 Hands" },
-                        { title: "Timeline", value: "3 Days", icon: Clock, sub: "Sept 10 - Sept 12" },
-                        { title: "Status", value: "Load-in", icon: CheckCircle2, sub: "Pending Final Approval" },
-                        { title: "Assets", value: "148 Items", icon: Boxes, sub: "95% Warehouse Ready" }
-                    ].map((stat, i) => (
-                        <Card key={i} className="border-none shadow-sm bg-muted/20 rounded-2xl">
-                            <CardContent className="p-6">
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{stat.title}</span>
-                                    <stat.icon className="size-4 text-primary/60" />
-                                </div>
-                                <div className="text-2xl font-bold">{stat.value}</div>
-                                <div className="text-xs text-muted-foreground mt-1">{stat.sub}</div>
-                            </CardContent>
-                        </Card>
-                    ))}
-                </div>
+          <div className="flex items-center gap-3">
+            <div className="hidden md:flex items-center bg-slate-100/80 rounded-full px-3 py-1 border border-slate-200">
+              <DollarSign className="size-3.5 text-emerald-600" />
+              <span className="text-xs font-semibold text-slate-500 mr-2">Daily:</span>
+              <span className="text-sm font-bold text-emerald-600">${totalDailyAmount}</span>
+            </div>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Tasks Column */}
-                    <Card className="lg:col-span-2 border-none shadow-xl shadow-black/[0.02] rounded-3xl">
-                        <CardHeader className="p-8 border-b pb-6">
-                            <CardTitle className="text-xl font-bold flex items-center gap-2">
-                                <LayoutDashboard className="size-5 text-primary" />
-                                Production Milestones
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-0">
-                            {[
-                                { task: "Technical Infrastructure Setup", status: "completed", time: "Day 1 - 08:00" },
-                                { task: "Audio Configuration & Tuning", status: "in-progress", time: "Day 1 - 12:00" },
-                                { task: "Lighting Programming", status: "pending", time: "Day 1 - 16:00" },
-                                { task: "Visual Content Sync", status: "pending", time: "Day 2 - 09:00" }
-                            ].map((item, i) => (
-                                <div key={i} className="flex items-center justify-between p-6 border-b last:border-none hover:bg-muted/10 transition-colors">
-                                    <div className="flex items-center gap-4">
-                                        <div className={`size-10 rounded-xl flex items-center justify-center ${item.status === 'completed' ? 'bg-emerald-500/10 text-emerald-500' : item.status === 'in-progress' ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'}`}>
-                                            {item.status === 'completed' ? <CheckCircle2 className="size-5" /> : <Clock className="size-5" />}
-                                        </div>
-                                        <div>
-                                            <div className="font-bold">{item.task}</div>
-                                            <div className="text-xs text-muted-foreground">{item.time}</div>
-                                        </div>
-                                    </div>
-                                    <Badge variant="outline" className={`font-bold text-[10px] uppercase tracking-tighter ${item.status === 'completed' ? 'text-emerald-500' : item.status === 'in-progress' ? 'text-primary' : 'text-muted-foreground'}`}>
-                                        {item.status}
-                                    </Badge>
-                                </div>
-                            ))}
-                        </CardContent>
-                    </Card>
+            <div className="h-6 w-px bg-slate-200 mx-1 hidden md:block" />
 
-                    {/* Logistics Card */}
-                    <Card className="border-none shadow-xl shadow-black/[0.02] rounded-3xl bg-zinc-900 text-white">
-                        <CardHeader className="p-8 pb-4">
-                            <CardTitle className="text-xl font-bold flex items-center gap-2">
-                                <Truck className="size-5 text-primary" />
-                                Logistics Hub
-                            </CardTitle>
-                        </CardHeader>
-                        <CardContent className="p-8 pt-0 space-y-6">
-                            <div className="p-4 rounded-2xl bg-white/5 border border-white/10 space-y-3">
-                                <div className="flex items-center justify-between">
-                                    <span className="text-xs font-bold uppercase tracking-widest text-white/50">Transport Status</span>
-                                    <Badge className="bg-emerald-500 text-white border-none">On Schedule</Badge>
-                                </div>
-                                <div className="flex items-center gap-3">
-                                    <Zap className="size-5 text-primary fill-primary" />
-                                    <span className="font-bold">2 Trucks Dispatched</span>
-                                </div>
-                            </div>
-
-                            <Separator className="bg-white/10" />
-
-                            <div className="space-y-4">
-                                <h4 className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/40">Equipment Breakdown</h4>
-                                <div className="space-y-3">
-                                    {[
-                                        { label: "Audio Gear", value: "100%" },
-                                        { label: "Visual Displays", value: "85%" },
-                                        { label: "Trussing Systems", value: "92%" }
-                                    ].map((row, i) => (
-                                        <div key={i} className="space-y-1.5">
-                                            <div className="flex justify-between text-xs font-bold">
-                                                <span>{row.label}</span>
-                                                <span className="text-white/50">{row.value}</span>
-                                            </div>
-                                            <div className="h-1 bg-white/5 rounded-full overflow-hidden">
-                                                <div className="h-full bg-primary" style={{ width: row.value }} />
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-                </div>
-            </main>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-slate-500 hover:text-blue-600"
+              onClick={() => setInfoModalOpen(true)}
+            >
+              <Info className="size-5" />
+            </Button>
+            <Button
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold h-9 px-4 rounded-lg shadow-sm"
+              onClick={() => setSummaryOpen(true)}
+            >
+              <FileText className="size-4 mr-2" />
+              View Summary
+            </Button>
+          </div>
         </div>
-    );
+
+        {/* Dynamic Context Toolbar */}
+        <div className="flex items-center justify-between px-4 py-1.5 bg-white border-b border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.03)] h-12">
+          <div className="flex items-center gap-1">
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn("size-8 transition-colors", leftSidebarOpen && "bg-slate-100 text-blue-600")}
+              onClick={() => setLeftSidebarOpen(!leftSidebarOpen)}
+            >
+              <PanelLeft className="size-4" />
+            </Button>
+            <div className="w-px h-4 bg-slate-200 mx-1" />
+            <div className="flex items-center gap-0.5">
+              <button className={toolBtnClass} title="Zoom In"><ZoomIn className="size-4" /></button>
+              <button className={toolBtnClass} title="Zoom Out"><ZoomOut className="size-4" /></button>
+              <div className="w-px h-4 bg-slate-200 mx-1" />
+              <button className={toolBtnClass} title="Pan Left"><ChevronLeft className="size-4" /></button>
+              <button className={toolBtnClass} title="Pan Right"><ChevronRight className="size-4" /></button>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 bg-slate-100 rounded-md p-0.5 border border-slate-200">
+              {[1, 2, 3].map(d => (
+                <button
+                  key={d}
+                  onClick={() => setNumberOfDays(d)}
+                  className={cn(
+                    "px-3 py-1 text-xs font-bold rounded transition-all",
+                    numberOfDays === d ? "bg-white text-blue-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                  )}
+                >
+                  {d}D
+                </button>
+              ))}
+              <Input
+                type="number"
+                className="w-10 h-6 p-0 border-none bg-transparent text-center text-xs font-bold focus-visible:ring-0"
+                value={numberOfDays}
+                onChange={(e) => setNumberOfDays(parseInt(e.target.value) || 1)}
+              />
+            </div>
+            <Button variant="outline" size="sm" className="h-8 gap-1.5 border-slate-300 text-slate-600 hover:bg-slate-50">
+              <Save className="size-3.5" />
+              Save Layout
+            </Button>
+            <div className="w-px h-4 bg-slate-200 mx-1" />
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn("size-8 transition-colors", rightSidebarOpen && "bg-slate-100 text-blue-600")}
+              onClick={() => setRightSidebarOpen(!rightSidebarOpen)}
+            >
+              <PanelRight className="size-4" />
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Main UI Body */}
+      <div className="flex flex-1 overflow-hidden relative">
+
+        {/* Professional Left Sidebar - Ballrooms */}
+        <aside
+          className={cn(
+            "bg-white border-r border-slate-200 flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0 shadow-[1px_0_10px_rgba(0,0,0,0.02)]",
+            leftSidebarOpen ? "w-64" : "w-0 -translate-x-full opacity-0 pointer-events-none"
+          )}
+        >
+          <div className="p-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+              <Layers className="size-3.5" />
+              Floor Plans
+            </span>
+            <Button variant="ghost" size="icon" className="size-6 text-slate-400">
+              <Settings className="size-3.5" />
+            </Button>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-3 space-y-4">
+            <div className="space-y-2">
+              <div className="group relative rounded-xl border-2 border-dashed border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 p-6 flex flex-col items-center justify-center gap-2 transition-all cursor-pointer">
+                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+                  <Upload className="size-5" />
+                </div>
+                <div className="text-center">
+                  <p className="text-xs font-bold text-slate-700">Import Drawings</p>
+                  <p className="text-[10px] text-slate-400 mt-0.5">DWG, PDF, JPG</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-slate-100">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 block">Recents</span>
+              <div className="space-y-1">
+                {/* Placeholder for recent floor plans */}
+                <div className="p-2 rounded-lg bg-blue-50 text-blue-700 border border-blue-100 flex items-center gap-3 cursor-pointer">
+                  <div className="w-10 h-8 bg-blue-200 rounded shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-bold truncate">Grand Ballroom A</p>
+                    <p className="text-[10px] opacity-70">1200 sq ft</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="p-3 border-t border-slate-100 bg-slate-50/30">
+            <Button variant="ghost" className="w-full justify-start text-[11px] font-bold text-slate-500 hover:text-blue-600 h-8 gap-2">
+              <History className="size-3.5" />
+              Version History
+            </Button>
+          </div>
+        </aside>
+
+        {/* Central Workspace area - Maximize canvas */}
+        <main className="flex-1 flex flex-col min-w-0 bg-[#f1f5f9] relative">
+
+          {/* Main Canvas Area */}
+          <div className="flex-1 p-4 flex flex-col gap-4 overflow-hidden">
+            {/* The Actual Canvas Container - Remove inner card padding, maximize space */}
+            <div className="flex-1 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm relative group">
+              {/* Floating Canvas Controls */}
+              <div className="absolute top-4 right-4 flex flex-col gap-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button variant="secondary" size="icon" className="bg-white/90 backdrop-blur shadow-md hover:bg-white" onClick={() => { }}>
+                  <Maximize2 className="size-4" />
+                </Button>
+              </div>
+
+              {/* Canvas Ruler/Grid Placeholder */}
+              <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
+                style={{ backgroundImage: "linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
+
+              <div
+                id="myCanvas"
+                className="w-full h-full min-h-[400px]"
+              />
+
+              {/* Selection Properties Overlay (When item is selected) */}
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 p-1.5 bg-white/95 backdrop-blur border border-slate-200 rounded-xl shadow-2xl z-10 scale-90 md:scale-100">
+                <div className="flex items-center gap-0.5 px-2">
+                  <button className={toolBtnClass} title="Scale Up"><ArrowUp className="size-3.5" /></button>
+                  <button className={toolBtnClass} title="Scale Down"><ArrowDown className="size-3.5" /></button>
+                  <div className="w-px h-3 bg-slate-200 mx-1" />
+                  <button className={toolBtnClass} title="Flip"><FlipVertical className="size-3.5" /></button>
+                  <button className={toolBtnClass} title="Rotate"><FlipHorizontal className="size-3.5" /></button>
+                  <div className="w-px h-3 bg-slate-200 mx-1" />
+                  <button className={toolBtnClass} title="Send Back"><ArrowDownToLine className="size-3.5" /></button>
+                  <button className={toolBtnClass} title="Bring Front"><ArrowUpFromLine className="size-3.5" /></button>
+                </div>
+                <div className="w-px h-8 bg-slate-200" />
+                <Button variant="ghost" size="icon" className="size-8 text-rose-500 hover:bg-rose-50 hover:text-rose-600 rounded-lg">
+                  <Trash2 className="size-4" />
+                </Button>
+              </div>
+            </div>
+
+            {/* Bottom Accessories Panel (Tech Table / Case) - Compacted */}
+            <div className="flex gap-4 h-48 shrink-0">
+              <div className="flex-[2] bg-slate-200/50 rounded-xl border border-slate-300 relative overflow-hidden group">
+                <div className="absolute top-3 left-4 flex items-center gap-1.5">
+                  <Briefcase className="size-3.5 text-slate-500" />
+                  <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Tech Table</span>
+                </div>
+                <div className="mt-8 flex items-center justify-center h-full opacity-40 grayscale group-hover:grayscale-0 transition-all">
+                  {/* Technical visualization placeholder */}
+                  <div className="w-1/2 aspect-video bg-slate-300 rounded-lg border-2 border-slate-400 flex items-center justify-center font-bold text-slate-500">
+                    Surface
+                  </div>
+                </div>
+                <div id="techAssetsContainer" className="absolute inset-0 flex items-center justify-center gap-2 p-4 pt-10" />
+              </div>
+
+              <div className="flex-1 bg-slate-200/50 rounded-xl border border-slate-300 relative overflow-hidden group">
+                <div className="absolute top-3 left-4 flex items-center gap-1.5">
+                  <Box className="size-3.5 text-slate-500" />
+                  <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Cable Box</span>
+                </div>
+                <div className="mt-8 flex items-center justify-center h-full opacity-40 grayscale group-hover:grayscale-0 transition-all">
+                  <div className="w-2/3 h-20 bg-slate-400 rounded border-2 border-slate-500 opacity-30" />
+                </div>
+                <div id="hardwareAssetsContainer" className="absolute inset-0 grid grid-cols-3 gap-1.5 p-3 pt-10" />
+              </div>
+            </div>
+          </div>
+        </main>
+
+        {/* Right Sidebar - High Spec Assets Library */}
+        <aside
+          className={cn(
+            "bg-white border-l border-slate-200 flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0 shadow-[-1px_0_10px_rgba(0,0,0,0.02)]",
+            rightSidebarOpen ? "w-[300px]" : "w-0 translate-x-full opacity-0 pointer-events-none"
+          )}
+        >
+          <div className="p-4 flex flex-col gap-4 border-b border-slate-100 bg-slate-50/50">
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+                <LayoutGrid className="size-3.5" />
+                Assets Library
+              </span>
+            </div>
+
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-slate-400" />
+              <Input
+                placeholder="Search gear..."
+                className="h-9 pl-9 text-xs bg-white border-slate-200 shadow-none focus-visible:ring-blue-500/20"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="p-2 bg-white border-b border-slate-100">
+            <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide no-scrollbar">
+              {CATEGORIES.map((cat) => {
+                const Icon = CATEGORY_ICONS[cat];
+                const isActive = activeCategory === cat;
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    className={cn(
+                      "px-3 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap transition-all flex items-center gap-1.5",
+                      isActive
+                        ? "bg-blue-600 text-white shadow-md shadow-blue-200"
+                        : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                    )}
+                  >
+                    {Icon && <Icon className="size-3" />}
+                    {cat.split(' ')[0]}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+            <div className="grid grid-cols-2 gap-3">
+              {MOCK_ASSETS
+                .filter(a => activeCategory === "All" || a.category === activeCategory)
+                .map((asset, i) => (
+                  <div
+                    key={`${activeCategory}-${i}`}
+                    className="group bg-white border border-slate-100 rounded-xl p-3 flex flex-col items-center text-center gap-2 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-500/5 transition-all cursor-grab active:cursor-grabbing"
+                  >
+                    <div className="w-full aspect-square bg-slate-50 rounded-lg flex items-center justify-center border border-slate-100 group-hover:bg-blue-50 transition-colors">
+                      <Box className="size-8 text-slate-300 group-hover:text-blue-200" />
+                    </div>
+                    <div className="w-full">
+                      <p className="text-[11px] font-bold text-slate-700 truncate w-full">{asset.name}</p>
+                      <div className="flex items-center justify-center gap-1 mt-1 text-emerald-600">
+                        <span className="text-[10px] font-bold">${asset.price}</span>
+                        <span className="text-[8px] text-slate-400 font-medium">/ Day</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+
+          <div className="p-4 bg-slate-50 border-t border-slate-100">
+            <div className="flex items-center justify-between mb-3">
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active List</span>
+              <span className="text-[10px] font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">3 Items</span>
+            </div>
+            <div className="space-y-2">
+              {/* Small summary line items */}
+              <div className="flex items-center justify-between text-[11px]">
+                <span className="text-slate-600 font-medium truncate flex-1">Wireless Mic System</span>
+                <span className="font-bold text-slate-800">$25.00</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+
+      {/* Modals & Overlays */}
+      {/* (Keeping existing modal structures but cleaning up the styles) */}
+
+      {infoModalOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <Card className="w-full max-w-lg border-none shadow-2xl rounded-2xl overflow-hidden p-0">
+            <div className="p-6">
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="size-10 rounded-xl bg-blue-100 flex items-center justify-center text-blue-600">
+                    <Info className="size-6" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold text-slate-900">Workspace Guide</h2>
+                    <p className="text-xs text-slate-500 font-medium">Master the production tools</p>
+                  </div>
+                </div>
+                <Button variant="ghost" size="icon" onClick={() => setInfoModalOpen(false)}>
+                  <X className="size-5" />
+                </Button>
+              </div>
+
+              <div className="space-y-4">
+                {[
+                  { title: "Select Venue", text: "Drag a floor plan from the left library onto the canvas to begin your layout.", icon: Layers },
+                  { title: "Place Equipment", text: "Drag items from the asset library. Use the tech area for compact placement.", icon: LayoutGrid },
+                  { title: "Precision Tuning", text: "Select an item to scale, flip, or change its layer priority.", icon: Settings },
+                ].map((step, idx) => (
+                  <div key={idx} className="flex gap-4 p-3 rounded-xl bg-slate-50 border border-slate-100">
+                    <div className="size-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 shrink-0 shadow-sm">
+                      <step.icon className="size-4" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-800">{step.title}</h4>
+                      <p className="text-xs text-slate-500 leading-relaxed mt-1">{step.text}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <Button
+                className="w-full mt-8 bg-blue-600 hover:bg-blue-700 h-10 font-bold"
+                onClick={() => setInfoModalOpen(false)}
+              >
+                Got it, let's build
+              </Button>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Summary Popup - Same Cleanup Pattern */}
+      {summaryOpen && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <Card className="w-full max-w-2xl border-none shadow-2xl rounded-2xl overflow-hidden p-0 bg-white">
+            <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+              <div className="flex items-center gap-2">
+                <FileText className="size-5 text-blue-600" />
+                <h2 className="text-lg font-bold text-slate-900">Project Estimate</h2>
+              </div>
+              <Button variant="ghost" size="icon" onClick={() => setSummaryOpen(false)}>
+                <X className="size-5" />
+              </Button>
+            </div>
+
+            <div className="p-6">
+              <div className="border border-slate-200 rounded-xl overflow-hidden mb-6">
+                <table className="w-full text-left text-xs">
+                  <thead className="bg-slate-50 border-b border-slate-200">
+                    <tr>
+                      <th className="p-3 font-bold text-slate-400">ITEM</th>
+                      <th className="p-3 font-bold text-slate-400">QTY</th>
+                      <th className="p-3 font-bold text-slate-400 text-right">UNIT</th>
+                      <th className="p-3 font-bold text-slate-400 text-right">TOTAL</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-slate-100 last:border-0">
+                      <td className="p-3">
+                        <p className="font-bold text-slate-800">Wireless Mic System</p>
+                        <p className="text-[10px] text-slate-400">Handheld Shure QLXD</p>
+                      </td>
+                      <td className="p-3 font-medium">02</td>
+                      <td className="p-3 text-right font-medium">$25.00</td>
+                      <td className="p-3 text-right font-bold text-blue-600">$50.00</td>
+                    </tr>
+                    {/* Placeholder empty state */}
+                    <tr>
+                      <td colSpan={4} className="p-8 text-center bg-slate-50/50">
+                        <div className="flex flex-col items-center gap-1">
+                          <Box className="size-8 text-slate-200" />
+                          <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-2">More items coming from backend</p>
+                        </div>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4">
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Equipment Total</p>
+                  <p className="text-xl font-black text-slate-900">$50.00</p>
+                </div>
+                <div className="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                  <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">Event Duration</p>
+                  <p className="text-xl font-black text-slate-900">{numberOfDays} Days</p>
+                </div>
+                <div className="p-4 rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-200">
+                  <p className="text-[10px] font-bold opacity-70 uppercase tracking-widest mb-1 text-white">Project Total</p>
+                  <p className="text-xl font-black text-white">${50 * numberOfDays}.00</p>
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-8">
+                <Button variant="outline" className="flex-1 h-11 font-bold border-slate-200">Download PDF</Button>
+                <Button className="flex-[2] h-11 font-bold bg-blue-600 hover:bg-blue-700">Submit for Approval</Button>
+              </div>
+            </div>
+          </Card>
+        </div>
+      )}
+
+      {/* Custom Styles to remove scrollbars while maintaining functionality */}
+      <style jsx global>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+          width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #e2e8f0;
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #cbd5e1;
+        }
+      `}</style>
+    </div>
+  );
 }
+

@@ -1,0 +1,269 @@
+<!-- This is the final milstone 1 fixes -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Event Planner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Alegreya+SC&display=swap" rel="stylesheet">
+
+    <link rel="preload" href="assets/menu.svg" as="image">
+    <link rel="stylesheet" href="styles.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>   
+</head>
+
+<body class="flex flex-col h-screen bg-white">
+
+    <div class="flex justify-center items-center">
+        <img id="topLogo" src="assets/brand.svg" alt="" width="50%" srcset="">
+    </div>
+
+    <header class="flex items-center justify-between bg-white p-4 shadow space-x-2">
+
+        <div class="hidden md:flex flex justify-center mb-4 space-x-2">
+
+            <button id="btnPanLeft" class="p-2 bg-gray-100 rounded hover:bg-blue-300" title="Pan Left">
+                <img src="icons/sleft.svg" alt="Left" class="w-5 h-5" />
+            </button>
+            <button id="btnPanRight" class="p-2 bg-gray-100 rounded hover:bg-blue-300" title="Pan Right">
+                <img src="icons/sright.svg" alt="Right" class="w-5 h-5" />
+            </button>
+            <button id="btnZoomIn" class="p-2 bg-gray-100 rounded hover:bg-blue-300" title="Zoom In">
+                <img src="icons/sup.svg" alt="Zoom In" class="w-5 h-5" />
+            </button>
+            <button id="btnZoomOut" class="p-2 bg-gray-100 rounded hover:bg-blue-300" title="Zoom Out">
+                <img src="icons/sdown.svg" alt="Zoom Out" class="w-5 h-5" />
+            </button>
+             
+
+        </div>
+
+        <button id="toggleLeftSidebar" class="md:hidden text-gray-300 hover:text-black transition-colors" title="Menu">
+            <img src="assets/menu.svg" alt="Menu" class="w-6 h-6" />
+        </button>
+
+            
+
+
+        <div class="flex items-center ">
+              <div>
+                    <button id="totalDailyAmount" class="text-sm border-2 border-blue-800 p-1 rounded-md">Total Daily Amount:
+                        <b class="text-xl text-green">$0.00</b> </button>
+                </div>
+
+               
+                <div class="flex items-center p-2 text-md space-x-2">
+                    
+                    <input 
+                        type="number" 
+                        id="numberOfDays" 
+                        placeholder="No.days" 
+                        class="w-[70px] p-1 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                        min="1"
+                        
+                    />
+                </div>
+                
+                  <button id="viewSummary" class="bg-blue-600 hover:bg-blue-700 text-white text-sm font-bold px-2 ml-1  py-2 rounded">
+                      View summary
+                   </button>
+
+        </div>
+        <button id="toggleRightSidebar" class="md:hidden text-gray-300 hover:text-black transition-colors" title="Menu">
+            <img src="assets/menu.svg" alt="Menu" class="w-6 h-6" />
+        </button>
+    </header>
+    <div class="flex flex-1">
+        <aside class="bg-[#1e40af] w-[220px] h-screen overflow-y-auto p-4" id="leftSidebar">
+            <h2 id="floorHeading" class="text-white text-xl font-bold mb-4 text-center">Meeting/Ballrooms</h2>
+            <div class="grid grid-cols-1 gap-3" id="ballroomsContainer">
+                <div
+                    class="bg-white rounded-lg overflow-hidden shadow-md cursor-pointer hover:scale-105 transition-transform">
+                    <img src="floors/upload.png" alt="Select" class="w-full h-[140px] p-1 object-cover floor-img">
+                </div>
+                <!-- Ballrooms will be dynamically rendered here -->
+            </div>
+        </aside>
+
+
+        <main class="flex-1 flex flex-col items-center p-4 bg-gray-50">
+            
+            
+            
+            <div class="flex justify-between items-center w-full mb-4">
+                
+                
+                <div class="hidden md:flex flex-1 items-center justify-start w-full space-x-2 mr-4">
+                    <button id="btnScaleUp" class="px-3 py-1 bg-gray-100 rounded hover:bg-blue-300 transition-colors"
+                        title="Scale Up">
+                        <img src="icons/up.svg" alt="Up" class="w-5 h-5" />
+                    </button>
+                    <button id="btnScaleDown" class="px-3 py-1 bg-gray-100 rounded hover:bg-blue-300 transition-colors"
+                        title="Scale Down">
+                        <img src="icons/down.svg" alt="Down" class="w-5 h-5" />
+                    </button>
+                    <button id="btnFlipV" class="px-3 py-1 bg-gray-100 rounded hover:bg-blue-300 transition-colors"
+                        title="Flip V">
+                        <img src="icons/flipv.svg" alt="Flip V" class="w-5 h-5" />
+                    </button>
+                    <button id="btnFlipH" class="px-3 py-1 bg-gray-100 rounded hover:bg-blue-300 transition-colors"
+                        title="Flip H">
+                        <img src="icons/fliph.svg" alt="Flip H" class="w-5 h-5" />
+                    </button>
+                    <button id="btnSendBack" class="px-3 py-1 bg-gray-100 rounded hover:bg-blue-300 transition-colors"
+                        title="Send Back">
+                        <img src="icons/back.svg" alt="Back" class="w-5 h-5" />
+                    </button>
+                    <button id="btnBringForward" class="px-3 py-1 bg-gray-100 rounded hover:bg-blue-300 transition-colors"
+                        title="Send Front">
+                        <img src="icons/front.svg" alt="Front" class="w-5 h-5" />
+                    </button>
+                    <button id="btnDelete" class="px-3 py-1 bg-red-100 rounded hover:bg-red-300 transition-colors"
+                        title="Delete">
+                        <img src="icons/cross.svg" alt="Delete" class="w-5 h-5" />
+                    </button>
+                </div>
+            
+            
+                <div class="flex items-center justify-end">
+                    <div class="flex gap-1">
+                        <button id="btnInfo"
+                            class="hidden md:block p-2 border rounded hover:bg-gray-100 flex items-center space-x-1"
+                            title="Info">
+                            <img src="icons/info.svg" alt="Info" class="w-5 h-5 inline-block" />
+                        </button>
+                        <button id="btnMaximize"
+                            class="hidden md:block p-2 border rounded hover:bg-gray-100 flex items-center space-x-1"
+                            title="Maximize">
+                            <img src="icons/maximize.svg" alt="Maximize" class="w-5 h-5 inline-block" />
+                        </button>
+                    </div>
+                    <button id="btnSave" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-900 transition-colors ml-4"
+                        title="Save">
+                        Save
+                    </button>
+                </div>
+            </div>
+
+            
+            
+            <canvas id="myCanvas" class="border border-gray-400 bg-white h-[70%] w-[100%]"
+                ondragover="event.preventDefault()" ondrop="handleDrop(event)"></canvas>
+
+            <div class="flex flex-col md:flex-row w-full gap-4 mt-8 justify-center items-center md:items-start">
+  
+              
+              <div class="relative mt-8" style="width:65%;">
+                <img id="tableImage" src="assets/table1.png" alt="Table" class="w-full h-auto" />
+            
+                
+                <div class="logo-overlay absolute" style="
+                     left: 60%;
+                     top: 50%;
+                     transform: translate(-50%, -50%);
+                     z-index: 1000;
+                   ">
+                  <img id="hardwareLogo" src="assets/logo.png" alt="Logo"
+                       style="width: 50%; height: auto;" />
+                  
+                </div>
+            
+                <div id="techAssetsContainer" class="table-asset-container flex justify-center items-center"
+                     style="top: auto; bottom: 64%; left: 0%;">
+                </div>
+              </div>
+              
+              
+              <div class="relative mt-8" style="width:33%;">
+                <img id="table2Image" src="assets/case1.png" alt="Case" class="w-full h-auto" />
+            
+                
+                <div class="logo-overlay absolute" style="
+                     left: 60%;
+                     top: 60.8%;
+                     transform: translate(-50%, -50%);
+                     z-index: 1000;
+                   ">
+                  <img id="caseLogo" src="assets/logo.png" alt="Logo"
+                       style="width: 50%; height: auto;" />
+                  
+                </div>
+            
+                <div id="hardwareAssetsContainer"
+                     class="case-asset-container mb-10 grid grid-cols-4 gap-1 justify-center items-center h-[33%] p-8"
+                     style="top: auto; bottom: 55%; left: 12%;">
+                </div>
+              </div>
+              
+            </div>
+
+
+        </main>
+           
+           
+           <aside id="rightSidebar"
+                class="hidden md:flex flex-col w-[380px] bg-[#1e40af] text-white p-4 space-y-4 transition-all duration-300 flex-shrink-0 overflow-y-auto scrollbar-hide-vertical">
+                <h2 id="equipmentHeading" class="text-xl text-center font-bold">A/V Equipment</h2>
+                
+                
+                <div class="relative">
+                    
+                    <div class="absolute left-0 top-0 w-8 h-8 bg-gradient-to-r from-[#1e40af] to-transparent z-10 pointer-events-none opacity-0 transition-opacity duration-300" id="leftFade"></div>
+                    
+                    
+                    <nav class="flex gap-1 overflow-x-auto whitespace-nowrap pb-2 scrollbar-hide" id="categoriesNav">
+                        <button
+                            class="category-btn text-xs px-2 h-8 flex-shrink-0 flex items-center justify-center bg-white text-black rounded hover:bg-gray-200 transition-colors"
+                            data-category="Audio" title="Audio">Audio</button>
+                        <button
+                            class="category-btn text-xs px-2 h-8 flex-shrink-0 flex items-center justify-center bg-white text-black rounded hover:bg-gray-200 transition-colors"
+                            data-category="Video" title="Video">Video</button>
+                        <button
+                            class="category-btn text-xs px-2 h-8 flex-shrink-0 flex items-center justify-center bg-white text-black rounded hover:bg-gray-200 transition-colors"
+                            data-category="Lighting" title="Lighting">Lighting</button>
+                            
+                        <button
+                            class="category-btn text-xs px-2 h-8 flex-shrink-0 flex items-center justify-center bg-white text-black rounded hover:bg-gray-200 transition-colors"
+                            data-category="Tech Table Items" title="Tech Table Items">Tech Table</button>
+                        <button
+                            class="category-btn text-xs px-2 h-8 flex-shrink-0 flex items-center justify-center bg-white text-black rounded hover:bg-gray-200 transition-colors"
+                            data-category="Cable Trunk Hardware" title="Cable Trunk Hardware">Cable Trunk</button>
+                    </nav>
+                    
+                    
+                    <div class="absolute right-0 top-0 w-8 h-8 bg-gradient-to-l from-[#1e40af] to-transparent z-10 pointer-events-none" id="rightFade"></div>
+                </div>
+                
+                <div id="assetsContainer" class="grid grid-cols-3 gap-3 pt-2 overflow-y-auto scrollbar-hide-vertical"
+                    style="max-height: 70vh;">
+                </div>
+            </aside>
+
+    </div>
+
+
+    <div id="infoModal" class="modal hidden">
+        <div class="modal-content">
+            <h2 class="text-xl font-bold mb-4">How to Use the Layout</h2>
+            <p class="mb-4 text-left">
+                This layout allows you to:
+            </p>
+            <ul class="mb-4 list-disc pl-5 text-left">
+                <li>Select a floor from the left sidebar to set as the background.</li>
+                <li>Drag and drop assets onto the canvas or click to place them in the tech/hardware areas.</li>
+                <li>Click on assets to select and edit them (scale, flip, z-index adjust, delete) even when zoomed
+                    in/out.</li>
+                <li>Use the zoom buttons to adjust the view (cannot zoom out below the original size).</li>
+                <li>Click the maximize button to view the canvas in full-screen mode.</li>
+            </ul>
+            <button id="closeInfo"
+                class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-300 transition-colors">Close</button>
+        </div>
+    </div>
+    <script src="eid.js"></script>
+</body>
+
+</html>
