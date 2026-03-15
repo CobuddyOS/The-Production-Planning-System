@@ -41,6 +41,9 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useBallrooms } from "@/features/ballrooms/hooks/useBallrooms";
+import { useInventory } from "@/features/inventory/hooks/useInventory";
+import { createClient } from "@/lib/supabase/client";
 
 const inter = Inter({ subsets: ["latin"] });
 const alegreyaSC = Alegreya_SC({ weight: ["400", "700"], subsets: ["latin"] });
@@ -53,37 +56,52 @@ const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>
   "Cable Trunk Hardware": Cable,
 };
 
-const CATEGORIES = [
-  "Audio",
-  "Video",
-  "Lighting",
-  "Tech Table Items",
-  "Cable Trunk Hardware",
-];
-
-const MOCK_ASSETS = [
-  { name: "Speaker A", price: 45, category: "Audio" },
-  { name: "Mic Wireless", price: 25, category: "Audio" },
-  { name: "Mixer 8ch", price: 80, category: "Audio" },
-  { name: "LED Par", price: 35, category: "Lighting" },
-  { name: "Projector", price: 120, category: "Video" },
-  { name: "Stand", price: 15, category: "Tech Table Items" },
-];
+type AtlasCategory = {
+  id: string;
+  name: string;
+};
 
 export default function AxisProductionPage() {
   const [mounted, setMounted] = useState(false);
-  const [leftSidebarOpen, setLeftSidebarOpen] = useState(true);
-  const [rightSidebarOpen, setRightSidebarOpen] = useState(true);
-  const [activeCategory, setActiveCategory] = useState("Audio");
+  const [leftSidebarOpen, setLeftSidebarOpen] = useState(false);
+  const [rightSidebarOpen, setRightSidebarOpen] = useState(false);
+  const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
+  const [atlasCategories, setAtlasCategories] = useState<AtlasCategory[]>([]);
   const [totalDailyAmount, setTotalDailyAmount] = useState("0.00");
   const [numberOfDays, setNumberOfDays] = useState(1);
   const [infoModalOpen, setInfoModalOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const { ballrooms, loading: ballroomsLoading } = useBallrooms();
+  const { inventory, loading: inventoryLoading } = useInventory();
+  const supabase = createClient();
+
   useEffect(() => {
     setMounted(true);
+    fetchCategories();
+
+    // Responsive sidebars: open by default only on desktop
+    if (window.innerWidth >= 1024) {
+      setLeftSidebarOpen(true);
+      setRightSidebarOpen(true);
+    }
   }, []);
+
+  const fetchCategories = async () => {
+    const { data } = await supabase
+      .from("atlas_categories")
+      .select("id, name")
+      .eq("status", "active")
+      .order("name");
+
+    if (data) {
+      setAtlasCategories(data);
+      if (data.length > 0 && !activeCategoryId) {
+        setActiveCategoryId(data[0].id);
+      }
+    }
+  };
 
   if (!mounted) return null;
 
@@ -229,16 +247,36 @@ export default function AxisProductionPage() {
             </div>
 
             <div className="pt-4 border-t border-slate-100">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 block">Recents</span>
+              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 block">Ballrooms</span>
               <div className="space-y-1">
-                {/* Placeholder for recent floor plans */}
-                <div className="p-2 rounded-lg bg-blue-50 text-blue-700 border border-blue-100 flex items-center gap-3 cursor-pointer">
-                  <div className="w-10 h-8 bg-blue-200 rounded shrink-0" />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-xs font-bold truncate">Grand Ballroom A</p>
-                    <p className="text-[10px] opacity-70">1200 sq ft</p>
+                {ballroomsLoading ? (
+                  <div className="flex justify-center p-4">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
                   </div>
-                </div>
+                ) : ballrooms.length === 0 ? (
+                  <p className="text-[10px] text-slate-400 text-center py-4">No ballrooms found</p>
+                ) : (
+                  ballrooms.map((ballroom) => (
+                    <div key={ballroom.id} className="group bg-white border border-slate-100 rounded-xl overflow-hidden hover:border-blue-200 hover:shadow-lg transition-all cursor-pointer mb-3">
+                      <div className="aspect-video w-full bg-slate-50 flex items-center justify-center overflow-hidden border-b border-slate-100">
+                        {ballroom.image ? (
+                          <img src={ballroom.image} alt={ballroom.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        ) : (
+                          <Box className="size-8 text-slate-200" />
+                        )}
+                      </div>
+                      <div className="p-2.5">
+                        <p className="text-xs font-bold text-slate-700 truncate">{ballroom.name}</p>
+                        <div className="flex items-center justify-between mt-1">
+                          <p className="text-[10px] text-slate-400">{ballroom.width} x {ballroom.depth} {ballroom.unit_type}</p>
+                          <Badge variant="outline" className="text-[8px] h-3.5 px-1 font-bold border-slate-200 text-slate-400 capitalize">
+                            {ballroom.unit_type}
+                          </Badge>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           </div>
@@ -295,27 +333,18 @@ export default function AxisProductionPage() {
 
             {/* Bottom Accessories Panel (Tech Table / Case) - Compacted */}
             <div className="flex gap-4 h-48 shrink-0">
-              <div className="flex-[2] bg-slate-200/50 rounded-xl border border-slate-300 relative overflow-hidden group">
-                <div className="absolute top-3 left-4 flex items-center gap-1.5">
-                  <Briefcase className="size-3.5 text-slate-500" />
-                  <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Tech Table</span>
-                </div>
-                <div className="mt-8 flex items-center justify-center h-full opacity-40 grayscale group-hover:grayscale-0 transition-all">
-                  {/* Technical visualization placeholder */}
-                  <div className="w-1/2 aspect-video bg-slate-300 rounded-lg border-2 border-slate-400 flex items-center justify-center font-bold text-slate-500">
-                    Surface
-                  </div>
+              <div className="flex-[2] bg-slate-200/30 rounded-xl border border-slate-300 relative overflow-hidden group">
+
+                <div className="absolute inset-0 flex items-center justify-center p-4 pt-10">
+                  <img src="/axis/table.png" alt="Tech Table" className="h-full w-auto object-contain" />
                 </div>
                 <div id="techAssetsContainer" className="absolute inset-0 flex items-center justify-center gap-2 p-4 pt-10" />
               </div>
 
-              <div className="flex-1 bg-slate-200/50 rounded-xl border border-slate-300 relative overflow-hidden group">
-                <div className="absolute top-3 left-4 flex items-center gap-1.5">
-                  <Box className="size-3.5 text-slate-500" />
-                  <span className="text-[10px] font-bold text-slate-600 uppercase tracking-widest">Cable Box</span>
-                </div>
-                <div className="mt-8 flex items-center justify-center h-full opacity-40 grayscale group-hover:grayscale-0 transition-all">
-                  <div className="w-2/3 h-20 bg-slate-400 rounded border-2 border-slate-500 opacity-30" />
+              <div className="flex-1 bg-slate-200/30 rounded-xl border border-slate-300 relative overflow-hidden group">
+
+                <div className="absolute inset-0 flex items-center justify-center p-4 pt-10">
+                  <img src="/axis/case.png" alt="Cable Case" className="h-full w-auto object-contain" />
                 </div>
                 <div id="hardwareAssetsContainer" className="absolute inset-0 grid grid-cols-3 gap-1.5 p-3 pt-10" />
               </div>
@@ -351,13 +380,13 @@ export default function AxisProductionPage() {
 
           <div className="p-2 bg-white border-b border-slate-100">
             <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide no-scrollbar">
-              {CATEGORIES.map((cat) => {
-                const Icon = CATEGORY_ICONS[cat];
-                const isActive = activeCategory === cat;
+              {atlasCategories.map((cat) => {
+                const Icon = CATEGORY_ICONS[cat.name] || LayoutGrid;
+                const isActive = activeCategoryId === cat.id;
                 return (
                   <button
-                    key={cat}
-                    onClick={() => setActiveCategory(cat)}
+                    key={cat.id}
+                    onClick={() => setActiveCategoryId(cat.id)}
                     className={cn(
                       "px-3 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap transition-all flex items-center gap-1.5",
                       isActive
@@ -366,7 +395,7 @@ export default function AxisProductionPage() {
                     )}
                   >
                     {Icon && <Icon className="size-3" />}
-                    {cat.split(' ')[0]}
+                    {cat.name}
                   </button>
                 );
               })}
@@ -375,25 +404,51 @@ export default function AxisProductionPage() {
 
           <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
             <div className="grid grid-cols-2 gap-3">
-              {MOCK_ASSETS
-                .filter(a => activeCategory === "All" || a.category === activeCategory)
-                .map((asset, i) => (
-                  <div
-                    key={`${activeCategory}-${i}`}
-                    className="group bg-white border border-slate-100 rounded-xl p-3 flex flex-col items-center text-center gap-2 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-500/5 transition-all cursor-grab active:cursor-grabbing"
-                  >
-                    <div className="w-full aspect-square bg-slate-50 rounded-lg flex items-center justify-center border border-slate-100 group-hover:bg-blue-50 transition-colors">
-                      <Box className="size-8 text-slate-300 group-hover:text-blue-200" />
-                    </div>
-                    <div className="w-full">
-                      <p className="text-[11px] font-bold text-slate-700 truncate w-full">{asset.name}</p>
-                      <div className="flex items-center justify-center gap-1 mt-1 text-emerald-600">
-                        <span className="text-[10px] font-bold">${asset.price}</span>
-                        <span className="text-[8px] text-slate-400 font-medium">/ Day</span>
+              {inventoryLoading ? (
+                <div className="col-span-2 flex justify-center p-8">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                </div>
+              ) : (
+                inventory
+                  .filter(item =>
+                    item.approval_status === 'approved' &&
+                    (!activeCategoryId || item.asset?.category_id === activeCategoryId) &&
+                    (!searchQuery || item.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      item.asset?.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                  )
+                  .map((item) => (
+                    <div
+                      key={item.id}
+                      className="group bg-white border border-slate-100 rounded-xl p-3 flex flex-col items-center text-center gap-2 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-500/5 transition-all cursor-grab active:cursor-grabbing"
+                    >
+                      <div className="w-full aspect-square bg-slate-50 rounded-lg flex items-center justify-center border border-slate-100 group-hover:bg-blue-50 transition-colors overflow-hidden">
+                        {item.asset?.image ? (
+                          <img src={item.asset.image} alt={item.title || item.asset.name} className="w-full h-full object-contain" />
+                        ) : (
+                          <Box className="size-8 text-slate-300 group-hover:text-blue-200" />
+                        )}
+                      </div>
+                      <div className="w-full">
+                        <p className="text-[11px] font-bold text-slate-700 truncate w-full">{item.title || item.asset?.name || 'Unknown Item'}</p>
+                        <div className="flex items-center justify-center gap-1 mt-1 text-emerald-600">
+                          <span className="text-[10px] font-bold">${item.pricing || 0}</span>
+                          <span className="text-[8px] text-slate-400 font-medium">/ Day</span>
+                        </div>
                       </div>
                     </div>
+                  ))
+              )}
+              {!inventoryLoading && inventory.filter(item =>
+                item.approval_status === 'approved' &&
+                (!activeCategoryId || item.asset?.category_id === activeCategoryId) &&
+                (!searchQuery || item.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                  item.asset?.name.toLowerCase().includes(searchQuery.toLowerCase()))
+              ).length === 0 && (
+                  <div className="col-span-2 text-center py-8">
+                    <Box className="size-8 text-slate-200 mx-auto mb-2" />
+                    <p className="text-[10px] font-bold text-slate-400 uppercase">No items found</p>
                   </div>
-                ))}
+                )}
             </div>
           </div>
 
