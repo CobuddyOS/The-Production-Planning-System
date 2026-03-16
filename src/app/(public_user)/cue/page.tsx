@@ -59,16 +59,15 @@ export default function CuePage() {
     if (!mounted) return null;
 
     return (
-        <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 md:p-8">
-            <div className="w-full max-w-2xl space-y-8">
+        <div className="min-h-screen bg-[url('/bg-img.png')] bg-cover bg-center bg-fixed text-foreground selection:bg-white/10 selection:text-white flex items-center justify-center p-6 font-montserrat relative">
+            <div className="absolute inset-0 bg-black/60" />
+            <div className="relative z-10 w-full max-w-2xl space-y-8 py-10">
                 {/* Header & Progress */}
                 <div className="flex flex-col items-center text-center space-y-4">
-                    <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center">
-                        <Sparkles className="size-6 text-primary" />
-                    </div>
+
                     <div className="space-y-1">
-                        <h1 className="text-3xl font-bold tracking-tight">Project Cue</h1>
-                        <p className="text-muted-foreground font-medium">Configure your event requirements for the OUL partner.</p>
+                        <h1 className="text-4xl font-extrabold tracking-tight font-orbitron text-white">Project Cue</h1>
+                        <p className="text-white/70 font-orbitron text-sm">Configure your event requirements for the OUL partner.</p>
                     </div>
 
                     <div className="flex items-center gap-4 pt-4">
@@ -89,30 +88,30 @@ export default function CuePage() {
                 </div>
 
                 {step === 1 ? (
-                    <Card className="border shadow-lg bg-muted/30 rounded-3xl overflow-hidden">
-                        <CardHeader className="bg-background/50 border-b p-8">
+                    <Card className="neon-glass-form neon-form border shadow-2xl rounded-[2.5rem] overflow-hidden">
+                        <CardHeader className="bg-white/5 border-b border-white/10 p-8">
                             <div className="flex items-center gap-3">
-                                <div className="p-2 rounded-lg bg-primary/10">
-                                    <Info className="size-4 text-primary" />
+                                <div className="p-2.5 rounded-xl bg-primary/20 backdrop-blur-md border border-primary/20">
+                                    <Info className="size-5 text-primary" />
                                 </div>
                                 <div>
-                                    <CardTitle className="text-lg">Event Specifications</CardTitle>
-                                    <CardDescription>Enter the core details for Ali & Sara Wedding</CardDescription>
+                                    <CardTitle className="text-xl font-orbitron text-white">Event Specifications</CardTitle>
+                                    <CardDescription className="text-white/60">Enter the core details for your project</CardDescription>
                                 </div>
                             </div>
                         </CardHeader>
-                        <CardContent className="p-8 space-y-8 bg-background/20 backdrop-blur-sm">
+                        <CardContent className="p-8 space-y-8">
                             <form onSubmit={handleContinue} className="space-y-8">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                                     {/* Event Name */}
                                     <div className="md:col-span-2 space-y-2">
-                                        <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Event Name</label>
+                                        <label className="text-xs font-bold uppercase tracking-[0.2em] text-white/70 ml-1">Event Name</label>
                                         <div className="relative group">
-                                            <Building2 className="absolute left-3 top-2.5 size-4 text-muted-foreground/50 group-focus-within:text-primary transition-colors" />
+                                            <Building2 className="absolute left-4 top-3.5 size-4 text-white/30 group-focus-within:text-primary transition-colors" />
                                             <Input
                                                 required
                                                 placeholder="e.g. Ali & Sara Wedding"
-                                                className="pl-10 h-10 bg-background border-muted-foreground/20 rounded-xl focus-visible:ring-1 focus-visible:ring-primary shadow-sm"
+                                                className="pl-12 h-12 bg-white/5 border-white/10 rounded-2xl focus-visible:ring-2 focus-visible:ring-primary/50 text-white placeholder:text-white/20 transition-all font-medium"
                                                 value={formData.event_name}
                                                 onChange={(e) => handleChange('event_name', e.target.value)}
                                             />
@@ -121,16 +120,16 @@ export default function CuePage() {
 
                                     {/* Event Type */}
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Event Category</label>
+                                        <label className="text-xs font-bold uppercase tracking-[0.2em] text-white/70 ml-1">Event Category</label>
                                         <Select
                                             required
                                             onValueChange={(v) => handleChange('event_type', v)}
                                             value={formData.event_type}
                                         >
-                                            <SelectTrigger className="h-10 bg-background border-muted-foreground/20 rounded-xl focus:ring-1 focus:ring-primary shadow-sm">
+                                            <SelectTrigger className="h-12 bg-white/5 border-white/10 rounded-2xl focus:ring-2 focus:ring-primary/50 text-white transition-all font-medium">
                                                 <SelectValue placeholder="Select type" />
                                             </SelectTrigger>
-                                            <SelectContent>
+                                            <SelectContent className="bg-zinc-900 border-white/10 rounded-xl">
                                                 <SelectItem value="Wedding">Wedding</SelectItem>
                                                 <SelectItem value="Corporate">Corporate</SelectItem>
                                                 <SelectItem value="Concert">Concert</SelectItem>
@@ -141,13 +140,13 @@ export default function CuePage() {
 
                                     {/* Expected Guests */}
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Expected Guests</label>
+                                        <label className="text-xs font-bold uppercase tracking-[0.2em] text-white/70 ml-1">Expected Guests</label>
                                         <div className="relative group">
-                                            <Users className="absolute left-3 top-2.5 size-4 text-muted-foreground/50 group-focus-within:text-primary transition-colors" />
+                                            <Users className="absolute left-4 top-3.5 size-4 text-white/30 group-focus-within:text-primary transition-colors" />
                                             <Input
                                                 type="number"
                                                 required
-                                                className="pl-10 h-10 bg-background border-muted-foreground/20 rounded-xl focus-visible:ring-1 focus-visible:ring-primary shadow-sm"
+                                                className="pl-12 h-12 bg-white/5 border-white/10 rounded-2xl focus-visible:ring-2 focus-visible:ring-primary/50 text-white transition-all font-medium hide-spinner"
                                                 value={formData.expected_guests}
                                                 onChange={(e) => handleChange('expected_guests', e.target.value)}
                                             />
@@ -155,22 +154,22 @@ export default function CuePage() {
                                     </div>
 
                                     <div className="md:col-span-2">
-                                        <div className="flex items-center gap-2 mb-4">
-                                            <CalendarDays className="size-4 text-primary" />
-                                            <span className="text-xs font-bold uppercase tracking-wider">Date & Time Mapping</span>
-                                            <Separator className="flex-1" />
+                                        <div className="flex items-center gap-3 mb-4">
+                                            <CalendarDays className="size-5 text-primary" />
+                                            <span className="text-[10px] font-black uppercase tracking-[0.3em] text-white/90">Date & Time Mapping</span>
+                                            <Separator className="flex-1 bg-white/10" />
                                         </div>
                                     </div>
 
                                     {/* Event Date */}
                                     <div className="md:col-span-2 space-y-2">
-                                        <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Primary Event Date</label>
+                                        <label className="text-xs font-bold uppercase tracking-[0.2em] text-white/70 ml-1">Primary Event Date</label>
                                         <div className="relative group">
-                                            <Calendar className="absolute left-3 top-2.5 size-4 text-muted-foreground/50 group-focus-within:text-primary transition-colors" />
+                                            <Calendar className="absolute left-4 top-3.5 size-4 text-white/30 group-focus-within:text-primary transition-colors" />
                                             <Input
                                                 type="date"
                                                 required
-                                                className="pl-10 h-10 bg-background border-muted-foreground/20 rounded-xl focus-visible:ring-1 focus-visible:ring-primary shadow-sm"
+                                                className="pl-12 h-12 bg-white/5 border-white/10 rounded-2xl focus-visible:ring-2 focus-visible:ring-primary/50 text-white transition-all font-medium"
                                                 value={formData.event_date}
                                                 onChange={(e) => handleChange('event_date', e.target.value)}
                                             />
@@ -179,21 +178,21 @@ export default function CuePage() {
 
                                     {/* Start/End Dates */}
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Load-in Date</label>
+                                        <label className="text-xs font-bold uppercase tracking-[0.2em] text-white/70 ml-1">Load-in Date</label>
                                         <Input
                                             type="date"
                                             required
-                                            className="h-10 bg-background border-muted-foreground/20 rounded-xl focus-visible:ring-1 focus-visible:ring-primary shadow-sm"
+                                            className="h-12 bg-white/5 border-white/10 rounded-2xl focus-visible:ring-2 focus-visible:ring-primary/50 text-white transition-all font-medium"
                                             value={formData.start_date}
                                             onChange={(e) => handleChange('start_date', e.target.value)}
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Load-out Date</label>
+                                        <label className="text-xs font-bold uppercase tracking-[0.2em] text-white/70 ml-1">Load-out Date</label>
                                         <Input
                                             type="date"
                                             required
-                                            className="h-10 bg-background border-muted-foreground/20 rounded-xl focus-visible:ring-1 focus-visible:ring-primary shadow-sm"
+                                            className="h-12 bg-white/5 border-white/10 rounded-2xl focus-visible:ring-2 focus-visible:ring-primary/50 text-white transition-all font-medium"
                                             value={formData.end_date}
                                             onChange={(e) => handleChange('end_date', e.target.value)}
                                         />
@@ -201,26 +200,26 @@ export default function CuePage() {
 
                                     {/* Start/End Times */}
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Operation Start</label>
+                                        <label className="text-xs font-bold uppercase tracking-[0.2em] text-white/70 ml-1">Start Date</label>
                                         <div className="relative group">
-                                            <Clock className="absolute left-3 top-2.5 size-4 text-muted-foreground/50 group-focus-within:text-primary transition-colors" />
+                                            <Clock className="absolute left-4 top-3.5 size-4 text-white/30 group-focus-within:text-primary transition-colors" />
                                             <Input
                                                 type="time"
                                                 required
-                                                className="pl-10 h-10 bg-background border-muted-foreground/20 rounded-xl focus-visible:ring-1 focus-visible:ring-primary shadow-sm"
+                                                className="pl-12 h-12 bg-white/5 border-white/10 rounded-2xl focus-visible:ring-2 focus-visible:ring-primary/50 text-white transition-all font-medium"
                                                 value={formData.start_time}
                                                 onChange={(e) => handleChange('start_time', e.target.value)}
                                             />
                                         </div>
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground ml-1">Operation Close</label>
+                                        <label className="text-xs font-bold uppercase tracking-[0.2em] text-white/70 ml-1">End Date</label>
                                         <div className="relative group">
-                                            <Clock className="absolute left-3 top-2.5 size-4 text-muted-foreground/50 group-focus-within:text-primary transition-colors" />
+                                            <Clock className="absolute left-4 top-3.5 size-4 text-white/30 group-focus-within:text-primary transition-colors" />
                                             <Input
                                                 type="time"
                                                 required
-                                                className="pl-10 h-10 bg-background border-muted-foreground/20 rounded-xl focus-visible:ring-1 focus-visible:ring-primary shadow-sm"
+                                                className="pl-12 h-12 bg-white/5 border-white/10 rounded-2xl focus-visible:ring-2 focus-visible:ring-primary/50 text-white transition-all font-medium"
                                                 value={formData.end_time}
                                                 onChange={(e) => handleChange('end_time', e.target.value)}
                                             />
@@ -228,55 +227,52 @@ export default function CuePage() {
                                     </div>
                                 </div>
 
-                                <div className="pt-4 border-t border-muted-foreground/10">
-                                    <Button
+                                <div className="pt-8 border-t border-white/10">
+                                    <button
                                         type="submit"
-                                        className="w-full h-11 rounded-xl text-sm font-bold shadow-md shadow-primary/10 transition-all hover:scale-[1.01] active:scale-[0.99] flex items-center justify-center gap-2 group"
+                                        className="w-full btn-primary py-5 text-lg flex items-center justify-center gap-3 group active:scale-[0.98] transition-all"
                                     >
-                                        Continue to Service Mode
-                                        <ChevronRight className="size-4 group-hover:translate-x-0.5 transition-transform" />
-                                    </Button>
-                                    <p className="text-[10px] text-center text-muted-foreground font-medium mt-4">
-                                        Data is stored as a draft until final selection is made.
-                                    </p>
+                                        Continue
+                                        <ChevronRight className="size-5 group-hover:translate-x-1.5 transition-transform" />
+                                    </button>
+
                                 </div>
                             </form>
                         </CardContent>
                     </Card>
                 ) : (
                     <div className="space-y-6">
-                        <Button
-                            variant="ghost"
+                        <button
                             onClick={() => setStep(1)}
-                            className="gap-2 text-muted-foreground hover:text-foreground font-bold uppercase tracking-[0.2em] text-[10px] h-8 -ml-2"
+                            className="group flex items-center gap-2 text-white/50 hover:text-white font-bold uppercase tracking-[0.3em] text-[10px] transition-all cursor-pointer"
                         >
-                            <ArrowLeft className="size-3.5" />
+                            <ArrowLeft className="size-4 group-hover:-translate-x-1 transition-transform" />
                             Return to Configuration
-                        </Button>
+                        </button>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-24">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pb-32">
                             {/* Option Cards */}
                             <button
                                 onClick={() => setServiceMode("production")}
-                                className={`flex flex-col text-left group border rounded-[2rem] transition-all duration-300 overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary p-1 ${serviceMode === "production" ? 'border-primary bg-primary/10' : 'border-border/50 bg-muted/20 hover:bg-muted/40'}`}
+                                className={`flex flex-col text-left group border rounded-[2.5rem] transition-all duration-500 overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary/50 p-1 relative ${serviceMode === "production" ? 'border-primary shadow-[0_0_30px_oklch(0.75_0.18_190_/_0.2)] scale-[1.02]' : 'border-white/10 hover:border-white/30'}`}
                             >
-                                <div className="bg-background rounded-[1.8rem] p-8 flex-1 space-y-6 shadow-sm border border-border/10 group-hover:border-primary/20 transition-colors">
-                                    <div className="size-12 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                                        <Briefcase className="size-6 text-primary" />
+                                <div className="bg-zinc-900/60 backdrop-blur-xl rounded-[2.3rem] p-8 flex-1 space-y-6 shadow-2xl relative z-10">
+                                    <div className="size-16 rounded-2xl bg-primary/20 flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 border border-primary/20 shadow-[0_0_15px_oklch(0.75_0.18_190_/_0.1)]">
+                                        <Briefcase className="size-8 text-primary" />
                                     </div>
-                                    <div className="space-y-2">
+                                    <div className="space-y-3">
                                         <div className="flex items-center justify-between">
-                                            <h3 className="text-xl font-bold">Production</h3>
-                                            <Badge variant="outline" className="text-[9px] font-bold uppercase tracking-widest border-primary/20 bg-primary/5 text-primary">Full Service</Badge>
+                                            <h3 className="text-2xl font-black font-orbitron text-white">Production</h3>
+                                            <Badge className="text-[9px] font-black uppercase tracking-widest border border-primary/30 bg-primary/10 text-primary px-2.5 py-0.5 rounded-full">Full Service</Badge>
                                         </div>
-                                        <p className="text-sm text-muted-foreground leading-relaxed">
+                                        <p className="text-sm text-white/50 leading-relaxed font-medium">
                                             Comprehensive execution including logistics, labor, technical operation, and equipment management.
                                         </p>
                                     </div>
-                                    <ul className="space-y-2 pt-2">
+                                    <ul className="space-y-3 pt-2">
                                         {['Labor included', 'Post-event reports', 'Technical support'].map(item => (
-                                            <li key={item} className="flex items-center gap-2 text-xs font-semibold text-muted-foreground/70">
-                                                <div className="size-1 rounded-full bg-primary/40" />
+                                            <li key={item} className="flex items-center gap-3 text-xs font-bold text-white/40 uppercase tracking-widest">
+                                                <div className="size-1.5 rounded-full bg-primary/60 shadow-[0_0_8px_oklch(0.75_0.18_190_/_0.5)]" />
                                                 {item}
                                             </li>
                                         ))}
@@ -286,25 +282,25 @@ export default function CuePage() {
 
                             <button
                                 onClick={() => setServiceMode("rental")}
-                                className={`flex flex-col text-left group border rounded-[2rem] transition-all duration-300 overflow-hidden focus:outline-none focus:ring-2 focus:ring-zinc-900 p-1 ${serviceMode === "rental" ? 'border-zinc-900 bg-zinc-900/10' : 'border-border/50 bg-zinc-900/5 hover:bg-zinc-900/10'}`}
+                                className={`flex flex-col text-left group border rounded-[2.5rem] transition-all duration-500 overflow-hidden focus:outline-none focus:ring-2 focus:ring-white/50 p-1 relative ${serviceMode === "rental" ? 'border-white shadow-[0_0_30px_rgba(255,255,255,0.1)] scale-[1.02]' : 'border-white/10 hover:border-white/30'}`}
                             >
-                                <div className="bg-background rounded-[1.8rem] p-8 flex-1 space-y-6 shadow-sm border border-border/10 group-hover:border-zinc-900/20 transition-colors">
-                                    <div className="size-12 rounded-2xl bg-zinc-900/5 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                                        <Settings className="size-6 text-zinc-900" />
+                                <div className="bg-zinc-900/60 backdrop-blur-xl rounded-[2.3rem] p-8 flex-1 space-y-6 shadow-2xl relative z-10">
+                                    <div className="size-16 rounded-2xl bg-white/10 flex items-center justify-center group-hover:scale-110 group-hover:-rotate-3 transition-all duration-500 border border-white/10">
+                                        <Settings className="size-8 text-white" />
                                     </div>
-                                    <div className="space-y-2">
+                                    <div className="space-y-3">
                                         <div className="flex items-center justify-between">
-                                            <h3 className="text-xl font-bold">Rental Only</h3>
-                                            <Badge variant="outline" className="text-[9px] font-bold uppercase tracking-widest border-zinc-900/20 bg-zinc-900/5 text-zinc-900">Dry Hire</Badge>
+                                            <h3 className="text-2xl font-black font-orbitron text-white">Rental Only</h3>
+                                            <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest border border-white/30 bg-white/5 text-white px-2.5 py-0.5 rounded-full">Dry Hire</Badge>
                                         </div>
-                                        <p className="text-sm text-muted-foreground leading-relaxed">
+                                        <p className="text-sm text-white/50 leading-relaxed font-medium">
                                             High-quality hardware procurement. You manage the team; we provide the precision tools.
                                         </p>
                                     </div>
-                                    <ul className="space-y-2 pt-2">
+                                    <ul className="space-y-3 pt-2">
                                         {['Equipment only', 'Self-operation', 'Logistics optional'].map(item => (
-                                            <li key={item} className="flex items-center gap-2 text-xs font-semibold text-muted-foreground/70">
-                                                <div className="size-1 rounded-full bg-zinc-900/40" />
+                                            <li key={item} className="flex items-center gap-3 text-xs font-bold text-white/40 uppercase tracking-widest">
+                                                <div className="size-1.5 rounded-full bg-white/40 shadow-[0_0_8px_rgba(255,255,255,0.3)]" />
                                                 {item}
                                             </li>
                                         ))}
@@ -315,20 +311,20 @@ export default function CuePage() {
 
                         {/* Proceed Button Fixed at Bottom Right */}
                         {serviceMode && (
-                            <div className="fixed bottom-10 right-10 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                                <Button
-                                    className="h-14 px-10 rounded-2xl font-bold text-lg shadow-2xl hover:scale-105 active:scale-95 transition-all flex items-center gap-3 group shadow-primary/20"
+                            <div className="fixed bottom-12 right-12 animate-in fade-in zoom-in slide-in-from-bottom-8 duration-700 z-50">
+                                <button
+                                    className="btn-primary h-16 px-12 rounded-[1.8rem] font-black text-xl flex items-center gap-4 group active:scale-95 transition-all shadow-2xl"
                                     onClick={() => window.location.href = `/axis/${serviceMode}`}
                                 >
                                     Proceed to {serviceMode.charAt(0).toUpperCase() + serviceMode.slice(1)} View
-                                    <ChevronRight className="size-5 group-hover:translate-x-1 transition-transform" />
-                                </Button>
+                                    <ChevronRight className="size-6 group-hover:translate-x-1.5 transition-transform" />
+                                </button>
                             </div>
                         )}
 
-                        <div className="flex items-center justify-center gap-2 text-muted-foreground/50 pt-4">
-                            <Settings className="size-3" />
-                            <span className="text-[9px] font-bold uppercase tracking-widest">Enterprise mode selector • Cobuddy Cue System</span>
+                        <div className="flex items-center justify-center gap-3 text-white/20 pt-8">
+                            <Settings className="size-4 animate-spin-slow" />
+                            <span className="text-[10px] font-black uppercase tracking-[0.4em]">Enterprise Selection • Cobuddy Cue System</span>
                         </div>
                     </div>
                 )}

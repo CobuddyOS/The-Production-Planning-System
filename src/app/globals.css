@@ -198,7 +198,6 @@ body {
   /* Redundant if :root is already dark, but kept for compatibility */
   --background: oklch(0.10 0.02 250);
   --foreground: oklch(0.98 0.01 250);
-  /* ... same as above ... */
 }
 
 @theme inline {
@@ -241,6 +240,7 @@ body {
   --radius-2xl: calc(var(--radius) * 1.8);
   --radius-3xl: calc(var(--radius) * 2.2);
   --radius-4xl: calc(var(--radius) * 2.6);
+  --animate-spin-slow: spin 8s linear infinite;
 }
 
 @layer base {
