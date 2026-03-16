@@ -27,7 +27,7 @@ export function AssetDetailsSheet({
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="sm:max-w-[450px] p-0 border-l border-border/50 shadow-2xl overflow-y-auto">
+            <SheetContent className="neon-glass-drawer sm:max-w-[450px] p-0 overflow-y-auto">
                 <div className="h-64 w-full relative bg-muted overflow-hidden">
                     {asset.image ? (
                         <div className="h-full w-full relative">

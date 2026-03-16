@@ -16,7 +16,7 @@ export function BundleDetailsSheet({ bundle }: BundleDetailsSheetProps) {
     if (!bundle) return null;
 
     return (
-        <SheetContent className="sm:max-w-lg overflow-y-auto">
+        <SheetContent className="neon-glass-drawer sm:max-w-lg overflow-y-auto">
             <SheetHeader className="pb-6 px-8 border-b text-left">
                 <div className="flex items-center gap-2 mb-2">
                     <Badge
