@@ -75,17 +75,6 @@ export default function AxisProductionPage() {
   const { inventory, loading: inventoryLoading } = useInventory();
   const supabase = createClient();
 
-  useEffect(() => {
-    setMounted(true);
-    fetchCategories();
-
-    // Responsive sidebars: open by default only on desktop
-    if (window.innerWidth >= 1024) {
-      setLeftSidebarOpen(true);
-      setRightSidebarOpen(true);
-    }
-  }, []);
-
   const fetchCategories = async () => {
     const { data } = await supabase
       .from("atlas_categories")
@@ -100,6 +89,17 @@ export default function AxisProductionPage() {
       }
     }
   };
+
+  useEffect(() => {
+    setMounted(true);
+    fetchCategories();
+
+    // Responsive sidebars: open by default only on desktop
+    if (window.innerWidth >= 1024) {
+      setLeftSidebarOpen(true);
+      setRightSidebarOpen(true);
+    }
+  }, []);
 
   if (!mounted) return null;
 
@@ -119,7 +119,7 @@ export default function AxisProductionPage() {
               height={300}
               className="h-25 w-auto object-contain"
             />
-           
+
           </div>
 
           <div className="flex items-center gap-3">
@@ -237,234 +237,215 @@ export default function AxisProductionPage() {
           {/* Professional Left Sidebar - Ballrooms */}
           <aside
             className={cn(
-              "border-r border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(136,86,255,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0",
+              "mb-4 rounded-2xl overflow-hidden border-r border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(136,86,255,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0",
               leftSidebarOpen ? "w-64" : "w-0 -translate-x-full opacity-0 pointer-events-none"
             )}
           >
-          <div className="p-3 flex items-center justify-between bg-white/5">
-            <span className="text-[11px] font-bold text-white/60 uppercase tracking-widest flex items-center gap-2">
-              <Layers className="size-3.5" />
-              Floor Plans
-            </span>
-            <Button variant="ghost" size="icon" className="size-6 text-white/60 hover:text-white hover:bg-white/10">
-              <Settings className="size-3.5" />
-            </Button>
-          </div>
-
-          <div className="flex-1 overflow-y-auto scrollbar-hide p-3 space-y-4">
-            <div className="space-y-2">
-            <div className="group relative rounded-xl border border-dashed border-white/15 hover:border-purple-300/60 hover:bg-white/5 p-6 flex flex-col items-center justify-center gap-2 transition-all cursor-pointer">
-                <div className="w-10 h-10 rounded-full bg-[radial-gradient(circle_at_top,rgba(168,85,247,0.6),rgba(14,165,233,0.25))] flex items-center justify-center text-white group-hover:scale-110 transition-transform">
-                  <Upload className="size-5" />
-                </div>
-                <div className="text-center">
-                  <p className="text-xs font-bold text-white">Import Drawings</p>
-                  <p className="text-[10px] text-white/60 mt-0.5">DWG, PDF, JPG</p>
-                </div>
-              </div>
+            <div className="p-3 flex items-center justify-between bg-white/5">
+              <span className="text-[11px] font-bold text-white/60 uppercase tracking-widest flex items-center gap-2">
+                <Layers className="size-3.5" />
+                Floor Plans
+              </span>
+              <Button variant="ghost" size="icon" className="size-6 text-white/60 hover:text-white hover:bg-white/10">
+                <Settings className="size-3.5" />
+              </Button>
             </div>
 
-            <div className="pt-4">
-              <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest mb-3 block">Ballrooms</span>
-              <div className="space-y-1">
-                {ballroomsLoading ? (
-                  <div className="flex justify-center p-4">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-300"></div>
+            <div className="flex-1 overflow-y-auto scrollbar-hide p-3 space-y-4">
+              <div className="space-y-2">
+                <div className="group relative rounded-xl border border-dashed border-white/15 hover:border-purple-300/60 hover:bg-white/5 p-6 flex flex-col items-center justify-center gap-2 transition-all cursor-pointer">
+                  <div className="w-10 h-10 rounded-full bg-[radial-gradient(circle_at_top,rgba(168,85,247,0.6),rgba(14,165,233,0.25))] flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+                    <Upload className="size-5" />
                   </div>
-                ) : ballrooms.length === 0 ? (
-                  <p className="text-[10px] text-white/60 text-center py-4">No ballrooms found</p>
-                ) : (
-                  ballrooms.map((ballroom) => (
-                    <div key={ballroom.id} className="group bg-white/5 rounded-xl overflow-hidden shadow-[0_0_18px_rgba(0,0,0,0.35)] hover:shadow-[0_0_28px_rgba(168,85,247,0.18)] transition-all cursor-pointer mb-3">
-                      <div className="aspect-video w-full bg-black/20 flex items-center justify-center overflow-hidden">
-                        {ballroom.image ? (
-                          <img src={ballroom.image} alt={ballroom.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-                        ) : (
-                          <Box className="size-8 text-white/30" />
-                        )}
-                      </div>
-                      <div className="p-2.5">
-                        <p className="text-xs font-bold text-white truncate">{ballroom.name}</p>
-                        <div className="flex items-center justify-between mt-1">
-                          <p className="text-[10px] text-white/60">{ballroom.width} x {ballroom.depth} {ballroom.unit_type}</p>
-                          <Badge variant="outline" className="text-[8px] h-3.5 px-1 font-bold border-white/15 text-white/70 bg-white/5 capitalize">
-                            {ballroom.unit_type}
-                          </Badge>
+                  <div className="text-center">
+                    <p className="text-xs font-bold text-white">Import Drawings</p>
+                    <p className="text-[10px] text-white/60 mt-0.5">DWG, PDF, JPG</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="pt-4">
+                <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest mb-3 block">Ballrooms</span>
+                <div className="space-y-1">
+                  {ballroomsLoading ? (
+                    <div className="flex justify-center p-4">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-300"></div>
+                    </div>
+                  ) : ballrooms.length === 0 ? (
+                    <p className="text-[10px] text-white/60 text-center py-4">No ballrooms found</p>
+                  ) : (
+                    ballrooms.map((ballroom) => (
+                      <div key={ballroom.id} className="group bg-white/5 rounded-xl overflow-hidden shadow-[0_0_18px_rgba(0,0,0,0.35)] hover:shadow-[0_0_28px_rgba(168,85,247,0.18)] transition-all cursor-pointer mb-3">
+                        <div className="aspect-video w-full bg-black/20 flex items-center justify-center overflow-hidden">
+                          {ballroom.image ? (
+                            <img src={ballroom.image} alt={ballroom.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                          ) : (
+                            <Box className="size-8 text-white/30" />
+                          )}
+                        </div>
+                        <div className="p-2.5">
+                          <p className="text-xs font-bold text-white truncate">{ballroom.name}</p>
+                          <div className="flex items-center justify-between mt-1">
+                            <p className="text-[10px] text-white/60">{ballroom.width} x {ballroom.depth} {ballroom.unit_type}</p>
+                            <Badge variant="outline" className="text-[8px] h-3.5 px-1 font-bold border-white/15 text-white/70 bg-white/5 capitalize">
+                              {ballroom.unit_type}
+                            </Badge>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))
-                )}
+                    ))
+                  )}
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="p-3 bg-white/5">
-            <Button variant="ghost" className="w-full justify-start text-[11px] font-bold text-white/60 hover:text-white hover:bg-white/5 h-8 gap-2">
-              <History className="size-3.5" />
-              Version History
-            </Button>
-          </div>
           </aside>
 
           {/* Central Workspace area - Maximize canvas */}
           <main className="flex-1 flex flex-col min-w-0 bg-transparent relative">
 
-          {/* Main Canvas Area */}
-          <div className="flex-1 p-4 flex flex-col gap-4 overflow-hidden">
-            {/* The Actual Canvas Container - Remove inner card padding, maximize space */}
-            <div className="flex-1 overflow-hidden rounded-xl neon-glass-card shadow-[0_0_35px_rgba(168,85,247,0.25)] relative group">
-              {/* Floating Canvas Controls */}
-              <div className="absolute top-4 right-4 flex flex-col gap-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
-                <Button variant="secondary" size="icon" className="bg-white/90 backdrop-blur shadow-md hover:bg-white" onClick={() => { }}>
-                  <Maximize2 className="size-4" />
-                </Button>
-              </div>
-
-              {/* Canvas Ruler/Grid Placeholder */}
-              <div className="absolute inset-0 opacity-[0.06] pointer-events-none"
-                style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
-
-              <div
-                id="myCanvas"
-                className="w-full h-full min-h-[400px]"
-              />
-
-              {/* Selection Properties Overlay (When item is selected) */}
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 p-1.5 bg-black/40 backdrop-blur border border-white/15 rounded-xl shadow-[0_0_24px_rgba(168,85,247,0.25)] z-10 scale-90 md:scale-100">
-                <div className="flex items-center gap-0.5 px-2">
-                  <Button variant="ghost" size="icon" className={toolBtnClass} title="Scale Up"><ArrowUp className="size-3.5" /></Button>
-                  <Button variant="ghost" size="icon" className={toolBtnClass} title="Scale Down"><ArrowDown className="size-3.5" /></Button>
-                  <Separator orientation="vertical" className="h-3 bg-white/20 mx-1" />
-                  <Button variant="ghost" size="icon" className={toolBtnClass} title="Flip"><FlipVertical className="size-3.5" /></Button>
-                  <Button variant="ghost" size="icon" className={toolBtnClass} title="Rotate"><FlipHorizontal className="size-3.5" /></Button>
-                  <Separator orientation="vertical" className="h-3 bg-white/20 mx-1" />
-                  <Button variant="ghost" size="icon" className={toolBtnClass} title="Send Back"><ArrowDownToLine className="size-3.5" /></Button>
-                  <Button variant="ghost" size="icon" className={toolBtnClass} title="Bring Front"><ArrowUpFromLine className="size-3.5" /></Button>
+            {/* Main Canvas Area */}
+            <div className="flex-1 p-4 flex flex-col gap-4 overflow-hidden">
+              {/* The Actual Canvas Container - Remove inner card padding, maximize space */}
+              <div className="flex-1 overflow-hidden rounded-xl neon-glass-card shadow-[0_0_35px_rgba(168,85,247,0.25)] relative group">
+                {/* Floating Canvas Controls */}
+                <div className="absolute top-4 right-4 flex flex-col gap-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Button variant="secondary" size="icon" className="bg-white/90 backdrop-blur shadow-md hover:bg-white" onClick={() => { }}>
+                    <Maximize2 className="size-4" />
+                  </Button>
                 </div>
-                <Separator orientation="vertical" className="h-8 bg-white/20" />
-                <Button variant="ghost" size="icon" className="size-8 text-rose-300 hover:bg-white/10 hover:text-rose-200 rounded-lg">
-                  <Trash2 className="size-4" />
-                </Button>
-              </div>
-            </div>
 
-          </div>
+                {/* Canvas Ruler/Grid Placeholder */}
+                <div className="absolute inset-0 opacity-[0.06] pointer-events-none"
+                  style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
+
+                <div
+                  id="myCanvas"
+                  className="w-full h-full min-h-[400px]"
+                />
+
+                {/* Selection Properties Overlay (When item is selected) */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 p-1.5 bg-black/40 backdrop-blur border border-white/15 rounded-xl shadow-[0_0_24px_rgba(168,85,247,0.25)] z-10 scale-90 md:scale-100">
+                  <div className="flex items-center gap-0.5 px-2">
+                    <Button variant="ghost" size="icon" className={toolBtnClass} title="Scale Up"><ArrowUp className="size-3.5" /></Button>
+                    <Button variant="ghost" size="icon" className={toolBtnClass} title="Scale Down"><ArrowDown className="size-3.5" /></Button>
+                    <Separator orientation="vertical" className="h-3 bg-white/20 mx-1" />
+                    <Button variant="ghost" size="icon" className={toolBtnClass} title="Flip"><FlipVertical className="size-3.5" /></Button>
+                    <Button variant="ghost" size="icon" className={toolBtnClass} title="Rotate"><FlipHorizontal className="size-3.5" /></Button>
+                    <Separator orientation="vertical" className="h-3 bg-white/20 mx-1" />
+                    <Button variant="ghost" size="icon" className={toolBtnClass} title="Send Back"><ArrowDownToLine className="size-3.5" /></Button>
+                    <Button variant="ghost" size="icon" className={toolBtnClass} title="Bring Front"><ArrowUpFromLine className="size-3.5" /></Button>
+                  </div>
+                  <Separator orientation="vertical" className="h-8 bg-white/20" />
+                  <Button variant="ghost" size="icon" className="size-8 text-rose-300 hover:bg-white/10 hover:text-rose-200 rounded-lg">
+                    <Trash2 className="size-4" />
+                  </Button>
+                </div>
+              </div>
+
+            </div>
           </main>
 
           {/* Right Sidebar - High Spec Assets Library */}
           <aside
             className={cn(
-              "border-l border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(136,86,255,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0",
+              "mb-4 rounded-2xl overflow-hidden border-l border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(136,86,255,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0",
               rightSidebarOpen ? "w-[300px]" : "w-0 translate-x-full opacity-0 pointer-events-none"
             )}
           >
-          <div className="p-4 flex flex-col gap-4 bg-white/5">
-            <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-white/60 uppercase tracking-widest flex items-center gap-2">
-                <LayoutGrid className="size-3.5" />
-                Assets Library
-              </span>
-            </div>
+            <div className="p-4 flex flex-col gap-4 bg-white/5">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-white/60 uppercase tracking-widest flex items-center gap-2">
+                  <LayoutGrid className="size-3.5" />
+                  Assets Library
+                </span>
+              </div>
 
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-white/40" />
-              <Input
-                placeholder="Search gear..."
-                className="h-9 pl-9 text-xs bg-white/5 border-white/15 text-white placeholder:text-white/40 shadow-none focus-visible:ring-purple-500/30"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="p-2 bg-white/5">
-            <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide no-scrollbar">
-              {atlasCategories.map((cat) => {
-                const Icon = CATEGORY_ICONS[cat.name] || LayoutGrid;
-                const isActive = activeCategoryId === cat.id;
-                return (
-                  <button
-                    key={cat.id}
-                    onClick={() => setActiveCategoryId(cat.id)}
-                    className={cn(
-                      "px-3 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap transition-all flex items-center gap-1.5",
-                      isActive
-                        ? "bg-white/15 text-white shadow-[0_0_16px_rgba(168,85,247,0.35)]"
-                        : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white"
-                    )}
-                  >
-                    {Icon && <Icon className="size-3" />}
-                    {cat.name}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="flex-1 overflow-y-auto scrollbar-hide p-4">
-            <div className="grid grid-cols-2 gap-3">
-              {inventoryLoading ? (
-                <div className="col-span-2 flex justify-center p-8">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-300"></div>
-                </div>
-              ) : (
-                inventory
-                  .filter(item =>
-                    item.approval_status === 'approved' &&
-                    (!activeCategoryId || item.asset?.category_id === activeCategoryId) &&
-                    (!searchQuery || item.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                      item.asset?.name.toLowerCase().includes(searchQuery.toLowerCase()))
-                  )
-                  .map((item) => (
-                    <div
-                      key={item.id}
-                      className="group bg-white/5 rounded-xl p-3 flex flex-col items-center text-center gap-2 shadow-[0_0_18px_rgba(0,0,0,0.35)] hover:shadow-[0_0_28px_rgba(168,85,247,0.18)] transition-all cursor-grab active:cursor-grabbing"
-                    >
-                      <div className="w-full aspect-square bg-black/20 rounded-lg flex items-center justify-center group-hover:bg-white/5 transition-colors overflow-hidden">
-                        {item.asset?.image ? (
-                          <img src={item.asset.image} alt={item.title || item.asset.name} className="w-full h-full object-contain" />
-                        ) : (
-                          <Box className="size-8 text-white/30 group-hover:text-purple-200" />
-                        )}
-                      </div>
-                      <div className="w-full">
-                        <p className="text-[11px] font-bold text-white truncate w-full">{item.title || item.asset?.name || 'Unknown Item'}</p>
-                        <div className="flex items-center justify-center gap-1 mt-1 text-emerald-300">
-                          <span className="text-[10px] font-bold">${item.pricing || 0}</span>
-                          <span className="text-[8px] text-white/50 font-medium">/ Day</span>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-              )}
-              {!inventoryLoading && inventory.filter(item =>
-                item.approval_status === 'approved' &&
-                (!activeCategoryId || item.asset?.category_id === activeCategoryId) &&
-                (!searchQuery || item.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                  item.asset?.name.toLowerCase().includes(searchQuery.toLowerCase()))
-              ).length === 0 && (
-                  <div className="col-span-2 text-center py-8">
-                    <Box className="size-8 text-white/30 mx-auto mb-2" />
-                    <p className="text-[10px] font-bold text-white/50 uppercase">No items found</p>
-                  </div>
-                )}
-            </div>
-          </div>
-
-          <div className="p-4 bg-white/5">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Active List</span>
-              <span className="text-[10px] font-bold text-purple-200 bg-white/10 px-2 py-0.5 rounded-full">3 Items</span>
-            </div>
-            <div className="space-y-2">
-              {/* Small summary line items */}
-              <div className="flex items-center justify-between text-[11px]">
-                <span className="text-white/70 font-medium truncate flex-1">Wireless Mic System</span>
-                <span className="font-bold text-white">$25.00</span>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-white/40" />
+                <Input
+                  placeholder="Search gear..."
+                  className="h-9 pl-9 text-xs bg-white/5 border-white/15 text-white placeholder:text-white/40 shadow-none focus-visible:ring-purple-500/30"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
               </div>
             </div>
-          </div>
+
+            <div className="p-2 bg-white/5">
+              <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide no-scrollbar">
+                {atlasCategories.map((cat) => {
+                  const Icon = CATEGORY_ICONS[cat.name] || LayoutGrid;
+                  const isActive = activeCategoryId === cat.id;
+                  return (
+                    <button
+                      key={cat.id}
+                      onClick={() => setActiveCategoryId(cat.id)}
+                      className={cn(
+                        "px-3 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap transition-all flex items-center gap-1.5",
+                        isActive
+                          ? "bg-white/15 text-white shadow-[0_0_16px_rgba(168,85,247,0.35)]"
+                          : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white"
+                      )}
+                    >
+                      {Icon && <Icon className="size-3" />}
+                      {cat.name}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto scrollbar-hide p-4">
+              <div className="grid grid-cols-2 gap-3">
+                {inventoryLoading ? (
+                  <div className="col-span-2 flex justify-center p-8">
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-300"></div>
+                  </div>
+                ) : (
+                  inventory
+                    .filter(item =>
+                      item.approval_status === 'approved' &&
+                      (!activeCategoryId || item.asset?.category_id === activeCategoryId) &&
+                      (!searchQuery || item.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                        item.asset?.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                    )
+                    .map((item) => (
+                      <div
+                        key={item.id}
+                        className="group bg-white/5 rounded-xl p-3 flex flex-col items-center text-center gap-2 shadow-[0_0_18px_rgba(0,0,0,0.35)] hover:shadow-[0_0_28px_rgba(168,85,247,0.18)] transition-all cursor-grab active:cursor-grabbing"
+                      >
+                        <div className="w-full aspect-square bg-black/20 rounded-lg flex items-center justify-center group-hover:bg-white/5 transition-colors overflow-hidden">
+                          {item.asset?.image ? (
+                            <img src={item.asset.image} alt={item.title || item.asset.name} className="w-full h-full object-contain" />
+                          ) : (
+                            <Box className="size-8 text-white/30 group-hover:text-purple-200" />
+                          )}
+                        </div>
+                        <div className="w-full">
+                          <p className="text-[11px] font-bold text-white truncate w-full">{item.title || item.asset?.name || 'Unknown Item'}</p>
+                          <div className="flex items-center justify-center gap-1 mt-1 text-emerald-300">
+                            <span className="text-[10px] font-bold">${item.pricing || 0}</span>
+                            <span className="text-[8px] text-white/50 font-medium">/ Day</span>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                )}
+                {!inventoryLoading && inventory.filter(item =>
+                  item.approval_status === 'approved' &&
+                  (!activeCategoryId || item.asset?.category_id === activeCategoryId) &&
+                  (!searchQuery || item.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                    item.asset?.name.toLowerCase().includes(searchQuery.toLowerCase()))
+                ).length === 0 && (
+                    <div className="col-span-2 text-center py-8">
+                      <Box className="size-8 text-white/30 mx-auto mb-2" />
+                      <p className="text-[10px] font-bold text-white/50 uppercase">No items found</p>
+                    </div>
+                  )}
+              </div>
+            </div>
+
           </aside>
         </div>
 
@@ -563,7 +544,7 @@ export default function AxisProductionPage() {
                 className="w-full mt-8 bg-blue-600 hover:bg-blue-700 h-10 font-bold"
                 onClick={() => setInfoModalOpen(false)}
               >
-                Got it, let's build
+                Got it, let&apos;s build
               </Button>
             </div>
           </Card>
