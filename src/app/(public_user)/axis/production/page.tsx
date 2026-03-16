@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import {
   ChevronLeft,
   ChevronRight,
@@ -124,7 +125,14 @@ export default function AxisProductionPage() {
       <header className="flex flex-col shrink-0 z-30">
         {/* Dynamic Context Toolbar */}
         <Card className="flex flex-row items-center justify-between px-4 py-1.5 rounded-none h-12 border-0 !shadow-none !bg-[linear-gradient(90deg,rgba(6,10,18,0.7),rgba(10,36,54,0.45),rgba(6,10,18,0.7))]">
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2 mt-2">
+            <Image
+              src="/cobuddy_logo.png"
+              alt="Cobuddy"
+              width={300}
+              height={300}
+              className="h-20 w-auto object-contain"
+            />
             <Button
               variant="ghost"
               size="icon"
@@ -249,9 +257,9 @@ export default function AxisProductionPage() {
 
                 {/* Selection Properties Overlay (When item is selected) */}
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 p-1.5 bg-black/40 backdrop-blur border border-white/15 rounded-xl shadow-[0_0_24px_rgba(34,197,94,0.25)] z-10 scale-90 md:scale-100">
-                  <div className="flex items-center gap-0.5 px-2">
-                    <Button variant="ghost" size="icon" className={toolBtnClass} title="Scale Up"><ArrowUp className="size-3.5" /></Button>
-                    <Button variant="ghost" size="icon" className={toolBtnClass} title="Scale Down"><ArrowDown className="size-3.5" /></Button>
+                <div className="flex items-center gap-0.5 px-2">
+                  <Button variant="ghost" size="icon" className={toolBtnClass} title="Scale Up"><ArrowUp className="size-3.5" /></Button>
+                  <Button variant="ghost" size="icon" className={toolBtnClass} title="Scale Down"><ArrowDown className="size-3.5" /></Button>
                     <Separator orientation="vertical" className="h-3 bg-white/20 mx-1" />
                     <Button variant="ghost" size="icon" className={toolBtnClass} title="Flip"><FlipVertical className="size-3.5" /></Button>
                     <Button variant="ghost" size="icon" className={toolBtnClass} title="Rotate"><FlipHorizontal className="size-3.5" /></Button>
