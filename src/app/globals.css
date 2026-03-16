@@ -92,8 +92,12 @@ body {
   }
 
   .neon-glass-drawer {
-    background:
-      linear-gradient(140deg, oklch(0.72 0.2 190 / 0.32) 0%, oklch(0.14 0.05 260 / 0.9) 55%, oklch(0.75 0.18 190 / 0.2) 100%) !important;
+    background-image:
+      linear-gradient(140deg, oklch(0.72 0.2 190 / 0.32) 0%, oklch(0.14 0.05 260 / 0.9) 55%, oklch(0.75 0.18 190 / 0.2) 100%),
+      url("/bg-img.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
     border: 1px solid oklch(0.78 0.18 190 / 0.3);
     box-shadow:
       0 0 24px oklch(0.75 0.18 190 / 0.45),

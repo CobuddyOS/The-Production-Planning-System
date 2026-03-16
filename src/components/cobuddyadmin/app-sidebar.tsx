@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Circle, Command, Map } from "lucide-react";
+import { Circle, Map } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -37,7 +37,7 @@ export function CobuddyAdminSidebar({
     return (
         <Sidebar
             variant="inset"
-            className="border-r border-white/5 bg-sidebar/50 backdrop-blur-xl"
+            className="border-r border-white/5 bg-gradient-to-t from-black/60 via-sidebar/40 to-sidebar/10 backdrop-blur-xl"
             {...props}
         >
             <SidebarHeader className="border-b border-white/5 pb-2">
@@ -45,12 +45,13 @@ export function CobuddyAdminSidebar({
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild className="hover:bg-white/5 transition-colors">
                             <Link href="/platform">
-                                <div className="flex aspect-square size-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-blue-600 text-white shadow-[0_0_15px_oklch(0.75_0.18_190_/_0.4)]">
-                                    <Command className="size-5" />
-                                </div>
-                                <div className="grid flex-1 text-left text-sm leading-tight ml-2">
-                                    <span className="truncate font-bold tracking-tight text-white">Cobuddy Admin</span>
-                                    <span className="truncate text-[10px] uppercase tracking-widest text-primary font-bold">System OS</span>
+                                <div className="flex h-10 w-full items-center justify-center">
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                        src="/cobuddy_logo.png"
+                                        alt="Cobuddy"
+                                        className="h-25 w-auto object-contain"
+                                    />
                                 </div>
                             </Link>
                         </SidebarMenuButton>
@@ -90,4 +91,3 @@ export function CobuddyAdminSidebar({
         </Sidebar>
     );
 }
-
