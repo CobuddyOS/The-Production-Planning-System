@@ -77,8 +77,12 @@ body {
   }
 
   .neon-glass-form {
-    background:
-      linear-gradient(140deg, oklch(0.75 0.2 190 / 0.6) 0%, oklch(0.12 0.04 260 / 0.95) 55%, oklch(0.78 0.18 190 / 0.45) 100%) !important;
+    background-image:
+      linear-gradient(140deg, oklch(0.75 0.2 190 / 0.6) 0%, oklch(0.12 0.04 260 / 0.95) 55%, oklch(0.78 0.18 190 / 0.45) 100%),
+      url("/bg-img.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
     border: 1px solid oklch(0.8 0.2 190 / 0.45);
     box-shadow:
       0 0 26px oklch(0.75 0.18 190 / 0.5),
