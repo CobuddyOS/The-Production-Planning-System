@@ -1,79 +1,52 @@
+ "use client";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Plus, Package, Layers, Grid, Zap, Activity, ChevronRight, Layout } from "lucide-react";
+import { useAtlasAssets } from "@/features/atlas/assets";
+import { useAtlasCategories } from "@/features/atlas/categories";
+import { useAtlasBundles } from "@/features/atlas/bundles";
 
-const overviewStats = {
-    totalAssets: 248,
-    totalCategories: 19,
-    totalBundles: 34,
-    recentAssets: 12,
-};
-
-const recentAssets = [
-    {
-        id: "A-1023",
-        name: "LED Uplight Pro",
-        category: "Lighting",
-        status: "Active",
-        createdAt: "2026-03-08",
-    },
-    {
-        id: "A-0982",
-        name: "Wireless Handheld Mic",
-        category: "Audio",
-        status: "Active",
-        createdAt: "2026-03-06",
-    },
-    {
-        id: "A-0871",
-        name: "4K Projector 6K Lumens",
-        category: "Visual",
-        status: "Draft",
-        createdAt: "2026-03-05",
-    },
-    {
-        id: "A-0799",
-        name: "Truss Corner Block",
-        category: "Rigging",
-        status: "Active",
-        createdAt: "2026-03-02",
-    },
-];
-
-const recentActivity = [
-    {
-        id: 1,
-        type: "asset_created",
-        title: "New asset created",
-        description: "“LED Uplight Pro” added to Lighting",
-        timestamp: "5 minutes ago",
-    },
-    {
-        id: 2,
-        type: "bundle_updated",
-        title: "Bundle updated",
-        description: "“Wedding Lighting Package” now includes 16 fixtures",
-        timestamp: "32 minutes ago",
-    },
-    {
-        id: 3,
-        type: "category_created",
-        title: "Category created",
-        description: "“Special FX” category created",
-        timestamp: "Today, 09:12",
-    },
-    {
-        id: 4,
-        type: "asset_archived",
-        title: "Asset archived",
-        description: "Legacy smoke machine marked inactive",
-        timestamp: "Yesterday, 18:23",
-    },
-];
+function formatDate(dateString: string) {
+    try {
+        return new Date(dateString).toLocaleDateString();
+    } catch {
+        return dateString;
+    }
+}
 
 export default function AtlasPage() {
+    const { assets, loading: assetsLoading } = useAtlasAssets();
+    const { categories, loading: categoriesLoading } = useAtlasCategories();
+    const { bundles, loading: bundlesLoading } = useAtlasBundles();
+
+    const recentAssets = assets.slice(0, 6);
+
+    const overviewStats = {
+        totalAssets: assets.length,
+        totalCategories: categories.length,
+        totalBundles: bundles.length,
+        recentAssets: recentAssets.length,
+    };
+
+    const recentActivity = [
+        ...assets.slice(0, 2).map((asset) => ({
+            id: asset.id,
+            type: "asset_created" as const,
+            title: "Asset created",
+            description: `“${asset.name}” added to ${asset.atlas_categories?.name || "Atlas"}`,
+            timestamp: formatDate(asset.created_at),
+        })),
+        ...bundles.slice(0, 2).map((bundle) => ({
+            id: bundle.id,
+            type: "bundle_created" as const,
+            title: "Bundle created",
+            description: `“${bundle.name}” bundle configured`,
+            timestamp: formatDate(bundle.created_at),
+        })),
+    ];
     return (
         <div className="space-y-6">
             <div className="flex flex-wrap items-center justify-between gap-4">
@@ -83,20 +56,7 @@ export default function AtlasPage() {
                         Central management for global assets, categories, and bundles.
                     </p>
                 </div>
-                <div className="flex flex-wrap gap-2">
-                    <Button size="sm" variant="outline" className="gap-2">
-                        <Plus className="h-4 w-4" />
-                        Create Category
-                    </Button>
-                    <Button size="sm" variant="outline" className="gap-2">
-                        <Plus className="h-4 w-4" />
-                        Create Bundle
-                    </Button>
-                    <Button size="sm" className="gap-2 shadow-lg shadow-primary/20">
-                        <Package className="h-4 w-4" />
-                        Add Asset
-                    </Button>
-                </div>
+                
             </div>
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -104,7 +64,7 @@ export default function AtlasPage() {
                     { title: "Total Assets", value: overviewStats.totalAssets, icon: Package, desc: "Across all categories", color: "text-blue-500", bg: "bg-blue-500/10" },
                     { title: "Total Categories", value: overviewStats.totalCategories, icon: Grid, desc: "Logical asset groups", color: "text-emerald-500", bg: "bg-emerald-500/10" },
                     { title: "Total Bundles", value: overviewStats.totalBundles, icon: Layers, desc: "Reusable packages", color: "text-purple-500", bg: "bg-purple-500/10" },
-                    { title: "Recently Added", value: overviewStats.recentAssets, icon: Zap, desc: "Added last 7 days", color: "text-amber-500", bg: "bg-amber-500/10" },
+                    { title: "Recently Added", value: overviewStats.recentAssets, icon: Zap, desc: "Most recent assets", color: "text-amber-500", bg: "bg-amber-500/10" },
                 ].map((stat, i) => (
                     <Card key={i} className="border-none shadow-sm bg-muted/30">
                         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
@@ -130,9 +90,7 @@ export default function AtlasPage() {
                             <Activity className="h-5 w-5 text-primary" />
                             Recent Asset Definitions
                         </CardTitle>
-                        <Button size="xs" variant="ghost" className="text-primary hover:bg-primary/5 gap-1">
-                            View library <ChevronRight className="h-4 w-4" />
-                        </Button>
+                       
                     </CardHeader>
                     <CardContent className="p-0">
                         <div className="border-t">
@@ -146,25 +104,37 @@ export default function AtlasPage() {
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody className="bg-background/50">
-                                    {recentAssets.map((asset) => (
+                                    {assetsLoading && recentAssets.length === 0 ? (
+                                        <TableRow>
+                                            <TableCell colSpan={4} className="text-center py-10 text-muted-foreground">
+                                                Loading recent assets...
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : recentAssets.length === 0 ? (
+                                        <TableRow>
+                                            <TableCell colSpan={4} className="text-center py-10 text-muted-foreground">
+                                                No assets found. Create an asset to see it here.
+                                            </TableCell>
+                                        </TableRow>
+                                    ) : recentAssets.map((asset) => (
                                         <TableRow key={asset.id} className="hover:bg-muted/30 transition-colors">
                                             <TableCell className="font-medium pl-6">{asset.name}</TableCell>
                                             <TableCell>
                                                 <Badge variant="outline" className="font-normal border-primary/20 bg-primary/5 text-primary">
-                                                    {asset.category}
+                                                    {asset.atlas_categories?.name || "Uncategorized"}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell>
                                                 <Badge
-                                                    className={asset.status === "Active"
+                                                    className={asset.status === "active"
                                                         ? "bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20 border-emerald-500/20"
                                                         : "bg-red-500/10 text-red-600 hover:bg-red-500/20 border-red-500/20"}
                                                 >
-                                                    {asset.status}
+                                                    {asset.status.charAt(0).toUpperCase() + asset.status.slice(1)}
                                                 </Badge>
                                             </TableCell>
                                             <TableCell className="text-right text-xs text-muted-foreground font-mono pr-6">
-                                                {asset.createdAt}
+                                                {formatDate(asset.created_at)}
                                             </TableCell>
                                         </TableRow>
                                     ))}
@@ -182,7 +152,11 @@ export default function AtlasPage() {
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
-                        {recentActivity.map((item, i) => (
+                        {(assetsLoading || bundlesLoading) && recentActivity.length === 0 ? (
+                            <p className="text-sm text-muted-foreground">Loading activity...</p>
+                        ) : recentActivity.length === 0 ? (
+                            <p className="text-sm text-muted-foreground">No recent activity yet.</p>
+                        ) : recentActivity.map((item, i) => (
                             <div key={item.id} className="relative flex gap-4">
                                 {i !== recentActivity.length - 1 && (
                                     <div className="absolute left-2.5 top-8 bottom-0 w-px bg-border" />
