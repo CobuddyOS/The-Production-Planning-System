@@ -2,10 +2,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 export default function RequestsPage() {
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 font-montserrat">
             <div>
-                <h2 className="text-3xl font-bold tracking-tight">Requests</h2>
-                <p className="text-muted-foreground">View and manage all incoming requests.</p>
+                <h2 className="text-2xl md:text-3xl font-semibold tracking-tight font-orbitron">REQUESTS HUB</h2>
+                <p className="text-sm text-muted-foreground font-orbitron">View and manage all incoming requests.</p>
             </div>
             <Card>
                 <CardHeader>

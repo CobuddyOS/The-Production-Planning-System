@@ -4,10 +4,10 @@ import { Button } from "@/components/ui/button";
 
 export default function SettingsPage() {
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 font-montserrat">
             <div>
-                <h2 className="text-3xl font-bold tracking-tight">Settings</h2>
-                <p className="text-muted-foreground">Manage your nexus dashboard preferences.</p>
+                <h2 className="text-2xl md:text-3xl font-semibold tracking-tight font-orbitron">SETTINGS HUB</h2>
+                <p className="text-sm text-muted-foreground font-orbitron">Manage your nexus dashboard preferences.</p>
             </div>
             <Card>
                 <CardHeader>

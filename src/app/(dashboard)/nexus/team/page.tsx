@@ -26,11 +26,11 @@ export default function TeamPage() {
     const [memberToRemove, setMemberToRemove] = useState<TeamMember | null>(null);
 
     return (
-        <div className="flex flex-col gap-6">
+        <div className="flex flex-col gap-6 font-montserrat">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Team</h2>
-                    <p className="text-muted-foreground">
+                    <h2 className="text-2xl md:text-3xl font-semibold tracking-tight font-orbitron">TEAM HUB</h2>
+                    <p className="text-sm text-muted-foreground font-orbitron">
                         Manage your team members and roles for this tenant.
                     </p>
                 </div>

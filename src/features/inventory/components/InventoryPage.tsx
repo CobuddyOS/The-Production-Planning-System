@@ -116,11 +116,11 @@ export function InventoryPage() {
     };
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 font-montserrat">
             <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-2xl font-bold tracking-tight">Inventory Hub</h2>
-                    <p className="text-sm text-muted-foreground">
+                    <h2 className="text-2xl md:text-3xl font-semibold tracking-tight font-orbitron">INVENTORY HUB</h2>
+                    <p className="text-sm text-muted-foreground font-orbitron">
                         Import global assets and manage your warehouse operations.
                     </p>
                 </div>
@@ -128,28 +128,28 @@ export function InventoryPage() {
 
             {/* Toolbar */}
             <div className="flex flex-col md:flex-row gap-3 items-start md:items-center justify-between">
-                <div className="flex p-1 bg-muted/40 rounded-lg w-fit border border-border/50">
+                <div className="flex flex-wrap items-center gap-2 border-b pb-2 text-sm">
                     <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => setActiveTab("catalog")}
-                        className={`h-8 px-4 text-xs font-medium gap-2 transition-all cursor-pointer rounded-md ${activeTab === "catalog"
-                            ? "bg-background text-foreground shadow-sm"
-                            : "text-muted-foreground hover:text-foreground"
+                        className={`inline-flex items-center rounded-full px-3 py-1.5 text-xs font-medium transition-colors neon-pill hover:text-white ${activeTab === "catalog"
+                            ? "neon-pill-active"
+                            : ""
                             }`}
                     >
-                        <Store className="size-3.5" /> Global Catalog
+                        Global Catalog
                     </Button>
                     <Button
                         variant="ghost"
                         size="sm"
                         onClick={() => setActiveTab("warehouse")}
-                        className={`h-8 px-4 text-xs font-medium gap-2 transition-all cursor-pointer rounded-md ${activeTab === "warehouse"
-                            ? "bg-background text-foreground shadow-sm"
-                            : "text-muted-foreground hover:text-foreground"
+                        className={`inline-flex items-center rounded-full px-3 py-1.5 text-xs font-medium transition-colors neon-pill hover:text-white ${activeTab === "warehouse"
+                            ? "neon-pill-active"
+                            : ""
                             }`}
                     >
-                        <Box className="size-3.5" /> My Warehouse
+                        My Warehouse
                         {inventory.length > 0 && (
                             <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-[10px] font-semibold bg-primary/10 text-primary border-none">
                                 {inventory.length}
