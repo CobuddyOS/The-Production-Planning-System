@@ -169,7 +169,7 @@ export function BallroomFormDialog({
     };
 
     return (
-        <DialogContent className="neon-glass-card sm:max-w-[700px] overflow-hidden flex flex-col p-0">
+        <DialogContent className="neon-glass-form neon-form sm:max-w-[700px] overflow-hidden flex flex-col p-0">
             <form onSubmit={handleSubmit}>
                 <DialogHeader className="p-6 pb-2 text-left">
                     <DialogTitle className="text-xl">
@@ -179,7 +179,7 @@ export function BallroomFormDialog({
                         Define the physical dimensions and core specifications for this ballroom template.
                     </DialogDescription>
                 </DialogHeader>
-                <div className="p-6 space-y-6 overflow-y-auto max-h-[75vh]">
+                <div className="p-6 space-y-6 overflow-y-auto max-h-[75vh] scrollbar-hide">
                     {error && (
                         <div className="p-3 text-sm bg-red-500/10 border border-red-500/20 text-red-600 rounded-md flex items-center gap-2">
                             <AlertCircleIcon className="size-4" />

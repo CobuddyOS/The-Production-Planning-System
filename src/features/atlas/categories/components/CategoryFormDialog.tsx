@@ -80,7 +80,7 @@ export function CategoryFormDialog({
     };
 
     return (
-        <DialogContent className="neon-glass-card sm:max-w-[500px] overflow-hidden flex flex-col p-0">
+        <DialogContent className="neon-glass-form neon-form sm:max-w-[500px] overflow-hidden flex flex-col p-0">
             <form onSubmit={handleSubmit}>
                 <DialogHeader className="p-6 pb-2 text-left">
                     <DialogTitle className="text-xl">
@@ -92,7 +92,7 @@ export function CategoryFormDialog({
                             : "Define a new global category for Atlas assets. Tenants will use these for their inventory."}
                     </DialogDescription>
                 </DialogHeader>
-                <div className="p-6 space-y-5 overflow-y-auto max-h-[70vh]">
+                <div className="p-6 space-y-5 overflow-y-auto max-h-[70vh] scrollbar-hide">
                     {error && (
                         <div className="p-3 text-sm bg-red-500/10 border border-red-500/20 text-red-600 rounded-md flex items-center gap-2">
                             <AlertCircleIcon className="size-4" />

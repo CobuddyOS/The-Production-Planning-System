@@ -45,7 +45,7 @@ export function AssetSelectionDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="neon-glass-card sm:max-w-[750px] max-h-[85vh] flex flex-col p-0 overflow-hidden rounded-xl">
+            <DialogContent className="neon-glass-form neon-form sm:max-w-[750px] max-h-[85vh] flex flex-col p-0 overflow-hidden rounded-xl">
                 <DialogHeader className="p-6 pb-2 bg-muted/20 text-left">
                     <DialogTitle className="text-xl font-bold flex items-center gap-2">
                         <Package className="size-5 text-primary" />
@@ -89,7 +89,7 @@ export function AssetSelectionDialog({
                     </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto p-6 pt-4">
+                <div className="flex-1 overflow-y-auto p-6 pt-4 scrollbar-hide">
                     {loading ? (
                         <div className="flex flex-col items-center justify-center py-20 text-muted-foreground">
                             <Package className="size-10 animate-pulse mb-4 opacity-20" />
