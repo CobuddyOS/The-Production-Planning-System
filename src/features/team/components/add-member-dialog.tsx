@@ -63,7 +63,7 @@ export function AddMemberDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent showCloseButton className="sm:max-w-md">
+            <DialogContent showCloseButton className="neon-glass-form neon-form sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>Add team member</DialogTitle>
                     <DialogDescription>

@@ -108,6 +108,7 @@ body {
 
   .neon-form [data-slot="input"],
   .neon-form input,
+  .neon-form select,
   .neon-form textarea,
   .neon-form [data-slot="select-trigger"] {
     background:
@@ -127,6 +128,7 @@ body {
 
   .neon-form [data-slot="input"]:focus-visible,
   .neon-form input:focus-visible,
+  .neon-form select:focus-visible,
   .neon-form textarea:focus-visible,
   .neon-form [data-slot="select-trigger"]:focus-visible {
     border-color: oklch(0.8 0.22 315 / 0.75) !important;

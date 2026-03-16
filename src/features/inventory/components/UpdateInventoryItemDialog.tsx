@@ -90,7 +90,7 @@ export function UpdateInventoryItemDialog({
     };
 
     return (
-        <DialogContent className="sm:max-w-[700px] overflow-hidden flex flex-col p-0 border-none shadow-2xl">
+        <DialogContent className="neon-glass-form neon-form sm:max-w-[700px] overflow-hidden flex flex-col p-0">
             <form onSubmit={handleSubmit}>
                 <DialogHeader className="p-6 pb-2 bg-muted/20 text-left relative">
                     <div className="flex items-center gap-4 mb-2">
@@ -106,7 +106,7 @@ export function UpdateInventoryItemDialog({
                     </div>
                 </DialogHeader>
 
-                <div className="p-6 space-y-6 overflow-y-auto max-h-[70vh]">
+                <div className="p-6 space-y-6 overflow-y-auto max-h-[70vh] scrollbar-hide">
                     {error && (
                         <div className="p-3 text-sm bg-red-500/10 border border-red-500/20 text-red-600 rounded-md flex items-center gap-2">
                             <AlertCircleIcon className="size-4" />

@@ -53,7 +53,7 @@ export function UpdateBallroomDialog({ ballroom, onSuccess, onCancel }: UpdateBa
     };
 
     return (
-        <DialogContent className="max-w-2xl p-0 overflow-hidden border-none shadow-2xl bg-background rounded-3xl">
+        <DialogContent className="neon-glass-form neon-form max-w-2xl p-0 overflow-hidden rounded-3xl">
             <DialogHeader className="sr-only">
                 <DialogTitle>Edit {ballroom.name}</DialogTitle>
                 <DialogDescription>Update the specifications and details of your local ballroom space.</DialogDescription>
@@ -85,7 +85,7 @@ export function UpdateBallroomDialog({ ballroom, onSuccess, onCancel }: UpdateBa
                     </div>
                 </div>
 
-                <div className="flex-1 overflow-y-auto px-6 pt-6">
+                <div className="flex-1 overflow-y-auto px-6 pt-6 scrollbar-hide">
                     <div className="space-y-6 pb-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             {/* Name & Specs */}
@@ -101,7 +101,7 @@ export function UpdateBallroomDialog({ ballroom, onSuccess, onCancel }: UpdateBa
                                         placeholder="e.g. Grand Ballroom A"
                                         value={name}
                                         onChange={(e) => setName(e.target.value)}
-                                        className="h-10 rounded-xl bg-muted/30 border-none focus-visible:ring-primary font-bold"
+                                        className="h-10 rounded-xl font-bold"
                                     />
                                 </div>
 
@@ -114,7 +114,7 @@ export function UpdateBallroomDialog({ ballroom, onSuccess, onCancel }: UpdateBa
                                             type="number"
                                             value={capacity}
                                             onChange={(e) => setCapacity(e.target.value)}
-                                            className="h-10 rounded-xl bg-muted/30 border-none focus-visible:ring-primary font-bold"
+                                            className="h-10 rounded-xl font-bold"
                                         />
                                     </div>
                                     <div className="space-y-2">
@@ -122,7 +122,7 @@ export function UpdateBallroomDialog({ ballroom, onSuccess, onCancel }: UpdateBa
                                             Status
                                         </label>
                                         <Select value={status} onValueChange={(v: any) => setStatus(v)}>
-                                            <SelectTrigger className="h-10 rounded-xl bg-muted/30 border-none focus-visible:ring-primary font-bold">
+                                            <SelectTrigger className="h-10 rounded-xl font-bold">
                                                 <SelectValue placeholder="Status" />
                                             </SelectTrigger>
                                             <SelectContent className="rounded-xl border-border/40 shadow-xl">
@@ -149,7 +149,7 @@ export function UpdateBallroomDialog({ ballroom, onSuccess, onCancel }: UpdateBa
                                             type="number"
                                             value={width}
                                             onChange={(e) => setWidth(e.target.value)}
-                                            className="h-10 rounded-xl bg-muted/30 border-none focus-visible:ring-primary font-bold"
+                                            className="h-10 rounded-xl font-bold"
                                         />
                                     </div>
                                     <div className="col-span-1 space-y-2">
@@ -158,13 +158,13 @@ export function UpdateBallroomDialog({ ballroom, onSuccess, onCancel }: UpdateBa
                                             type="number"
                                             value={depth}
                                             onChange={(e) => setDepth(e.target.value)}
-                                            className="h-10 rounded-xl bg-muted/30 border-none focus-visible:ring-primary font-bold"
+                                            className="h-10 rounded-xl font-bold"
                                         />
                                     </div>
                                     <div className="col-span-1 space-y-2">
                                         <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Unit</label>
                                         <Select value={unitType} onValueChange={(v: any) => setUnitType(v)}>
-                                            <SelectTrigger className="h-10 rounded-xl bg-muted/30 border-none focus-visible:ring-primary font-bold">
+                                            <SelectTrigger className="h-10 rounded-xl font-bold">
                                                 <SelectValue placeholder="Unit" />
                                             </SelectTrigger>
                                             <SelectContent className="rounded-xl border-border/40 shadow-xl">
@@ -183,7 +183,7 @@ export function UpdateBallroomDialog({ ballroom, onSuccess, onCancel }: UpdateBa
                                         placeholder="Describe the space..."
                                         value={description}
                                         onChange={(e) => setDescription(e.target.value)}
-                                        className="min-h-[100px] rounded-xl bg-muted/30 border-none focus-visible:ring-primary resize-none font-medium text-xs"
+                                        className="min-h-[100px] rounded-xl resize-none font-medium text-xs"
                                     />
                                 </div>
                             </div>
@@ -191,7 +191,7 @@ export function UpdateBallroomDialog({ ballroom, onSuccess, onCancel }: UpdateBa
                     </div>
                 </div>
 
-                <DialogFooter className="p-6 bg-muted/5 border-t border-border/40">
+                <DialogFooter className="p-6 border-t border-border/40">
                     <Button variant="ghost" onClick={onCancel} className="rounded-xl font-bold h-11 px-6 hover:bg-muted/10 cursor-pointer">
                         Cancel
                     </Button>

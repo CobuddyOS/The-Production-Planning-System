@@ -132,33 +132,25 @@ export function BallroomsPage() {
             {/* Toolbar */}
             <div className="flex flex-col md:flex-row gap-3 items-start md:items-center justify-between">
                 <div className="flex flex-wrap items-center gap-2 border-b pb-2 text-sm">
-                    <Button
-                        variant="ghost"
-                        size="sm"
+                    <button
                         onClick={() => setActiveTab("catalog")}
-                        className={`inline-flex items-center rounded-full px-3 py-1.5 text-xs font-medium transition-colors neon-pill hover:text-white ${activeTab === "catalog"
+                        className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-colors cursor-pointer neon-pill ${activeTab === "catalog"
                             ? "neon-pill-active"
                             : ""
                             }`}
                     >
                         Space Catalog
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="sm"
+                    </button>
+                    <button
                         onClick={() => setActiveTab("warehouse")}
-                        className={`inline-flex items-center rounded-full px-3 py-1.5 text-xs font-medium transition-colors neon-pill hover:text-white ${activeTab === "warehouse"
+                        className={`inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-colors cursor-pointer neon-pill ${activeTab === "warehouse"
                             ? "neon-pill-active"
                             : ""
                             }`}
                     >
                         My Spaces
-                        {ballrooms.length > 0 && (
-                            <Badge variant="secondary" className="ml-1 h-5 px-1.5 text-[10px] font-semibold bg-primary/10 text-primary border-none">
-                                {ballrooms.length}
-                            </Badge>
-                        )}
-                    </Button>
+
+                    </button>
                 </div>
 
                 <div className="flex items-center gap-2 w-full md:w-auto">

@@ -99,7 +99,7 @@ export function ImportAssetDialog({
     };
 
     return (
-        <DialogContent className="sm:max-w-[700px] overflow-hidden flex flex-col p-0 border-none shadow-2xl">
+        <DialogContent className="neon-glass-form neon-form sm:max-w-[700px] overflow-hidden flex flex-col p-0">
             <form onSubmit={handleSubmit}>
                 <DialogHeader className="p-6 pb-2 bg-muted/20 text-left">
                     <div className="flex items-center gap-4 mb-2">
@@ -115,7 +115,7 @@ export function ImportAssetDialog({
                     </div>
                 </DialogHeader>
 
-                <div className="p-6 space-y-6 overflow-y-auto max-h-[70vh]">
+                <div className="p-6 space-y-6 overflow-y-auto max-h-[70vh] scrollbar-hide">
                     {error && (
                         <div className="p-3 text-sm bg-red-500/10 border border-red-500/20 text-red-600 rounded-md flex items-center gap-2">
                             <AlertCircleIcon className="size-4" />
@@ -269,9 +269,7 @@ export function ImportAssetDialog({
                 </div>
 
                 <DialogFooter className="p-6 bg-muted/20 border-t flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <p className="text-[11px] text-muted-foreground leading-tight text-center sm:text-left max-w-[300px]">
-                        <span className="font-bold text-primary italic">Note:</span> Import request will be sent to admin for approval before use.
-                    </p>
+                    
                     <div className="flex items-center gap-2 w-full sm:w-auto">
                         <Button type="button" variant="outline" size="sm" onClick={onCancel} disabled={loading} className="cursor-pointer w-full sm:w-auto">
                             Cancel
