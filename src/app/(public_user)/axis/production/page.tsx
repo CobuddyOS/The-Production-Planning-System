@@ -110,7 +110,7 @@ export default function AxisProductionPage() {
       {/* Top Header Section */}
       <header className="flex flex-col shrink-0 z-30">
         {/* Superior Branding Bar */}
-        <Card className="flex flex-row justify-between items-center py-2 px-6 rounded-none h-14 border-0">
+        <Card className="flex flex-row justify-between items-center py-2 px-6 rounded-none h-14 border-0 !shadow-none !bg-[linear-gradient(90deg,rgba(10,10,20,0.75),rgba(30,10,60,0.55),rgba(10,10,20,0.75))]">
           <div className="flex items-center mt-1 gap-4">
             <Image
               src="/cobuddy_logo.png"
@@ -123,11 +123,11 @@ export default function AxisProductionPage() {
           </div>
 
           <div className="flex items-center gap-3">
-            <Card className="hidden md:flex flex-row items-center gap-2 rounded-full px-3 py-1 border border-white/10 bg-white/5">
+            <div className="hidden md:flex items-center gap-2 rounded-full px-3 py-1 bg-white/5">
               <DollarSign className="size-3.5 text-emerald-400" />
               <span className="text-xs font-semibold text-white/60 mr-2">Daily:</span>
               <span className="text-sm font-bold text-emerald-300">${totalDailyAmount}</span>
-            </Card>
+            </div>
 
             <Separator orientation="vertical" className="h-6 bg-white/10 mx-1 hidden md:block" />
 
@@ -151,7 +151,7 @@ export default function AxisProductionPage() {
         </Card>
 
         {/* Dynamic Context Toolbar */}
-        <Card className="flex flex-row items-center justify-between px-4 py-1.5 rounded-none h-12 border-0 border-t border-white/5">
+        <Card className="flex flex-row items-center justify-between px-4 py-1.5 rounded-none h-12 border-0 !shadow-none !bg-[linear-gradient(90deg,rgba(8,8,16,0.7),rgba(24,10,50,0.45),rgba(8,8,16,0.7))]">
           <div className="flex items-center gap-1">
             <Button
               variant="ghost"
@@ -172,7 +172,7 @@ export default function AxisProductionPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <Card className="flex flex-row items-center gap-1 rounded-md p-0.5 border border-white/10 bg-white/5">
+            <div className="flex items-center gap-1 rounded-md p-0.5 bg-white/5">
               {[1, 2, 3].map(d => (
                 <Button
                   key={d}
@@ -193,7 +193,7 @@ export default function AxisProductionPage() {
                 value={numberOfDays}
                 onChange={(e) => setNumberOfDays(parseInt(e.target.value) || 1)}
               />
-            </Card>
+            </div>
             <Button variant="outline" size="sm" className="h-8 gap-1.5 border-white/15 text-white/80 hover:bg-white/10 hover:text-white">
               <Save className="size-3.5" />
               Save Layout
@@ -212,16 +212,36 @@ export default function AxisProductionPage() {
       </header>
 
       {/* Main UI Body */}
-      <div className="flex flex-1 overflow-hidden relative">
+      <div className="flex flex-1 flex-col overflow-hidden relative">
+        <div className="flex items-center h-9 px-4 text-[11px] font-bold uppercase tracking-[0.25em] text-white/50">
+          <div
+            className={cn(
+              "shrink-0 w-64 transition-all duration-300",
+              leftSidebarOpen ? "opacity-100" : "w-0 opacity-0"
+            )}
+          >
+            Ballrooms
+          </div>
+          <div className="flex-1 text-center">Canvas</div>
+          <div
+            className={cn(
+              "shrink-0 w-[300px] text-right transition-all duration-300",
+              rightSidebarOpen ? "opacity-100" : "w-0 opacity-0"
+            )}
+          >
+            Assets
+          </div>
+        </div>
 
-        {/* Professional Left Sidebar - Ballrooms */}
-        <aside
-          className={cn(
-            "border-r border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(136,86,255,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0",
-            leftSidebarOpen ? "w-64" : "w-0 -translate-x-full opacity-0 pointer-events-none"
-          )}
-        >
-          <div className="p-3 border-b border-white/10 flex items-center justify-between bg-white/5">
+        <div className="flex flex-1 overflow-hidden">
+          {/* Professional Left Sidebar - Ballrooms */}
+          <aside
+            className={cn(
+              "border-r border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(136,86,255,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0",
+              leftSidebarOpen ? "w-64" : "w-0 -translate-x-full opacity-0 pointer-events-none"
+            )}
+          >
+          <div className="p-3 flex items-center justify-between bg-white/5">
             <span className="text-[11px] font-bold text-white/60 uppercase tracking-widest flex items-center gap-2">
               <Layers className="size-3.5" />
               Floor Plans
@@ -233,7 +253,7 @@ export default function AxisProductionPage() {
 
           <div className="flex-1 overflow-y-auto scrollbar-hide p-3 space-y-4">
             <div className="space-y-2">
-              <div className="group relative rounded-xl border border-dashed border-white/20 hover:border-purple-300/60 hover:bg-white/5 p-6 flex flex-col items-center justify-center gap-2 transition-all cursor-pointer">
+            <div className="group relative rounded-xl border border-dashed border-white/15 hover:border-purple-300/60 hover:bg-white/5 p-6 flex flex-col items-center justify-center gap-2 transition-all cursor-pointer">
                 <div className="w-10 h-10 rounded-full bg-[radial-gradient(circle_at_top,rgba(168,85,247,0.6),rgba(14,165,233,0.25))] flex items-center justify-center text-white group-hover:scale-110 transition-transform">
                   <Upload className="size-5" />
                 </div>
@@ -244,7 +264,7 @@ export default function AxisProductionPage() {
               </div>
             </div>
 
-            <div className="pt-4 border-t border-white/10">
+            <div className="pt-4">
               <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest mb-3 block">Ballrooms</span>
               <div className="space-y-1">
                 {ballroomsLoading ? (
@@ -255,8 +275,8 @@ export default function AxisProductionPage() {
                   <p className="text-[10px] text-white/60 text-center py-4">No ballrooms found</p>
                 ) : (
                   ballrooms.map((ballroom) => (
-                    <div key={ballroom.id} className="group bg-white/5 border border-white/10 rounded-xl overflow-hidden hover:border-purple-400/40 hover:shadow-[0_0_24px_rgba(168,85,247,0.12)] transition-all cursor-pointer mb-3">
-                      <div className="aspect-video w-full bg-black/20 flex items-center justify-center overflow-hidden border-b border-white/10">
+                    <div key={ballroom.id} className="group bg-white/5 rounded-xl overflow-hidden shadow-[0_0_18px_rgba(0,0,0,0.35)] hover:shadow-[0_0_28px_rgba(168,85,247,0.18)] transition-all cursor-pointer mb-3">
+                      <div className="aspect-video w-full bg-black/20 flex items-center justify-center overflow-hidden">
                         {ballroom.image ? (
                           <img src={ballroom.image} alt={ballroom.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                         ) : (
@@ -279,21 +299,21 @@ export default function AxisProductionPage() {
             </div>
           </div>
 
-          <div className="p-3 border-t border-white/10 bg-white/5">
+          <div className="p-3 bg-white/5">
             <Button variant="ghost" className="w-full justify-start text-[11px] font-bold text-white/60 hover:text-white hover:bg-white/5 h-8 gap-2">
               <History className="size-3.5" />
               Version History
             </Button>
           </div>
-        </aside>
+          </aside>
 
-        {/* Central Workspace area - Maximize canvas */}
-        <main className="flex-1 flex flex-col min-w-0 bg-transparent relative">
+          {/* Central Workspace area - Maximize canvas */}
+          <main className="flex-1 flex flex-col min-w-0 bg-transparent relative">
 
           {/* Main Canvas Area */}
           <div className="flex-1 p-4 flex flex-col gap-4 overflow-hidden">
             {/* The Actual Canvas Container - Remove inner card padding, maximize space */}
-            <div className="flex-1 overflow-hidden rounded-xl border border-white/10 bg-black/30 shadow-[0_0_24px_rgba(0,0,0,0.45)] relative group backdrop-blur">
+            <div className="flex-1 overflow-hidden rounded-xl neon-glass-card shadow-[0_0_35px_rgba(168,85,247,0.25)] relative group">
               {/* Floating Canvas Controls */}
               <div className="absolute top-4 right-4 flex flex-col gap-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Button variant="secondary" size="icon" className="bg-white/90 backdrop-blur shadow-md hover:bg-white" onClick={() => { }}>
@@ -302,7 +322,7 @@ export default function AxisProductionPage() {
               </div>
 
               {/* Canvas Ruler/Grid Placeholder */}
-              <div className="absolute inset-0 opacity-[0.08] pointer-events-none"
+              <div className="absolute inset-0 opacity-[0.06] pointer-events-none"
                 style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
 
               <div
@@ -329,35 +349,17 @@ export default function AxisProductionPage() {
               </div>
             </div>
 
-            {/* Bottom Accessories Panel (Tech Table / Case) - Compacted */}
-            <div className="flex gap-4 h-48 shrink-0">
-              <div className="flex-[2] bg-white/5 rounded-xl border border-white/10 relative overflow-hidden group backdrop-blur">
-
-                <div className="absolute inset-0 flex items-center justify-center p-4 pt-10">
-                  <img src="/axis/table.png" alt="Tech Table" className="h-full w-auto object-contain drop-shadow-[0_0_18px_rgba(168,85,247,0.35)]" />
-                </div>
-                <div id="techAssetsContainer" className="absolute inset-0 flex items-center justify-center gap-2 p-4 pt-10" />
-              </div>
-
-              <div className="flex-1 bg-white/5 rounded-xl border border-white/10 relative overflow-hidden group backdrop-blur">
-
-                <div className="absolute inset-0 flex items-center justify-center p-4 pt-10">
-                  <img src="/axis/case.png" alt="Cable Case" className="h-full w-auto object-contain drop-shadow-[0_0_18px_rgba(14,165,233,0.35)]" />
-                </div>
-                <div id="hardwareAssetsContainer" className="absolute inset-0 grid grid-cols-3 gap-1.5 p-3 pt-10" />
-              </div>
-            </div>
           </div>
-        </main>
+          </main>
 
-        {/* Right Sidebar - High Spec Assets Library */}
-        <aside
-          className={cn(
-            "border-l border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(136,86,255,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0",
-            rightSidebarOpen ? "w-[300px]" : "w-0 translate-x-full opacity-0 pointer-events-none"
-          )}
-        >
-          <div className="p-4 flex flex-col gap-4 border-b border-white/10 bg-white/5">
+          {/* Right Sidebar - High Spec Assets Library */}
+          <aside
+            className={cn(
+              "border-l border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(136,86,255,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0",
+              rightSidebarOpen ? "w-[300px]" : "w-0 translate-x-full opacity-0 pointer-events-none"
+            )}
+          >
+          <div className="p-4 flex flex-col gap-4 bg-white/5">
             <div className="flex items-center justify-between">
               <span className="text-[11px] font-bold text-white/60 uppercase tracking-widest flex items-center gap-2">
                 <LayoutGrid className="size-3.5" />
@@ -376,7 +378,7 @@ export default function AxisProductionPage() {
             </div>
           </div>
 
-          <div className="p-2 bg-white/5 border-b border-white/10">
+          <div className="p-2 bg-white/5">
             <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide no-scrollbar">
               {atlasCategories.map((cat) => {
                 const Icon = CATEGORY_ICONS[cat.name] || LayoutGrid;
@@ -388,7 +390,7 @@ export default function AxisProductionPage() {
                     className={cn(
                       "px-3 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap transition-all flex items-center gap-1.5",
                       isActive
-                        ? "bg-white/15 text-white shadow-[0_0_16px_rgba(168,85,247,0.35)] border border-white/20"
+                        ? "bg-white/15 text-white shadow-[0_0_16px_rgba(168,85,247,0.35)]"
                         : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white"
                     )}
                   >
@@ -417,9 +419,9 @@ export default function AxisProductionPage() {
                   .map((item) => (
                     <div
                       key={item.id}
-                      className="group bg-white/5 border border-white/10 rounded-xl p-3 flex flex-col items-center text-center gap-2 hover:border-purple-400/40 hover:shadow-[0_0_24px_rgba(168,85,247,0.12)] transition-all cursor-grab active:cursor-grabbing"
+                      className="group bg-white/5 rounded-xl p-3 flex flex-col items-center text-center gap-2 shadow-[0_0_18px_rgba(0,0,0,0.35)] hover:shadow-[0_0_28px_rgba(168,85,247,0.18)] transition-all cursor-grab active:cursor-grabbing"
                     >
-                      <div className="w-full aspect-square bg-black/20 rounded-lg flex items-center justify-center border border-white/10 group-hover:bg-white/5 transition-colors overflow-hidden">
+                      <div className="w-full aspect-square bg-black/20 rounded-lg flex items-center justify-center group-hover:bg-white/5 transition-colors overflow-hidden">
                         {item.asset?.image ? (
                           <img src={item.asset.image} alt={item.title || item.asset.name} className="w-full h-full object-contain" />
                         ) : (
@@ -450,10 +452,10 @@ export default function AxisProductionPage() {
             </div>
           </div>
 
-          <div className="p-4 bg-white/5 border-t border-white/10">
+          <div className="p-4 bg-white/5">
             <div className="flex items-center justify-between mb-3">
               <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Active List</span>
-              <span className="text-[10px] font-bold text-purple-200 bg-white/10 px-2 py-0.5 rounded-full border border-white/10">3 Items</span>
+              <span className="text-[10px] font-bold text-purple-200 bg-white/10 px-2 py-0.5 rounded-full">3 Items</span>
             </div>
             <div className="space-y-2">
               {/* Small summary line items */}
@@ -463,7 +465,58 @@ export default function AxisProductionPage() {
               </div>
             </div>
           </div>
-        </aside>
+          </aside>
+        </div>
+
+        <div className="px-4 pb-4">
+          <div className="flex items-center gap-4 px-1 text-[10px] font-bold uppercase tracking-[0.22em] text-white/45">
+            <div className="flex-[2]">Table</div>
+            <div className="flex-1">Case</div>
+            <div className="flex-1">Sliders</div>
+            <div className="flex-1">Staff</div>
+          </div>
+
+          {/* Bottom Accessories Panel (Tech Table / Case / Sliders / Staff) */}
+          <div className="flex gap-4 h-52">
+            <div className="flex-[2] bg-white/5 rounded-xl relative overflow-hidden group backdrop-blur">
+              <div className="absolute inset-0 flex items-center justify-center p-4 pt-10">
+                <img src="/axis/table.png" alt="Tech Table" className="h-full w-auto object-contain drop-shadow-[0_0_18px_rgba(168,85,247,0.35)]" />
+              </div>
+              <div id="techAssetsContainer" className="absolute inset-0 flex items-center justify-center gap-2 p-4 pt-10" />
+            </div>
+
+            <div className="flex-1 bg-white/5 rounded-xl relative overflow-hidden group backdrop-blur">
+              <div className="absolute inset-0 flex items-center justify-center p-4 pt-10">
+                <img src="/axis/case.png" alt="Cable Case" className="h-full w-auto object-contain drop-shadow-[0_0_18px_rgba(14,165,233,0.35)]" />
+              </div>
+              <div id="hardwareAssetsContainer" className="absolute inset-0 grid grid-cols-3 gap-1.5 p-3 pt-10" />
+            </div>
+
+            <div className="flex-1 bg-white/5 rounded-xl relative overflow-hidden backdrop-blur">
+              <div className="absolute inset-0 flex flex-col gap-3 p-4 pt-8">
+                <div className="text-[10px] font-semibold text-white/70 uppercase tracking-[0.2em]">Levels</div>
+                {["Front", "Stage", "Back"].map((label) => (
+                  <label key={label} className="flex items-center gap-3 text-[10px] uppercase tracking-[0.18em] text-white/60">
+                    <span className="w-12">{label}</span>
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      defaultValue={60}
+                      className="flex-1 accent-purple-400"
+                    />
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex-1 bg-white/5 rounded-xl relative overflow-hidden group backdrop-blur">
+              <div className="absolute inset-0 flex items-center justify-center p-4 pt-10">
+                <img src="/staff.png" alt="Staff" className="h-full w-auto object-contain drop-shadow-[0_0_18px_rgba(168,85,247,0.35)]" />
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Modals & Overlays */}
