@@ -365,9 +365,9 @@ export default function AxisProductionPage() {
 
         <div className="px-4 pb-3">
           <div className="flex gap-4 h-40">
-              <div className="flex-[1.5] bg-white/5 rounded-xl relative overflow-hidden group backdrop-blur">
+              <div className="flex-[2.0] bg-white/5 rounded-xl relative overflow-hidden group backdrop-blur">
               <div className="absolute inset-0 flex items-center justify-center p-1 pt-2">
-                <img src="/axis/table.png" alt="Tech Table" className="h-[200%] w-[200%] object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.35)]" />
+                <img src="/axis/table.png" alt="Tech Table" className="h-[250%] w-[250%] object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.35)]" />
               </div>
                 <div id="techAssetsContainer" className="absolute inset-0 flex items-center justify-center gap-2 p-3 pt-6" />
               </div>
@@ -387,7 +387,7 @@ export default function AxisProductionPage() {
 
               <div className="flex-[0.9] bg-white/5 rounded-xl relative overflow-hidden backdrop-blur">
                 <div className="absolute inset-0 flex items-center justify-center gap-6 p-4 pt-8">
-                  {["Front", "Back"].map((label) => (
+                  {["Frequency", "Color"].map((label) => (
                     <div key={label} className="flex flex-col items-center gap-2">
                       <span className="text-[10px] font-semibold text-white/70 uppercase tracking-[0.2em]">{label}</span>
                       <input
