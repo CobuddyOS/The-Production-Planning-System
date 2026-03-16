@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import {
   ChevronLeft,
   ChevronRight,
@@ -37,7 +36,6 @@ import {
   Search,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -66,7 +64,7 @@ export default function AxisProductionPage() {
   const [activeCategoryId, setActiveCategoryId] = useState<string | null>(null);
   const [atlasCategories, setAtlasCategories] = useState<AtlasCategory[]>([]);
   const [totalDailyAmount, setTotalDailyAmount] = useState("0.00");
-  const [numberOfDays, setNumberOfDays] = useState(1);
+  const [numberOfDays] = useState(1);
   const [infoModalOpen, setInfoModalOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -104,52 +102,26 @@ export default function AxisProductionPage() {
   if (!mounted) return null;
 
   const toolBtnClass = "h-8 w-8 p-0 rounded-md transition-all duration-200 border border-white/10 text-white/70 bg-white/5 hover:text-white hover:bg-white/10";
+  const normalizedSearch = searchQuery.trim().toLowerCase();
+  const filteredInventory = inventory.filter((item) => {
+    const isApproved = item.approval_status === "approved" || !item.approval_status;
+    if (!isApproved) return false;
+    if (!activeCategoryId) return true;
+    if (!item.asset?.category_id) return true;
+    return item.asset.category_id === activeCategoryId;
+  });
+  const visibleInventory = filteredInventory.filter((item) => {
+    if (!normalizedSearch) return true;
+    return (
+      item.title?.toLowerCase().includes(normalizedSearch) ||
+      item.asset?.name.toLowerCase().includes(normalizedSearch)
+    );
+  });
 
   return (
     <div className="flex flex-col h-screen bg-transparent overflow-hidden text-white font-montserrat">
       {/* Top Header Section */}
       <header className="flex flex-col shrink-0 z-30">
-        {/* Superior Branding Bar */}
-        <Card className="flex flex-row justify-between items-center py-2 px-6 rounded-none h-14 border-0 !shadow-none !bg-[linear-gradient(90deg,rgba(8,12,24,0.78),rgba(10,60,90,0.55),rgba(8,12,24,0.78))]">
-          <div className="flex items-center mt-1 gap-4">
-            <Image
-              src="/cobuddy_logo.png"
-              alt="Cobuddy"
-              width={300}
-              height={300}
-              className="h-25 w-auto object-contain"
-            />
-
-          </div>
-
-          <div className="flex items-center gap-3">
-            <div className="hidden md:flex items-center gap-2 rounded-full px-3 py-1 bg-white/5">
-              <DollarSign className="size-3.5 text-emerald-400" />
-              <span className="text-xs font-semibold text-white/60 mr-2">Daily:</span>
-              <span className="text-sm font-bold text-emerald-300">${totalDailyAmount}</span>
-            </div>
-
-            <Separator orientation="vertical" className="h-6 bg-white/10 mx-1 hidden md:block" />
-
-            <Button
-              variant="ghost"
-              size="icon"
-              className="text-white/70 hover:text-white hover:bg-white/10"
-              onClick={() => setInfoModalOpen(true)}
-            >
-              <Info className="size-5" />
-            </Button>
-            <Button
-              className="bg-[linear-gradient(120deg,rgba(14,165,233,0.9),rgba(132,204,22,0.7))] hover:brightness-110 text-white font-semibold h-9 px-4 rounded-lg shadow-[0_0_18px_rgba(14,165,233,0.35)]"
-              onClick={() => setSummaryOpen(true)}
-            >
-              <FileText className="size-4 mr-2" />
-              View Summary
-            </Button>
-
-          </div>
-        </Card>
-
         {/* Dynamic Context Toolbar */}
         <Card className="flex flex-row items-center justify-between px-4 py-1.5 rounded-none h-12 border-0 !shadow-none !bg-[linear-gradient(90deg,rgba(6,10,18,0.7),rgba(10,36,54,0.45),rgba(6,10,18,0.7))]">
           <div className="flex items-center gap-1">
@@ -172,33 +144,31 @@ export default function AxisProductionPage() {
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1 rounded-md p-0.5 bg-white/5">
-              {[1, 2, 3].map(d => (
-                <Button
-                  key={d}
-                  onClick={() => setNumberOfDays(d)}
-                  className={cn(
-                    "h-7 px-3 text-xs font-bold rounded transition-all",
-                    numberOfDays === d
-                      ? "bg-white/20 text-cyan-100 shadow-[0_0_12px_rgba(14,165,233,0.4)] border border-white/20"
-                      : "text-white/60 hover:text-white hover:bg-white/5"
-                  )}
-                >
-                  {d}D
-                </Button>
-              ))}
-              <Input
-                type="number"
-                className="w-12 h-7 p-0 border-none bg-transparent text-center text-xs font-bold focus-visible:ring-0 text-white"
-                value={numberOfDays}
-                onChange={(e) => setNumberOfDays(parseInt(e.target.value) || 1)}
-              />
-            </div>
             <Button variant="outline" size="sm" className="h-8 gap-1.5 border-white/15 text-white/80 hover:bg-white/10 hover:text-white">
               <Save className="size-3.5" />
               Save Layout
             </Button>
             <Separator orientation="vertical" className="h-4 bg-white/10 mx-1" />
+            <div className="hidden md:flex items-center gap-2 rounded-full px-3 py-1 bg-white/5">
+              <DollarSign className="size-3.5 text-emerald-400" />
+              <span className="text-xs font-semibold text-white/60 mr-2">Daily:</span>
+              <span className="text-sm font-bold text-emerald-300">${totalDailyAmount}</span>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-white/70 hover:text-white hover:bg-white/10"
+              onClick={() => setInfoModalOpen(true)}
+            >
+              <Info className="size-5" />
+            </Button>
+            <Button
+              className="bg-[linear-gradient(120deg,rgba(14,165,233,0.9),rgba(132,204,22,0.7))] hover:brightness-110 text-white font-semibold h-8 px-4 rounded-lg shadow-[0_0_18px_rgba(14,165,233,0.35)]"
+              onClick={() => setSummaryOpen(true)}
+            >
+              <FileText className="size-4 mr-2" />
+              View Summary
+            </Button>
             <Button
               variant="ghost"
               size="icon"
@@ -213,60 +183,22 @@ export default function AxisProductionPage() {
 
       {/* Main UI Body */}
       <div className="flex flex-1 flex-col overflow-hidden relative">
-        <div className="flex items-center h-9 px-4 text-[11px] font-bold uppercase tracking-[0.25em] text-white/50">
-          <div
-            className={cn(
-              "shrink-0 w-64 transition-all duration-300",
-              leftSidebarOpen ? "opacity-100" : "w-0 opacity-0"
-            )}
-          >
-            Ballrooms
-          </div>
-          <div className="flex-1 text-center">Canvas</div>
-          <div
-            className={cn(
-              "shrink-0 w-[300px] text-right transition-all duration-300",
-              rightSidebarOpen ? "opacity-100" : "w-0 opacity-0"
-            )}
-          >
-            Assets
-          </div>
-        </div>
-
         <div className="flex flex-1 overflow-hidden">
           {/* Professional Left Sidebar - Ballrooms */}
           <aside
             className={cn(
-              "mb-4 rounded-2xl overflow-hidden border-r border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(56,189,248,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0",
-              leftSidebarOpen ? "w-64" : "w-0 -translate-x-full opacity-0 pointer-events-none"
+              "mb-3 rounded-2xl overflow-hidden border-r border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(56,189,248,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0",
+              leftSidebarOpen ? "w-35" : "w-0 -translate-x-full opacity-0 pointer-events-none"
             )}
           >
-            <div className="p-3 flex items-center justify-between bg-white/5">
-              <span className="text-[11px] font-bold text-white/60 uppercase tracking-widest flex items-center gap-2">
-                <Layers className="size-3.5" />
-                Floor Plans
-              </span>
-              <Button variant="ghost" size="icon" className="size-6 text-white/60 hover:text-white hover:bg-white/10">
-                <Settings className="size-3.5" />
-              </Button>
-            </div>
+            
 
             <div className="flex-1 overflow-y-auto scrollbar-hide p-3 space-y-4">
-              <div className="space-y-2">
-                <div className="group relative rounded-xl border border-dashed border-white/15 hover:border-emerald-300/60 hover:bg-white/5 p-6 flex flex-col items-center justify-center gap-2 transition-all cursor-pointer">
-                  <div className="w-10 h-10 rounded-full bg-[radial-gradient(circle_at_top,rgba(14,165,233,0.65),rgba(34,197,94,0.25))] flex items-center justify-center text-white group-hover:scale-110 transition-transform">
-                    <Upload className="size-5" />
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs font-bold text-white">Import Drawings</p>
-                    <p className="text-[10px] text-white/60 mt-0.5">DWG, PDF, JPG</p>
-                  </div>
-                </div>
-              </div>
+             
 
-              <div className="pt-4">
+              <div className="pt-3">
                 <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest mb-3 block">Ballrooms</span>
-                <div className="space-y-1">
+                <div className="grid grid-cols-1 gap-2 justify-items-center">
                   {ballroomsLoading ? (
                     <div className="flex justify-center p-4">
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-sky-300"></div>
@@ -275,22 +207,13 @@ export default function AxisProductionPage() {
                     <p className="text-[10px] text-white/60 text-center py-4">No ballrooms found</p>
                   ) : (
                     ballrooms.map((ballroom) => (
-                    <div key={ballroom.id} className="group bg-white/5 rounded-xl overflow-hidden shadow-[0_0_18px_rgba(0,0,0,0.35)] hover:shadow-[0_0_28px_rgba(56,189,248,0.18)] transition-all cursor-pointer mb-3">
-                        <div className="aspect-video w-full bg-black/20 flex items-center justify-center overflow-hidden">
+                      <div key={ballroom.id} className="group bg-white/5 rounded-lg overflow-hidden shadow-[0_0_18px_rgba(0,0,0,0.35)] hover:shadow-[0_0_28px_rgba(56,189,248,0.18)] transition-all cursor-pointer w-[92px] h-[92px]">
+                        <div className="h-full w-full bg-black/20 flex items-center justify-center overflow-hidden">
                           {ballroom.image ? (
                             <img src={ballroom.image} alt={ballroom.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                           ) : (
                             <Box className="size-8 text-white/30" />
                           )}
-                        </div>
-                        <div className="p-2.5">
-                          <p className="text-xs font-bold text-white truncate">{ballroom.name}</p>
-                          <div className="flex items-center justify-between mt-1">
-                            <p className="text-[10px] text-white/60">{ballroom.width} x {ballroom.depth} {ballroom.unit_type}</p>
-                            <Badge variant="outline" className="text-[8px] h-3.5 px-1 font-bold border-white/15 text-white/70 bg-white/5 capitalize">
-                              {ballroom.unit_type}
-                            </Badge>
-                          </div>
                         </div>
                       </div>
                     ))
@@ -305,7 +228,7 @@ export default function AxisProductionPage() {
           <main className="flex-1 flex flex-col min-w-0 bg-transparent relative">
 
             {/* Main Canvas Area */}
-            <div className="flex-1 p-4 flex flex-col gap-4 overflow-hidden">
+            <div className="flex-1 p-2 flex flex-col gap-2 overflow-hidden">
               {/* The Actual Canvas Container - Remove inner card padding, maximize space */}
             <div className="flex-1 overflow-hidden rounded-xl neon-glass-card shadow-[0_0_35px_rgba(56,189,248,0.25)] relative group">
                 {/* Floating Canvas Controls */}
@@ -349,11 +272,11 @@ export default function AxisProductionPage() {
           {/* Right Sidebar - High Spec Assets Library */}
           <aside
             className={cn(
-              "mb-4 rounded-2xl overflow-hidden border-l border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(56,189,248,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0",
-              rightSidebarOpen ? "w-[300px]" : "w-0 translate-x-full opacity-0 pointer-events-none"
+              "mb-3 rounded-2xl overflow-hidden border-l border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(56,189,248,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0",
+              rightSidebarOpen ? "w-[320px]" : "w-0 translate-x-full opacity-0 pointer-events-none"
             )}
           >
-            <div className="p-4 flex flex-col gap-4 bg-white/5">
+            <div className="p-3 flex flex-col gap-3 bg-white/5">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-bold text-white/60 uppercase tracking-widest flex items-center gap-2">
                   <LayoutGrid className="size-3.5" />
@@ -365,15 +288,15 @@ export default function AxisProductionPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-white/40" />
                 <Input
                   placeholder="Search gear..."
-                className="h-9 pl-9 text-xs bg-white/5 border-white/15 text-white placeholder:text-white/40 shadow-none focus-visible:ring-sky-500/30"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
+                  className="h-8 pl-9 text-xs bg-white/5 border-white/15 text-white placeholder:text-white/40 shadow-none focus-visible:ring-sky-500/30"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
               </div>
             </div>
 
             <div className="p-2 bg-white/5">
-              <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide no-scrollbar">
+              <div className="grid grid-cols-6 gap-1">
                 {atlasCategories.map((cat) => {
                   const Icon = CATEGORY_ICONS[cat.name] || LayoutGrid;
                   const isActive = activeCategoryId === cat.id;
@@ -381,15 +304,16 @@ export default function AxisProductionPage() {
                     <button
                       key={cat.id}
                       onClick={() => setActiveCategoryId(cat.id)}
+                      title={cat.name}
                       className={cn(
-                        "px-3 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap transition-all flex items-center gap-1.5",
+                        "h-8 w-8 rounded-lg transition-all flex items-center justify-center",
                         isActive
                           ? "bg-white/15 text-white shadow-[0_0_16px_rgba(56,189,248,0.35)]"
                           : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white"
                       )}
                     >
-                      {Icon && <Icon className="size-3" />}
-                      {cat.name}
+                      {Icon && <Icon className="size-4" />}
+                      <span className="sr-only">{cat.name}</span>
                     </button>
                   );
                 })}
@@ -397,48 +321,38 @@ export default function AxisProductionPage() {
             </div>
 
             <div className="flex-1 overflow-y-auto scrollbar-hide p-4">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-3 gap-2">
                 {inventoryLoading ? (
-                  <div className="col-span-2 flex justify-center p-8">
+                  <div className="col-span-3 flex justify-center p-8">
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-sky-300"></div>
                   </div>
                 ) : (
-                  inventory
-                    .filter(item =>
-                      item.approval_status === 'approved' &&
-                      (!activeCategoryId || item.asset?.category_id === activeCategoryId) &&
-                      (!searchQuery || item.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                        item.asset?.name.toLowerCase().includes(searchQuery.toLowerCase()))
-                    )
-                    .map((item) => (
+                  visibleInventory.map((item) => (
                       <div
                         key={item.id}
-                        className="group bg-white/5 rounded-xl p-3 flex flex-col items-center text-center gap-2 shadow-[0_0_18px_rgba(0,0,0,0.35)] hover:shadow-[0_0_28px_rgba(56,189,248,0.18)] transition-all cursor-grab active:cursor-grabbing"
+                        title={[
+                          item.title || item.asset?.name || "Unknown Item",
+                          item.brand ? `Brand: ${item.brand}` : null,
+                          item.model ? `Model: ${item.model}` : null,
+                          item.quantity ? `Qty: ${item.quantity}` : null,
+                          item.pricing ? `Price: $${item.pricing}/Day` : null,
+                        ]
+                          .filter(Boolean)
+                          .join("\n")}
+                        className="group bg-white/5 rounded-lg p-2 flex flex-col items-center text-center gap-1.5 shadow-[0_0_18px_rgba(0,0,0,0.35)] hover:shadow-[0_0_28px_rgba(56,189,248,0.18)] transition-all cursor-grab active:cursor-grabbing"
                       >
-                        <div className="w-full aspect-square bg-black/20 rounded-lg flex items-center justify-center group-hover:bg-white/5 transition-colors overflow-hidden">
+                        <div className="w-full aspect-square bg-black/20 rounded-md flex items-center justify-center group-hover:bg-white/5 transition-colors overflow-hidden">
                           {item.asset?.image ? (
                             <img src={item.asset.image} alt={item.title || item.asset.name} className="w-full h-full object-contain" />
                           ) : (
                             <Box className="size-8 text-white/30 group-hover:text-emerald-200" />
                           )}
                         </div>
-                        <div className="w-full">
-                          <p className="text-[11px] font-bold text-white truncate w-full">{item.title || item.asset?.name || 'Unknown Item'}</p>
-                          <div className="flex items-center justify-center gap-1 mt-1 text-emerald-300">
-                            <span className="text-[10px] font-bold">${item.pricing || 0}</span>
-                            <span className="text-[8px] text-white/50 font-medium">/ Day</span>
-                          </div>
-                        </div>
                       </div>
                     ))
                 )}
-                {!inventoryLoading && inventory.filter(item =>
-                  item.approval_status === 'approved' &&
-                  (!activeCategoryId || item.asset?.category_id === activeCategoryId) &&
-                  (!searchQuery || item.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                    item.asset?.name.toLowerCase().includes(searchQuery.toLowerCase()))
-                ).length === 0 && (
-                    <div className="col-span-2 text-center py-8">
+                {!inventoryLoading && visibleInventory.length === 0 && (
+                    <div className="col-span-3 text-center py-8">
                       <Box className="size-8 text-white/30 mx-auto mb-2" />
                       <p className="text-[10px] font-bold text-white/50 uppercase">No items found</p>
                     </div>
@@ -449,33 +363,25 @@ export default function AxisProductionPage() {
           </aside>
         </div>
 
-        <div className="px-4 pb-4">
-            <div className="flex items-center gap-4 px-1 text-[10px] font-bold uppercase tracking-[0.22em] text-white/45">
-              <div className="flex-[2.6]">Table</div>
-              <div className="flex-1">Case</div>
-              <div className="flex-[1.3]">Staff</div>
-              <div className="flex-[0.9]">Sliders</div>
-            </div>
-
-            {/* Bottom Accessories Panel (Tech Table / Case / Staff / Sliders) */}
-            <div className="flex gap-4 h-52">
-              <div className="flex-[2.6] bg-white/5 rounded-xl relative overflow-hidden group backdrop-blur">
-              <div className="absolute inset-0 flex items-center justify-center p-2 pt-4">
-                <img src="/axis/table.png" alt="Tech Table" className="h-full w-full object-contain scale-110 drop-shadow-[0_0_18px_rgba(56,189,248,0.35)]" />
+        <div className="px-4 pb-3">
+          <div className="flex gap-4 h-40">
+              <div className="flex-[1.5] bg-white/5 rounded-xl relative overflow-hidden group backdrop-blur">
+              <div className="absolute inset-0 flex items-center justify-center p-1 pt-2">
+                <img src="/axis/table.png" alt="Tech Table" className="h-[200%] w-[200%] object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.35)]" />
               </div>
                 <div id="techAssetsContainer" className="absolute inset-0 flex items-center justify-center gap-2 p-3 pt-6" />
               </div>
 
               <div className="flex-1 bg-white/5 rounded-xl relative overflow-hidden group backdrop-blur">
-                <div className="absolute inset-0 flex items-center justify-center p-4 pt-10">
-                  <img src="/axis/case.png" alt="Cable Case" className="h-full w-auto object-contain drop-shadow-[0_0_18px_rgba(14,165,233,0.35)]" />
-                </div>
+              <div className="absolute inset-0 flex items-center justify-center p-2 pt-6">
+                <img src="/axis/case.png" alt="Cable Case" className="h-[150%] w-[150%] object-contain scale-110 drop-shadow-[0_0_18px_rgba(14,165,233,0.35)]" />
+              </div>
                 <div id="hardwareAssetsContainer" className="absolute inset-0 grid grid-cols-3 gap-1.5 p-3 pt-10" />
               </div>
 
               <div className="flex-[1.3] bg-white/5 rounded-xl relative overflow-hidden group backdrop-blur">
-              <div className="absolute inset-0 flex items-center justify-center p-4 pt-8">
-                <img src="/staff.png" alt="Staff" className="h-full w-full object-contain scale-110 drop-shadow-[0_0_22px_rgba(132,204,22,0.7)]" />
+              <div className="absolute inset-0 flex items-center justify-center p-2 pt-4">
+                <img src="/staff.png" alt="Staff" className="h-[150%] w-[150%] object-contain scale-125 drop-shadow-[0_0_22px_rgba(132,204,22,0.7)]" />
               </div>
               </div>
 
