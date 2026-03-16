@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Inter, Alegreya_SC } from "next/font/google"; // Adding Inter for UI
+import Image from "next/image";
 import {
   ChevronLeft,
   ChevronRight,
@@ -41,12 +41,10 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
 import { useBallrooms } from "@/features/ballrooms/hooks/useBallrooms";
 import { useInventory } from "@/features/inventory/hooks/useInventory";
 import { createClient } from "@/lib/supabase/client";
-
-const inter = Inter({ subsets: ["latin"] });
-const alegreyaSC = Alegreya_SC({ weight: ["400", "700"], subsets: ["latin"] });
 
 const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   Audio: Mic2,
@@ -105,112 +103,112 @@ export default function AxisProductionPage() {
 
   if (!mounted) return null;
 
-  const toolBtnClass = "p-2 hover:bg-blue-50 text-slate-600 hover:text-blue-600 rounded-md transition-all duration-200 border border-transparent hover:border-blue-100";
+  const toolBtnClass = "h-8 w-8 p-0 rounded-md transition-all duration-200 border border-white/10 text-white/70 bg-white/5 hover:text-white hover:bg-white/10";
 
   return (
-    <div className={cn("flex flex-col h-screen bg-[#f8fafc] overflow-hidden text-slate-900", inter.className)}>
+    <div className="flex flex-col h-screen bg-transparent overflow-hidden text-white font-montserrat">
       {/* Top Header Section */}
       <header className="flex flex-col shrink-0 z-30">
         {/* Superior Branding Bar */}
-        <div className="flex justify-between items-center py-2 px-6 bg-white border-b border-slate-200 h-14">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold shadow-sm">
-                B
-              </div>
-              <span className={cn("text-xl tracking-tight text-slate-800", alegreyaSC.className)}>
-                BAEBOARD <span className="text-blue-600">AXIS</span>
-              </span>
-            </div>
-            <Badge variant="outline" className="text-[10px] uppercase tracking-wider font-bold py-0 h-5 border-blue-200 text-blue-700 bg-blue-50">
-              Production
-            </Badge>
+        <Card className="flex flex-row justify-between items-center py-2 px-6 rounded-none h-14 border-0">
+          <div className="flex items-center mt-1 gap-4">
+            <Image
+              src="/cobuddy_logo.png"
+              alt="Cobuddy"
+              width={300}
+              height={300}
+              className="h-25 w-auto object-contain"
+            />
+           
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="hidden md:flex items-center bg-slate-100/80 rounded-full px-3 py-1 border border-slate-200">
-              <DollarSign className="size-3.5 text-emerald-600" />
-              <span className="text-xs font-semibold text-slate-500 mr-2">Daily:</span>
-              <span className="text-sm font-bold text-emerald-600">${totalDailyAmount}</span>
-            </div>
+            <Card className="hidden md:flex flex-row items-center gap-2 rounded-full px-3 py-1 border border-white/10 bg-white/5">
+              <DollarSign className="size-3.5 text-emerald-400" />
+              <span className="text-xs font-semibold text-white/60 mr-2">Daily:</span>
+              <span className="text-sm font-bold text-emerald-300">${totalDailyAmount}</span>
+            </Card>
 
-            <div className="h-6 w-px bg-slate-200 mx-1 hidden md:block" />
+            <Separator orientation="vertical" className="h-6 bg-white/10 mx-1 hidden md:block" />
 
             <Button
               variant="ghost"
               size="icon"
-              className="text-slate-500 hover:text-blue-600"
+              className="text-white/70 hover:text-white hover:bg-white/10"
               onClick={() => setInfoModalOpen(true)}
             >
               <Info className="size-5" />
             </Button>
             <Button
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold h-9 px-4 rounded-lg shadow-sm"
+              className="bg-[linear-gradient(120deg,rgba(147,51,234,0.9),rgba(56,189,248,0.7))] hover:brightness-110 text-white font-semibold h-9 px-4 rounded-lg shadow-[0_0_18px_rgba(147,51,234,0.35)]"
               onClick={() => setSummaryOpen(true)}
             >
               <FileText className="size-4 mr-2" />
               View Summary
             </Button>
+
           </div>
-        </div>
+        </Card>
 
         {/* Dynamic Context Toolbar */}
-        <div className="flex items-center justify-between px-4 py-1.5 bg-white border-b border-slate-200 shadow-[0_1px_2px_rgba(0,0,0,0.03)] h-12">
+        <Card className="flex flex-row items-center justify-between px-4 py-1.5 rounded-none h-12 border-0 border-t border-white/5">
           <div className="flex items-center gap-1">
             <Button
               variant="ghost"
               size="icon"
-              className={cn("size-8 transition-colors", leftSidebarOpen && "bg-slate-100 text-blue-600")}
+              className={cn("size-8 transition-colors hover:bg-white/10", leftSidebarOpen && "bg-white/10 text-white")}
               onClick={() => setLeftSidebarOpen(!leftSidebarOpen)}
             >
               <PanelLeft className="size-4" />
             </Button>
-            <div className="w-px h-4 bg-slate-200 mx-1" />
+            <Separator orientation="vertical" className="h-4 bg-white/10 mx-1" />
             <div className="flex items-center gap-0.5">
-              <button className={toolBtnClass} title="Zoom In"><ZoomIn className="size-4" /></button>
-              <button className={toolBtnClass} title="Zoom Out"><ZoomOut className="size-4" /></button>
-              <div className="w-px h-4 bg-slate-200 mx-1" />
-              <button className={toolBtnClass} title="Pan Left"><ChevronLeft className="size-4" /></button>
-              <button className={toolBtnClass} title="Pan Right"><ChevronRight className="size-4" /></button>
+              <Button variant="ghost" size="icon" className={toolBtnClass} title="Zoom In"><ZoomIn className="size-4" /></Button>
+              <Button variant="ghost" size="icon" className={toolBtnClass} title="Zoom Out"><ZoomOut className="size-4" /></Button>
+              <Separator orientation="vertical" className="h-4 bg-white/10 mx-1" />
+              <Button variant="ghost" size="icon" className={toolBtnClass} title="Pan Left"><ChevronLeft className="size-4" /></Button>
+              <Button variant="ghost" size="icon" className={toolBtnClass} title="Pan Right"><ChevronRight className="size-4" /></Button>
             </div>
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1 bg-slate-100 rounded-md p-0.5 border border-slate-200">
+            <Card className="flex flex-row items-center gap-1 rounded-md p-0.5 border border-white/10 bg-white/5">
               {[1, 2, 3].map(d => (
-                <button
+                <Button
                   key={d}
                   onClick={() => setNumberOfDays(d)}
                   className={cn(
-                    "px-3 py-1 text-xs font-bold rounded transition-all",
-                    numberOfDays === d ? "bg-white text-blue-600 shadow-sm" : "text-slate-500 hover:text-slate-700"
+                    "h-7 px-3 text-xs font-bold rounded transition-all",
+                    numberOfDays === d
+                      ? "bg-white/20 text-purple-100 shadow-[0_0_12px_rgba(168,85,247,0.4)] border border-white/20"
+                      : "text-white/60 hover:text-white hover:bg-white/5"
                   )}
                 >
                   {d}D
-                </button>
+                </Button>
               ))}
               <Input
                 type="number"
-                className="w-10 h-6 p-0 border-none bg-transparent text-center text-xs font-bold focus-visible:ring-0"
+                className="w-12 h-7 p-0 border-none bg-transparent text-center text-xs font-bold focus-visible:ring-0 text-white"
                 value={numberOfDays}
                 onChange={(e) => setNumberOfDays(parseInt(e.target.value) || 1)}
               />
-            </div>
-            <Button variant="outline" size="sm" className="h-8 gap-1.5 border-slate-300 text-slate-600 hover:bg-slate-50">
+            </Card>
+            <Button variant="outline" size="sm" className="h-8 gap-1.5 border-white/15 text-white/80 hover:bg-white/10 hover:text-white">
               <Save className="size-3.5" />
               Save Layout
             </Button>
-            <div className="w-px h-4 bg-slate-200 mx-1" />
+            <Separator orientation="vertical" className="h-4 bg-white/10 mx-1" />
             <Button
               variant="ghost"
               size="icon"
-              className={cn("size-8 transition-colors", rightSidebarOpen && "bg-slate-100 text-blue-600")}
+              className={cn("size-8 transition-colors hover:bg-white/10", rightSidebarOpen && "bg-white/10 text-white")}
               onClick={() => setRightSidebarOpen(!rightSidebarOpen)}
             >
               <PanelRight className="size-4" />
             </Button>
           </div>
-        </div>
+        </Card>
       </header>
 
       {/* Main UI Body */}
@@ -219,57 +217,57 @@ export default function AxisProductionPage() {
         {/* Professional Left Sidebar - Ballrooms */}
         <aside
           className={cn(
-            "bg-white border-r border-slate-200 flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0 shadow-[1px_0_10px_rgba(0,0,0,0.02)]",
+            "border-r border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(136,86,255,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0",
             leftSidebarOpen ? "w-64" : "w-0 -translate-x-full opacity-0 pointer-events-none"
           )}
         >
-          <div className="p-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
-            <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+          <div className="p-3 border-b border-white/10 flex items-center justify-between bg-white/5">
+            <span className="text-[11px] font-bold text-white/60 uppercase tracking-widest flex items-center gap-2">
               <Layers className="size-3.5" />
               Floor Plans
             </span>
-            <Button variant="ghost" size="icon" className="size-6 text-slate-400">
+            <Button variant="ghost" size="icon" className="size-6 text-white/60 hover:text-white hover:bg-white/10">
               <Settings className="size-3.5" />
             </Button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-3 space-y-4">
+          <div className="flex-1 overflow-y-auto scrollbar-hide p-3 space-y-4">
             <div className="space-y-2">
-              <div className="group relative rounded-xl border-2 border-dashed border-slate-200 hover:border-blue-400 hover:bg-blue-50/50 p-6 flex flex-col items-center justify-center gap-2 transition-all cursor-pointer">
-                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+              <div className="group relative rounded-xl border border-dashed border-white/20 hover:border-purple-300/60 hover:bg-white/5 p-6 flex flex-col items-center justify-center gap-2 transition-all cursor-pointer">
+                <div className="w-10 h-10 rounded-full bg-[radial-gradient(circle_at_top,rgba(168,85,247,0.6),rgba(14,165,233,0.25))] flex items-center justify-center text-white group-hover:scale-110 transition-transform">
                   <Upload className="size-5" />
                 </div>
                 <div className="text-center">
-                  <p className="text-xs font-bold text-slate-700">Import Drawings</p>
-                  <p className="text-[10px] text-slate-400 mt-0.5">DWG, PDF, JPG</p>
+                  <p className="text-xs font-bold text-white">Import Drawings</p>
+                  <p className="text-[10px] text-white/60 mt-0.5">DWG, PDF, JPG</p>
                 </div>
               </div>
             </div>
 
-            <div className="pt-4 border-t border-slate-100">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-3 block">Ballrooms</span>
+            <div className="pt-4 border-t border-white/10">
+              <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest mb-3 block">Ballrooms</span>
               <div className="space-y-1">
                 {ballroomsLoading ? (
                   <div className="flex justify-center p-4">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600"></div>
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-300"></div>
                   </div>
                 ) : ballrooms.length === 0 ? (
-                  <p className="text-[10px] text-slate-400 text-center py-4">No ballrooms found</p>
+                  <p className="text-[10px] text-white/60 text-center py-4">No ballrooms found</p>
                 ) : (
                   ballrooms.map((ballroom) => (
-                    <div key={ballroom.id} className="group bg-white border border-slate-100 rounded-xl overflow-hidden hover:border-blue-200 hover:shadow-lg transition-all cursor-pointer mb-3">
-                      <div className="aspect-video w-full bg-slate-50 flex items-center justify-center overflow-hidden border-b border-slate-100">
+                    <div key={ballroom.id} className="group bg-white/5 border border-white/10 rounded-xl overflow-hidden hover:border-purple-400/40 hover:shadow-[0_0_24px_rgba(168,85,247,0.12)] transition-all cursor-pointer mb-3">
+                      <div className="aspect-video w-full bg-black/20 flex items-center justify-center overflow-hidden border-b border-white/10">
                         {ballroom.image ? (
                           <img src={ballroom.image} alt={ballroom.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                         ) : (
-                          <Box className="size-8 text-slate-200" />
+                          <Box className="size-8 text-white/30" />
                         )}
                       </div>
                       <div className="p-2.5">
-                        <p className="text-xs font-bold text-slate-700 truncate">{ballroom.name}</p>
+                        <p className="text-xs font-bold text-white truncate">{ballroom.name}</p>
                         <div className="flex items-center justify-between mt-1">
-                          <p className="text-[10px] text-slate-400">{ballroom.width} x {ballroom.depth} {ballroom.unit_type}</p>
-                          <Badge variant="outline" className="text-[8px] h-3.5 px-1 font-bold border-slate-200 text-slate-400 capitalize">
+                          <p className="text-[10px] text-white/60">{ballroom.width} x {ballroom.depth} {ballroom.unit_type}</p>
+                          <Badge variant="outline" className="text-[8px] h-3.5 px-1 font-bold border-white/15 text-white/70 bg-white/5 capitalize">
                             {ballroom.unit_type}
                           </Badge>
                         </div>
@@ -281,8 +279,8 @@ export default function AxisProductionPage() {
             </div>
           </div>
 
-          <div className="p-3 border-t border-slate-100 bg-slate-50/30">
-            <Button variant="ghost" className="w-full justify-start text-[11px] font-bold text-slate-500 hover:text-blue-600 h-8 gap-2">
+          <div className="p-3 border-t border-white/10 bg-white/5">
+            <Button variant="ghost" className="w-full justify-start text-[11px] font-bold text-white/60 hover:text-white hover:bg-white/5 h-8 gap-2">
               <History className="size-3.5" />
               Version History
             </Button>
@@ -290,12 +288,12 @@ export default function AxisProductionPage() {
         </aside>
 
         {/* Central Workspace area - Maximize canvas */}
-        <main className="flex-1 flex flex-col min-w-0 bg-[#f1f5f9] relative">
+        <main className="flex-1 flex flex-col min-w-0 bg-transparent relative">
 
           {/* Main Canvas Area */}
           <div className="flex-1 p-4 flex flex-col gap-4 overflow-hidden">
             {/* The Actual Canvas Container - Remove inner card padding, maximize space */}
-            <div className="flex-1 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm relative group">
+            <div className="flex-1 overflow-hidden rounded-xl border border-white/10 bg-black/30 shadow-[0_0_24px_rgba(0,0,0,0.45)] relative group backdrop-blur">
               {/* Floating Canvas Controls */}
               <div className="absolute top-4 right-4 flex flex-col gap-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Button variant="secondary" size="icon" className="bg-white/90 backdrop-blur shadow-md hover:bg-white" onClick={() => { }}>
@@ -304,8 +302,8 @@ export default function AxisProductionPage() {
               </div>
 
               {/* Canvas Ruler/Grid Placeholder */}
-              <div className="absolute inset-0 opacity-[0.03] pointer-events-none"
-                style={{ backgroundImage: "linear-gradient(#000 1px, transparent 1px), linear-gradient(90deg, #000 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
+              <div className="absolute inset-0 opacity-[0.08] pointer-events-none"
+                style={{ backgroundImage: "linear-gradient(rgba(255,255,255,0.25) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
 
               <div
                 id="myCanvas"
@@ -313,19 +311,19 @@ export default function AxisProductionPage() {
               />
 
               {/* Selection Properties Overlay (When item is selected) */}
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 p-1.5 bg-white/95 backdrop-blur border border-slate-200 rounded-xl shadow-2xl z-10 scale-90 md:scale-100">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 p-1.5 bg-black/40 backdrop-blur border border-white/15 rounded-xl shadow-[0_0_24px_rgba(168,85,247,0.25)] z-10 scale-90 md:scale-100">
                 <div className="flex items-center gap-0.5 px-2">
-                  <button className={toolBtnClass} title="Scale Up"><ArrowUp className="size-3.5" /></button>
-                  <button className={toolBtnClass} title="Scale Down"><ArrowDown className="size-3.5" /></button>
-                  <div className="w-px h-3 bg-slate-200 mx-1" />
-                  <button className={toolBtnClass} title="Flip"><FlipVertical className="size-3.5" /></button>
-                  <button className={toolBtnClass} title="Rotate"><FlipHorizontal className="size-3.5" /></button>
-                  <div className="w-px h-3 bg-slate-200 mx-1" />
-                  <button className={toolBtnClass} title="Send Back"><ArrowDownToLine className="size-3.5" /></button>
-                  <button className={toolBtnClass} title="Bring Front"><ArrowUpFromLine className="size-3.5" /></button>
+                  <Button variant="ghost" size="icon" className={toolBtnClass} title="Scale Up"><ArrowUp className="size-3.5" /></Button>
+                  <Button variant="ghost" size="icon" className={toolBtnClass} title="Scale Down"><ArrowDown className="size-3.5" /></Button>
+                  <Separator orientation="vertical" className="h-3 bg-white/20 mx-1" />
+                  <Button variant="ghost" size="icon" className={toolBtnClass} title="Flip"><FlipVertical className="size-3.5" /></Button>
+                  <Button variant="ghost" size="icon" className={toolBtnClass} title="Rotate"><FlipHorizontal className="size-3.5" /></Button>
+                  <Separator orientation="vertical" className="h-3 bg-white/20 mx-1" />
+                  <Button variant="ghost" size="icon" className={toolBtnClass} title="Send Back"><ArrowDownToLine className="size-3.5" /></Button>
+                  <Button variant="ghost" size="icon" className={toolBtnClass} title="Bring Front"><ArrowUpFromLine className="size-3.5" /></Button>
                 </div>
-                <div className="w-px h-8 bg-slate-200" />
-                <Button variant="ghost" size="icon" className="size-8 text-rose-500 hover:bg-rose-50 hover:text-rose-600 rounded-lg">
+                <Separator orientation="vertical" className="h-8 bg-white/20" />
+                <Button variant="ghost" size="icon" className="size-8 text-rose-300 hover:bg-white/10 hover:text-rose-200 rounded-lg">
                   <Trash2 className="size-4" />
                 </Button>
               </div>
@@ -333,18 +331,18 @@ export default function AxisProductionPage() {
 
             {/* Bottom Accessories Panel (Tech Table / Case) - Compacted */}
             <div className="flex gap-4 h-48 shrink-0">
-              <div className="flex-[2] bg-slate-200/30 rounded-xl border border-slate-300 relative overflow-hidden group">
+              <div className="flex-[2] bg-white/5 rounded-xl border border-white/10 relative overflow-hidden group backdrop-blur">
 
                 <div className="absolute inset-0 flex items-center justify-center p-4 pt-10">
-                  <img src="/axis/table.png" alt="Tech Table" className="h-full w-auto object-contain" />
+                  <img src="/axis/table.png" alt="Tech Table" className="h-full w-auto object-contain drop-shadow-[0_0_18px_rgba(168,85,247,0.35)]" />
                 </div>
                 <div id="techAssetsContainer" className="absolute inset-0 flex items-center justify-center gap-2 p-4 pt-10" />
               </div>
 
-              <div className="flex-1 bg-slate-200/30 rounded-xl border border-slate-300 relative overflow-hidden group">
+              <div className="flex-1 bg-white/5 rounded-xl border border-white/10 relative overflow-hidden group backdrop-blur">
 
                 <div className="absolute inset-0 flex items-center justify-center p-4 pt-10">
-                  <img src="/axis/case.png" alt="Cable Case" className="h-full w-auto object-contain" />
+                  <img src="/axis/case.png" alt="Cable Case" className="h-full w-auto object-contain drop-shadow-[0_0_18px_rgba(14,165,233,0.35)]" />
                 </div>
                 <div id="hardwareAssetsContainer" className="absolute inset-0 grid grid-cols-3 gap-1.5 p-3 pt-10" />
               </div>
@@ -355,30 +353,30 @@ export default function AxisProductionPage() {
         {/* Right Sidebar - High Spec Assets Library */}
         <aside
           className={cn(
-            "bg-white border-l border-slate-200 flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0 shadow-[-1px_0_10px_rgba(0,0,0,0.02)]",
+            "border-l border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(136,86,255,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0",
             rightSidebarOpen ? "w-[300px]" : "w-0 translate-x-full opacity-0 pointer-events-none"
           )}
         >
-          <div className="p-4 flex flex-col gap-4 border-b border-slate-100 bg-slate-50/50">
+          <div className="p-4 flex flex-col gap-4 border-b border-white/10 bg-white/5">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] font-bold text-slate-500 uppercase tracking-widest flex items-center gap-2">
+              <span className="text-[11px] font-bold text-white/60 uppercase tracking-widest flex items-center gap-2">
                 <LayoutGrid className="size-3.5" />
                 Assets Library
               </span>
             </div>
 
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-slate-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-white/40" />
               <Input
                 placeholder="Search gear..."
-                className="h-9 pl-9 text-xs bg-white border-slate-200 shadow-none focus-visible:ring-blue-500/20"
+                className="h-9 pl-9 text-xs bg-white/5 border-white/15 text-white placeholder:text-white/40 shadow-none focus-visible:ring-purple-500/30"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
           </div>
 
-          <div className="p-2 bg-white border-b border-slate-100">
+          <div className="p-2 bg-white/5 border-b border-white/10">
             <div className="flex gap-1 overflow-x-auto pb-1 scrollbar-hide no-scrollbar">
               {atlasCategories.map((cat) => {
                 const Icon = CATEGORY_ICONS[cat.name] || LayoutGrid;
@@ -390,8 +388,8 @@ export default function AxisProductionPage() {
                     className={cn(
                       "px-3 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap transition-all flex items-center gap-1.5",
                       isActive
-                        ? "bg-blue-600 text-white shadow-md shadow-blue-200"
-                        : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                        ? "bg-white/15 text-white shadow-[0_0_16px_rgba(168,85,247,0.35)] border border-white/20"
+                        : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white"
                     )}
                   >
                     {Icon && <Icon className="size-3" />}
@@ -402,11 +400,11 @@ export default function AxisProductionPage() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 custom-scrollbar">
+          <div className="flex-1 overflow-y-auto scrollbar-hide p-4">
             <div className="grid grid-cols-2 gap-3">
               {inventoryLoading ? (
                 <div className="col-span-2 flex justify-center p-8">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-300"></div>
                 </div>
               ) : (
                 inventory
@@ -419,20 +417,20 @@ export default function AxisProductionPage() {
                   .map((item) => (
                     <div
                       key={item.id}
-                      className="group bg-white border border-slate-100 rounded-xl p-3 flex flex-col items-center text-center gap-2 hover:border-blue-200 hover:shadow-xl hover:shadow-blue-500/5 transition-all cursor-grab active:cursor-grabbing"
+                      className="group bg-white/5 border border-white/10 rounded-xl p-3 flex flex-col items-center text-center gap-2 hover:border-purple-400/40 hover:shadow-[0_0_24px_rgba(168,85,247,0.12)] transition-all cursor-grab active:cursor-grabbing"
                     >
-                      <div className="w-full aspect-square bg-slate-50 rounded-lg flex items-center justify-center border border-slate-100 group-hover:bg-blue-50 transition-colors overflow-hidden">
+                      <div className="w-full aspect-square bg-black/20 rounded-lg flex items-center justify-center border border-white/10 group-hover:bg-white/5 transition-colors overflow-hidden">
                         {item.asset?.image ? (
                           <img src={item.asset.image} alt={item.title || item.asset.name} className="w-full h-full object-contain" />
                         ) : (
-                          <Box className="size-8 text-slate-300 group-hover:text-blue-200" />
+                          <Box className="size-8 text-white/30 group-hover:text-purple-200" />
                         )}
                       </div>
                       <div className="w-full">
-                        <p className="text-[11px] font-bold text-slate-700 truncate w-full">{item.title || item.asset?.name || 'Unknown Item'}</p>
-                        <div className="flex items-center justify-center gap-1 mt-1 text-emerald-600">
+                        <p className="text-[11px] font-bold text-white truncate w-full">{item.title || item.asset?.name || 'Unknown Item'}</p>
+                        <div className="flex items-center justify-center gap-1 mt-1 text-emerald-300">
                           <span className="text-[10px] font-bold">${item.pricing || 0}</span>
-                          <span className="text-[8px] text-slate-400 font-medium">/ Day</span>
+                          <span className="text-[8px] text-white/50 font-medium">/ Day</span>
                         </div>
                       </div>
                     </div>
@@ -445,23 +443,23 @@ export default function AxisProductionPage() {
                   item.asset?.name.toLowerCase().includes(searchQuery.toLowerCase()))
               ).length === 0 && (
                   <div className="col-span-2 text-center py-8">
-                    <Box className="size-8 text-slate-200 mx-auto mb-2" />
-                    <p className="text-[10px] font-bold text-slate-400 uppercase">No items found</p>
+                    <Box className="size-8 text-white/30 mx-auto mb-2" />
+                    <p className="text-[10px] font-bold text-white/50 uppercase">No items found</p>
                   </div>
                 )}
             </div>
           </div>
 
-          <div className="p-4 bg-slate-50 border-t border-slate-100">
+          <div className="p-4 bg-white/5 border-t border-white/10">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Active List</span>
-              <span className="text-[10px] font-bold text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full">3 Items</span>
+              <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Active List</span>
+              <span className="text-[10px] font-bold text-purple-200 bg-white/10 px-2 py-0.5 rounded-full border border-white/10">3 Items</span>
             </div>
             <div className="space-y-2">
               {/* Small summary line items */}
               <div className="flex items-center justify-between text-[11px]">
-                <span className="text-slate-600 font-medium truncate flex-1">Wireless Mic System</span>
-                <span className="font-bold text-slate-800">$25.00</span>
+                <span className="text-white/70 font-medium truncate flex-1">Wireless Mic System</span>
+                <span className="font-bold text-white">$25.00</span>
               </div>
             </div>
           </div>
@@ -620,4 +618,3 @@ export default function AxisProductionPage() {
     </div>
   );
 }
-
