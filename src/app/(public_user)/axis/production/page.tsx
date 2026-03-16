@@ -450,53 +450,53 @@ export default function AxisProductionPage() {
         </div>
 
         <div className="px-4 pb-4">
-          <div className="flex items-center gap-4 px-1 text-[10px] font-bold uppercase tracking-[0.22em] text-white/45">
-            <div className="flex-[2]">Table</div>
-            <div className="flex-1">Case</div>
-            <div className="flex-1">Sliders</div>
-            <div className="flex-1">Staff</div>
-          </div>
-
-          {/* Bottom Accessories Panel (Tech Table / Case / Sliders / Staff) */}
-          <div className="flex gap-4 h-52">
-            <div className="flex-[2] bg-white/5 rounded-xl relative overflow-hidden group backdrop-blur">
-              <div className="absolute inset-0 flex items-center justify-center p-4 pt-10">
-                <img src="/axis/table.png" alt="Tech Table" className="h-full w-auto object-contain drop-shadow-[0_0_18px_rgba(168,85,247,0.35)]" />
-              </div>
-              <div id="techAssetsContainer" className="absolute inset-0 flex items-center justify-center gap-2 p-4 pt-10" />
+            <div className="flex items-center gap-4 px-1 text-[10px] font-bold uppercase tracking-[0.22em] text-white/45">
+              <div className="flex-[2.6]">Table</div>
+              <div className="flex-1">Case</div>
+              <div className="flex-[1.3]">Staff</div>
+              <div className="flex-[0.9]">Sliders</div>
             </div>
 
-            <div className="flex-1 bg-white/5 rounded-xl relative overflow-hidden group backdrop-blur">
-              <div className="absolute inset-0 flex items-center justify-center p-4 pt-10">
-                <img src="/axis/case.png" alt="Cable Case" className="h-full w-auto object-contain drop-shadow-[0_0_18px_rgba(14,165,233,0.35)]" />
+            {/* Bottom Accessories Panel (Tech Table / Case / Staff / Sliders) */}
+            <div className="flex gap-4 h-52">
+              <div className="flex-[2.6] bg-white/5 rounded-xl relative overflow-hidden group backdrop-blur">
+              <div className="absolute inset-0 flex items-center justify-center p-2 pt-4">
+                <img src="/axis/table.png" alt="Tech Table" className="h-full w-full object-contain scale-110 drop-shadow-[0_0_18px_rgba(168,85,247,0.35)]" />
               </div>
-              <div id="hardwareAssetsContainer" className="absolute inset-0 grid grid-cols-3 gap-1.5 p-3 pt-10" />
-            </div>
+                <div id="techAssetsContainer" className="absolute inset-0 flex items-center justify-center gap-2 p-3 pt-6" />
+              </div>
 
-            <div className="flex-1 bg-white/5 rounded-xl relative overflow-hidden backdrop-blur">
-              <div className="absolute inset-0 flex flex-col gap-3 p-4 pt-8">
-                <div className="text-[10px] font-semibold text-white/70 uppercase tracking-[0.2em]">Levels</div>
-                {["Front", "Stage", "Back"].map((label) => (
-                  <label key={label} className="flex items-center gap-3 text-[10px] uppercase tracking-[0.18em] text-white/60">
-                    <span className="w-12">{label}</span>
-                    <input
-                      type="range"
-                      min={0}
-                      max={100}
-                      defaultValue={60}
-                      className="flex-1 accent-purple-400"
-                    />
-                  </label>
-                ))}
+              <div className="flex-1 bg-white/5 rounded-xl relative overflow-hidden group backdrop-blur">
+                <div className="absolute inset-0 flex items-center justify-center p-4 pt-10">
+                  <img src="/axis/case.png" alt="Cable Case" className="h-full w-auto object-contain drop-shadow-[0_0_18px_rgba(14,165,233,0.35)]" />
+                </div>
+                <div id="hardwareAssetsContainer" className="absolute inset-0 grid grid-cols-3 gap-1.5 p-3 pt-10" />
               </div>
-            </div>
 
-            <div className="flex-1 bg-white/5 rounded-xl relative overflow-hidden group backdrop-blur">
-              <div className="absolute inset-0 flex items-center justify-center p-4 pt-10">
-                <img src="/staff.png" alt="Staff" className="h-full w-auto object-contain drop-shadow-[0_0_18px_rgba(168,85,247,0.35)]" />
+              <div className="flex-[1.3] bg-white/5 rounded-xl relative overflow-hidden group backdrop-blur">
+                <div className="absolute inset-0 flex items-center justify-center p-4 pt-8">
+                  <img src="/staff.png" alt="Staff" className="h-full w-full object-contain scale-110 drop-shadow-[0_0_18px_rgba(168,85,247,0.35)]" />
+                </div>
+              </div>
+
+              <div className="flex-[0.9] bg-white/5 rounded-xl relative overflow-hidden backdrop-blur">
+                <div className="absolute inset-0 flex items-center justify-center gap-6 p-4 pt-8">
+                  {["Front", "Back"].map((label) => (
+                    <div key={label} className="flex flex-col items-center gap-2">
+                      <span className="text-[10px] font-semibold text-white/70 uppercase tracking-[0.2em]">{label}</span>
+                      <input
+                        type="range"
+                        min={0}
+                        max={100}
+                        defaultValue={60}
+                        className="axis-slider h-28 w-3"
+                        style={{ writingMode: "vertical-rl" }}
+                      />
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
-          </div>
         </div>
       </div>
 
@@ -647,6 +647,39 @@ export default function AxisProductionPage() {
         }
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
           background: #cbd5e1;
+        }
+        .axis-slider {
+          -webkit-appearance: none;
+          appearance: none;
+          background: transparent;
+        }
+        .axis-slider::-webkit-slider-runnable-track {
+          width: 4px;
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 999px;
+        }
+        .axis-slider::-webkit-slider-thumb {
+          -webkit-appearance: none;
+          width: 28px;
+          height: 12px;
+          border-radius: 4px;
+          background: rgba(168, 85, 247, 0.95);
+          border: 1px solid rgba(255, 255, 255, 0.45);
+          box-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+          margin-top: -4px;
+        }
+        .axis-slider::-moz-range-track {
+          width: 4px;
+          background: rgba(255, 255, 255, 0.3);
+          border-radius: 999px;
+        }
+        .axis-slider::-moz-range-thumb {
+          width: 28px;
+          height: 12px;
+          border-radius: 4px;
+          background: rgba(168, 85, 247, 0.95);
+          border: 1px solid rgba(255, 255, 255, 0.45);
+          box-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
         }
       `}</style>
     </div>
