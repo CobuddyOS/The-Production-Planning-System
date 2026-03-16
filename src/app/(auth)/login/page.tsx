@@ -25,7 +25,7 @@ export default function LoginPage() {
             // fall back to default redirect below
         }
 
-        router.push('/nexus');
+        router.push('/nexus/ballrooms');
     }, [router]);
 
     useEffect(() => {

@@ -45,12 +45,8 @@ export default async function NexusLayout({
                             <Separator orientation="vertical" className="mr-2 h-4" />
                             <Breadcrumb>
                                 <BreadcrumbList>
-                                    <BreadcrumbItem className="hidden md:block">
-                                        <BreadcrumbLink href="/nexus">Dashboard</BreadcrumbLink>
-                                    </BreadcrumbItem>
-                                    <BreadcrumbSeparator className="hidden md:block" />
                                     <BreadcrumbItem>
-                                        <BreadcrumbPage>Nexus</BreadcrumbPage>
+                                        <BreadcrumbPage>NEXUS</BreadcrumbPage>
                                     </BreadcrumbItem>
                                 </BreadcrumbList>
                             </Breadcrumb>

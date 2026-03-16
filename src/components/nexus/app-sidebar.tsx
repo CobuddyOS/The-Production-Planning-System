@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import {
-    Command,
     Settings2,
     Grid,
     Users,
@@ -32,12 +31,11 @@ const data = {
         avatar: "/avatars/admin.jpg",
     },
     navMain: [
-        { title: "Dashboard", url: "/nexus", icon: Grid },
-        { title: "Team", url: "/nexus/team", icon: Users },
-        { title: "Requests", url: "/nexus/requests", icon: Inbox },
-        { title: "Ballrooms", url: "/nexus/ballrooms", icon: Map },
-        { title: "Inventory", url: "/nexus/inventory", icon: Package },
-        { title: "Settings", url: "/nexus/settings", icon: Settings2 },
+        { title: "BALLROOMS", url: "/nexus/ballrooms", icon: Map },
+        { title: "INVENTORY", url: "/nexus/inventory", icon: Package },
+        { title: "REQUEST", url: "/nexus/requests", icon: Inbox },
+        { title: "TEAM", url: "/nexus/team", icon: Users },
+        { title: "SETTINGS", url: "/nexus/settings", icon: Settings2 },
     ],
 };
 
@@ -47,20 +45,21 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return (
         <Sidebar
             variant="inset"
-            className="border-r border-white/5 bg-sidebar/50 backdrop-blur-xl"
+            className="border-r border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.08)_0%,rgba(136,86,255,0.28)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl font-montserrat"
             {...props}
         >
             <SidebarHeader className="border-b border-white/5 pb-2">
                 <SidebarMenu>
                     <SidebarMenuItem>
                         <SidebarMenuButton size="lg" asChild className="hover:bg-white/5 transition-colors">
-                            <Link href="/nexus">
-                                <div className="flex aspect-square size-10 items-center justify-center rounded-xl bg-gradient-to-br from-primary to-blue-600 text-white shadow-[0_0_15px_oklch(0.75_0.18_190_/_0.4)]">
-                                    <Command className="size-5" />
-                                </div>
-                                <div className="grid flex-1 text-left text-sm leading-tight ml-2">
-                                    <span className="truncate font-bold tracking-tight text-white">Nexus Suite</span>
-                                    <span className="truncate text-[10px] uppercase tracking-widest text-primary font-bold">Enterprise OS</span>
+                            <Link href="/nexus/ballrooms">
+                                <div className="flex h-10 w-full items-center justify-center">
+                                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                                    <img
+                                        src="/cobuddy_logo.png"
+                                        alt="Cobuddy"
+                                        className="h-25 w-auto object-contain"
+                                    />
                                 </div>
                             </Link>
                         </SidebarMenuButton>
@@ -87,7 +86,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                                         "size-5 transition-transform duration-300",
                                         pathname === item.url ? "scale-110 drop-shadow-[0_0_8px_oklch(0.75_0.18_190_/_0.5)]" : ""
                                     )} />
-                                    <span className="font-semibold tracking-wide text-xs">{item.title}</span>
+                                    <span className="font-semibold tracking-wide text-xs font-montserrat">{item.title}</span>
                                 </Link>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
