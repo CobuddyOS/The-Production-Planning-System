@@ -110,7 +110,7 @@ export default function AxisProductionPage() {
       {/* Top Header Section */}
       <header className="flex flex-col shrink-0 z-30">
         {/* Superior Branding Bar */}
-        <Card className="flex flex-row justify-between items-center py-2 px-6 rounded-none h-14 border-0 !shadow-none !bg-[linear-gradient(90deg,rgba(10,10,20,0.75),rgba(30,10,60,0.55),rgba(10,10,20,0.75))]">
+        <Card className="flex flex-row justify-between items-center py-2 px-6 rounded-none h-14 border-0 !shadow-none !bg-[linear-gradient(90deg,rgba(8,12,24,0.78),rgba(10,60,90,0.55),rgba(8,12,24,0.78))]">
           <div className="flex items-center mt-1 gap-4">
             <Image
               src="/cobuddy_logo.png"
@@ -140,7 +140,7 @@ export default function AxisProductionPage() {
               <Info className="size-5" />
             </Button>
             <Button
-              className="bg-[linear-gradient(120deg,rgba(147,51,234,0.9),rgba(56,189,248,0.7))] hover:brightness-110 text-white font-semibold h-9 px-4 rounded-lg shadow-[0_0_18px_rgba(147,51,234,0.35)]"
+              className="bg-[linear-gradient(120deg,rgba(14,165,233,0.9),rgba(132,204,22,0.7))] hover:brightness-110 text-white font-semibold h-9 px-4 rounded-lg shadow-[0_0_18px_rgba(14,165,233,0.35)]"
               onClick={() => setSummaryOpen(true)}
             >
               <FileText className="size-4 mr-2" />
@@ -151,7 +151,7 @@ export default function AxisProductionPage() {
         </Card>
 
         {/* Dynamic Context Toolbar */}
-        <Card className="flex flex-row items-center justify-between px-4 py-1.5 rounded-none h-12 border-0 !shadow-none !bg-[linear-gradient(90deg,rgba(8,8,16,0.7),rgba(24,10,50,0.45),rgba(8,8,16,0.7))]">
+        <Card className="flex flex-row items-center justify-between px-4 py-1.5 rounded-none h-12 border-0 !shadow-none !bg-[linear-gradient(90deg,rgba(6,10,18,0.7),rgba(10,36,54,0.45),rgba(6,10,18,0.7))]">
           <div className="flex items-center gap-1">
             <Button
               variant="ghost"
@@ -180,7 +180,7 @@ export default function AxisProductionPage() {
                   className={cn(
                     "h-7 px-3 text-xs font-bold rounded transition-all",
                     numberOfDays === d
-                      ? "bg-white/20 text-purple-100 shadow-[0_0_12px_rgba(168,85,247,0.4)] border border-white/20"
+                      ? "bg-white/20 text-cyan-100 shadow-[0_0_12px_rgba(14,165,233,0.4)] border border-white/20"
                       : "text-white/60 hover:text-white hover:bg-white/5"
                   )}
                 >
@@ -237,7 +237,7 @@ export default function AxisProductionPage() {
           {/* Professional Left Sidebar - Ballrooms */}
           <aside
             className={cn(
-              "mb-4 rounded-2xl overflow-hidden border-r border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(136,86,255,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0",
+              "mb-4 rounded-2xl overflow-hidden border-r border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(56,189,248,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0",
               leftSidebarOpen ? "w-64" : "w-0 -translate-x-full opacity-0 pointer-events-none"
             )}
           >
@@ -253,8 +253,8 @@ export default function AxisProductionPage() {
 
             <div className="flex-1 overflow-y-auto scrollbar-hide p-3 space-y-4">
               <div className="space-y-2">
-                <div className="group relative rounded-xl border border-dashed border-white/15 hover:border-purple-300/60 hover:bg-white/5 p-6 flex flex-col items-center justify-center gap-2 transition-all cursor-pointer">
-                  <div className="w-10 h-10 rounded-full bg-[radial-gradient(circle_at_top,rgba(168,85,247,0.6),rgba(14,165,233,0.25))] flex items-center justify-center text-white group-hover:scale-110 transition-transform">
+                <div className="group relative rounded-xl border border-dashed border-white/15 hover:border-emerald-300/60 hover:bg-white/5 p-6 flex flex-col items-center justify-center gap-2 transition-all cursor-pointer">
+                  <div className="w-10 h-10 rounded-full bg-[radial-gradient(circle_at_top,rgba(14,165,233,0.65),rgba(34,197,94,0.25))] flex items-center justify-center text-white group-hover:scale-110 transition-transform">
                     <Upload className="size-5" />
                   </div>
                   <div className="text-center">
@@ -269,13 +269,13 @@ export default function AxisProductionPage() {
                 <div className="space-y-1">
                   {ballroomsLoading ? (
                     <div className="flex justify-center p-4">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-purple-300"></div>
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-sky-300"></div>
                     </div>
                   ) : ballrooms.length === 0 ? (
                     <p className="text-[10px] text-white/60 text-center py-4">No ballrooms found</p>
                   ) : (
                     ballrooms.map((ballroom) => (
-                      <div key={ballroom.id} className="group bg-white/5 rounded-xl overflow-hidden shadow-[0_0_18px_rgba(0,0,0,0.35)] hover:shadow-[0_0_28px_rgba(168,85,247,0.18)] transition-all cursor-pointer mb-3">
+                    <div key={ballroom.id} className="group bg-white/5 rounded-xl overflow-hidden shadow-[0_0_18px_rgba(0,0,0,0.35)] hover:shadow-[0_0_28px_rgba(56,189,248,0.18)] transition-all cursor-pointer mb-3">
                         <div className="aspect-video w-full bg-black/20 flex items-center justify-center overflow-hidden">
                           {ballroom.image ? (
                             <img src={ballroom.image} alt={ballroom.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
@@ -307,7 +307,7 @@ export default function AxisProductionPage() {
             {/* Main Canvas Area */}
             <div className="flex-1 p-4 flex flex-col gap-4 overflow-hidden">
               {/* The Actual Canvas Container - Remove inner card padding, maximize space */}
-              <div className="flex-1 overflow-hidden rounded-xl neon-glass-card shadow-[0_0_35px_rgba(168,85,247,0.25)] relative group">
+            <div className="flex-1 overflow-hidden rounded-xl neon-glass-card shadow-[0_0_35px_rgba(56,189,248,0.25)] relative group">
                 {/* Floating Canvas Controls */}
                 <div className="absolute top-4 right-4 flex flex-col gap-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
                   <Button variant="secondary" size="icon" className="bg-white/90 backdrop-blur shadow-md hover:bg-white" onClick={() => { }}>
@@ -325,7 +325,7 @@ export default function AxisProductionPage() {
                 />
 
                 {/* Selection Properties Overlay (When item is selected) */}
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 p-1.5 bg-black/40 backdrop-blur border border-white/15 rounded-xl shadow-[0_0_24px_rgba(168,85,247,0.25)] z-10 scale-90 md:scale-100">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 p-1.5 bg-black/40 backdrop-blur border border-white/15 rounded-xl shadow-[0_0_24px_rgba(34,197,94,0.25)] z-10 scale-90 md:scale-100">
                   <div className="flex items-center gap-0.5 px-2">
                     <Button variant="ghost" size="icon" className={toolBtnClass} title="Scale Up"><ArrowUp className="size-3.5" /></Button>
                     <Button variant="ghost" size="icon" className={toolBtnClass} title="Scale Down"><ArrowDown className="size-3.5" /></Button>
@@ -349,7 +349,7 @@ export default function AxisProductionPage() {
           {/* Right Sidebar - High Spec Assets Library */}
           <aside
             className={cn(
-              "mb-4 rounded-2xl overflow-hidden border-l border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(136,86,255,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0",
+              "mb-4 rounded-2xl overflow-hidden border-l border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(56,189,248,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0",
               rightSidebarOpen ? "w-[300px]" : "w-0 translate-x-full opacity-0 pointer-events-none"
             )}
           >
@@ -365,10 +365,10 @@ export default function AxisProductionPage() {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-white/40" />
                 <Input
                   placeholder="Search gear..."
-                  className="h-9 pl-9 text-xs bg-white/5 border-white/15 text-white placeholder:text-white/40 shadow-none focus-visible:ring-purple-500/30"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
+                className="h-9 pl-9 text-xs bg-white/5 border-white/15 text-white placeholder:text-white/40 shadow-none focus-visible:ring-sky-500/30"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
               </div>
             </div>
 
@@ -384,7 +384,7 @@ export default function AxisProductionPage() {
                       className={cn(
                         "px-3 py-1.5 rounded-full text-[10px] font-bold whitespace-nowrap transition-all flex items-center gap-1.5",
                         isActive
-                          ? "bg-white/15 text-white shadow-[0_0_16px_rgba(168,85,247,0.35)]"
+                          ? "bg-white/15 text-white shadow-[0_0_16px_rgba(56,189,248,0.35)]"
                           : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white"
                       )}
                     >
@@ -400,7 +400,7 @@ export default function AxisProductionPage() {
               <div className="grid grid-cols-2 gap-3">
                 {inventoryLoading ? (
                   <div className="col-span-2 flex justify-center p-8">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-300"></div>
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-sky-300"></div>
                   </div>
                 ) : (
                   inventory
@@ -413,13 +413,13 @@ export default function AxisProductionPage() {
                     .map((item) => (
                       <div
                         key={item.id}
-                        className="group bg-white/5 rounded-xl p-3 flex flex-col items-center text-center gap-2 shadow-[0_0_18px_rgba(0,0,0,0.35)] hover:shadow-[0_0_28px_rgba(168,85,247,0.18)] transition-all cursor-grab active:cursor-grabbing"
+                        className="group bg-white/5 rounded-xl p-3 flex flex-col items-center text-center gap-2 shadow-[0_0_18px_rgba(0,0,0,0.35)] hover:shadow-[0_0_28px_rgba(56,189,248,0.18)] transition-all cursor-grab active:cursor-grabbing"
                       >
                         <div className="w-full aspect-square bg-black/20 rounded-lg flex items-center justify-center group-hover:bg-white/5 transition-colors overflow-hidden">
                           {item.asset?.image ? (
                             <img src={item.asset.image} alt={item.title || item.asset.name} className="w-full h-full object-contain" />
                           ) : (
-                            <Box className="size-8 text-white/30 group-hover:text-purple-200" />
+                            <Box className="size-8 text-white/30 group-hover:text-emerald-200" />
                           )}
                         </div>
                         <div className="w-full">
@@ -461,7 +461,7 @@ export default function AxisProductionPage() {
             <div className="flex gap-4 h-52">
               <div className="flex-[2.6] bg-white/5 rounded-xl relative overflow-hidden group backdrop-blur">
               <div className="absolute inset-0 flex items-center justify-center p-2 pt-4">
-                <img src="/axis/table.png" alt="Tech Table" className="h-full w-full object-contain scale-110 drop-shadow-[0_0_18px_rgba(168,85,247,0.35)]" />
+                <img src="/axis/table.png" alt="Tech Table" className="h-full w-full object-contain scale-110 drop-shadow-[0_0_18px_rgba(56,189,248,0.35)]" />
               </div>
                 <div id="techAssetsContainer" className="absolute inset-0 flex items-center justify-center gap-2 p-3 pt-6" />
               </div>
@@ -474,9 +474,9 @@ export default function AxisProductionPage() {
               </div>
 
               <div className="flex-[1.3] bg-white/5 rounded-xl relative overflow-hidden group backdrop-blur">
-                <div className="absolute inset-0 flex items-center justify-center p-4 pt-8">
-                  <img src="/staff.png" alt="Staff" className="h-full w-full object-contain scale-110 drop-shadow-[0_0_18px_rgba(168,85,247,0.35)]" />
-                </div>
+              <div className="absolute inset-0 flex items-center justify-center p-4 pt-8">
+                <img src="/staff.png" alt="Staff" className="h-full w-full object-contain scale-110 drop-shadow-[0_0_22px_rgba(132,204,22,0.7)]" />
+              </div>
               </div>
 
               <div className="flex-[0.9] bg-white/5 rounded-xl relative overflow-hidden backdrop-blur">
@@ -663,9 +663,9 @@ export default function AxisProductionPage() {
           width: 28px;
           height: 12px;
           border-radius: 4px;
-          background: rgba(168, 85, 247, 0.95);
+          background: rgba(56, 189, 248, 0.95);
           border: 1px solid rgba(255, 255, 255, 0.45);
-          box-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+          box-shadow: 0 0 12px rgba(132, 204, 22, 0.6);
           margin-top: -4px;
         }
         .axis-slider::-moz-range-track {
@@ -677,9 +677,9 @@ export default function AxisProductionPage() {
           width: 28px;
           height: 12px;
           border-radius: 4px;
-          background: rgba(168, 85, 247, 0.95);
+          background: rgba(56, 189, 248, 0.95);
           border: 1px solid rgba(255, 255, 255, 0.45);
-          box-shadow: 0 0 12px rgba(168, 85, 247, 0.6);
+          box-shadow: 0 0 12px rgba(132, 204, 22, 0.6);
         }
       `}</style>
     </div>
