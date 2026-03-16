@@ -71,7 +71,7 @@ export default function OrbPage() {
                     { title: "Pending Ballrooms", value: stats.pendingBallrooms, icon: Clock, desc: "Awaiting review", color: "text-amber-500", bg: "bg-amber-500/10" },
                     { title: "Approved Ballrooms", value: stats.approvedBallrooms, icon: CheckCircle2, desc: "Approved spaces", color: "text-emerald-500", bg: "bg-emerald-500/10" },
                 ].map((stat, i) => (
-                    <Card key={i} className="border-none shadow-sm bg-muted/30">
+                    <Card key={i} className="neon-glass-card">
                         <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
                             <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
                             <div className={`${stat.bg} p-2 rounded-lg`}>
@@ -87,7 +87,7 @@ export default function OrbPage() {
             </div>
 
             {/* Recent pending table */}
-            <Card className="border-none shadow-sm bg-muted/30 overflow-hidden">
+            <Card className="neon-glass-card overflow-hidden">
                 <CardHeader className="flex flex-row items-center justify-between gap-4 pb-6 px-6 pt-6">
                     <CardTitle className="text-lg font-semibold flex items-center gap-2">
                         <Activity className="h-5 w-5 text-primary" />
@@ -105,7 +105,7 @@ export default function OrbPage() {
                 <CardContent className="p-0">
                     <div className="border-t">
                         <Table>
-                            <TableHeader className="bg-muted/50">
+                            <TableHeader>
                                 <TableRow>
                                     <TableHead className="pl-6">Name</TableHead>
                                     <TableHead>Tenant</TableHead>
@@ -113,7 +113,7 @@ export default function OrbPage() {
                                     <TableHead className="text-right pr-6">Submitted</TableHead>
                                 </TableRow>
                             </TableHeader>
-                            <TableBody className="bg-background/50">
+                            <TableBody>
                                 {recentPending.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={4} className="text-center py-10 text-muted-foreground">

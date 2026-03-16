@@ -56,6 +56,26 @@ body {
     @apply bg-card/60 backdrop-blur-xl border border-white/5 shadow-2xl;
   }
 
+  .neon-glass-card {
+    background:
+      linear-gradient(140deg, oklch(0.72 0.2 190 / 0.18) 0%, oklch(0.16 0.06 260 / 0.6) 55%, oklch(0.75 0.18 190 / 0.1) 100%);
+    border: 1px solid oklch(0.78 0.18 190 / 0.25);
+    box-shadow:
+      0 0 18px oklch(0.75 0.18 190 / 0.35),
+      inset 0 1px 0 oklch(0.98 0.01 250 / 0.15);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    transition: box-shadow 200ms ease, transform 200ms ease, border-color 200ms ease;
+  }
+
+  .neon-glass-card:hover {
+    border-color: oklch(0.8 0.2 190 / 0.45);
+    box-shadow:
+      0 0 28px oklch(0.75 0.18 190 / 0.5),
+      0 0 60px oklch(0.72 0.2 190 / 0.25),
+      inset 0 1px 0 oklch(0.98 0.01 250 / 0.2);
+  }
+
   .glass-nav {
     @apply sticky top-0 z-50 backdrop-blur-md bg-background/80 border-b border-white/5;
   }

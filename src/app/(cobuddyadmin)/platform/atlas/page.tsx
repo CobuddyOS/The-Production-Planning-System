@@ -78,7 +78,7 @@ export default function AtlasPage() {
                     { title: "Total Bundles", value: overviewStats.totalBundles, icon: Layers, desc: "Reusable packages", color: "text-purple-400", bg: "bg-purple-400/10", border: "border-purple-400/20" },
                     { title: "Recently Added", value: overviewStats.recentAssets, icon: Zap, desc: "Most recent assets", color: "text-amber-400", bg: "bg-amber-400/10", border: "border-amber-400/20" },
                 ].map((stat, i) => (
-                    <Card key={i} className="glass-card group hover:scale-[1.02] transition-all duration-300">
+                    <Card key={i} className="neon-glass-card group hover:scale-[1.02] transition-all duration-300">
                         <CardHeader className="flex flex-row items-center justify-between pb-3 space-y-0">
                             <CardTitle className="text-xs font-bold uppercase tracking-wider text-muted-foreground">{stat.title}</CardTitle>
                             <div className={`${stat.bg} ${stat.border} border p-2.5 rounded-xl transition-all group-hover:shadow-[0_0_15px_rgba(0,0,0,0.2)]`}>
@@ -96,7 +96,7 @@ export default function AtlasPage() {
             </div>
 
             <div className="grid gap-8 lg:grid-cols-3">
-                <Card className="lg:col-span-2 glass-card overflow-hidden">
+                <Card className="lg:col-span-2 neon-glass-card overflow-hidden">
                     <CardHeader className="flex flex-row items-center justify-between gap-4 pb-6 px-6 pt-6 border-b border-white/5">
                         <CardTitle className="text-lg font-bold flex items-center gap-3 text-white">
                             <Activity className="h-5 w-5 text-primary drop-shadow-[0_0_8px_oklch(0.75_0.18_190_/_0.5)]" />
@@ -163,7 +163,7 @@ export default function AtlasPage() {
                     </CardContent>
                 </Card>
 
-                <Card className="glass-card">
+                <Card className="neon-glass-card">
                     <CardHeader className="pb-6 border-b border-white/5">
                         <CardTitle className="text-lg font-bold flex items-center gap-3 text-white">
                             <Layout className="h-5 w-5 text-primary drop-shadow-[0_0_8px_oklch(0.75_0.18_190_/_0.5)]" />
