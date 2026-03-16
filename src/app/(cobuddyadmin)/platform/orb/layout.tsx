@@ -15,13 +15,13 @@ export default function OrbLayout({ children }: { children: ReactNode }) {
     const pathname = usePathname();
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col gap-4 font-montserrat">
             <div className="flex items-center justify-between gap-4">
                 <div>
-                    <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">
+                    <h1 className="text-2xl md:text-3xl font-semibold tracking-tight font-orbitron">
                         ORB
                     </h1>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground font-orbitron">
                         Operational Request Bridge — review and approve tenant resources.
                     </p>
                 </div>
@@ -59,10 +59,8 @@ function OrbNavLink({
         <Link
             href={href}
             className={cn(
-                "inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-colors",
-                "hover:bg-muted hover:text-foreground",
-                active &&
-                "bg-foreground text-background hover:bg-foreground hover:text-background"
+                "inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-xs font-medium transition-colors neon-pill",
+                active && "neon-pill-active"
             )}
         >
             {children}
