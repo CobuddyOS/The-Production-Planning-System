@@ -80,9 +80,9 @@ export function BallroomCategoryFormDialog({
     };
 
     return (
-        <DialogContent className="sm:max-w-[500px] overflow-hidden flex flex-col p-0 border-none shadow-2xl">
+        <DialogContent className="neon-glass-card sm:max-w-[500px] overflow-hidden flex flex-col p-0">
             <form onSubmit={handleSubmit}>
-                <DialogHeader className="p-6 pb-2 bg-muted/20 text-left">
+                <DialogHeader className="p-6 pb-2 text-left">
                     <DialogTitle className="text-xl">
                         {isEdit ? "Edit Ballroom Category" : "Create Ballroom Category"}
                     </DialogTitle>
@@ -151,7 +151,7 @@ export function BallroomCategoryFormDialog({
                         </button>
                     </div>
                 </div>
-                <DialogFooter className="p-6 bg-muted/20 border-t">
+                <DialogFooter className="p-6 border-t">
                     <Button type="button" variant="outline" size="sm" onClick={onCancel} disabled={loading} className="cursor-pointer">
                         Cancel
                     </Button>

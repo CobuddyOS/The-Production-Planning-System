@@ -45,7 +45,7 @@ export function BallroomRequestSheet({
 
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="sm:max-w-[450px] gap-0 p-0 overflow-y-auto">
+            <SheetContent className="neon-glass-card sm:max-w-[450px] gap-0 p-0 overflow-y-auto">
                 {/* Image preview */}
                 {imageUrl ? (
                     <div className="w-full aspect-video relative bg-muted overflow-hidden shrink-0">

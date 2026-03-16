@@ -167,9 +167,9 @@ export function AssetFormDialog({
     };
 
     return (
-        <DialogContent className="sm:max-w-[600px] overflow-hidden flex flex-col p-0 border-none shadow-2xl">
+        <DialogContent className="neon-glass-card sm:max-w-[600px] overflow-hidden flex flex-col p-0">
             <form onSubmit={handleSubmit}>
-                <DialogHeader className="p-6 pb-2 bg-muted/20 text-left">
+                <DialogHeader className="p-6 pb-2 text-left">
                     <DialogTitle className="text-xl">
                         {isEdit ? "Edit Asset" : "Create Asset"}
                     </DialogTitle>
@@ -392,7 +392,7 @@ export function AssetFormDialog({
                         </button>
                     </div>
                 </div>
-                <DialogFooter className="p-6 bg-muted/20 border-t">
+                <DialogFooter className="p-6 border-t">
                     <Button type="button" variant="outline" size="sm" onClick={onCancel} disabled={loading} className="cursor-pointer">
                         Cancel
                     </Button>

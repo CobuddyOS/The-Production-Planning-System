@@ -45,7 +45,7 @@ export function AssetSelectionDialog({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[750px] max-h-[85vh] flex flex-col p-0 overflow-hidden border-none shadow-2xl rounded-xl">
+            <DialogContent className="neon-glass-card sm:max-w-[750px] max-h-[85vh] flex flex-col p-0 overflow-hidden rounded-xl">
                 <DialogHeader className="p-6 pb-2 bg-muted/20 text-left">
                     <DialogTitle className="text-xl font-bold flex items-center gap-2">
                         <Package className="size-5 text-primary" />
