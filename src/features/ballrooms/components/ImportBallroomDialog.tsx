@@ -55,7 +55,7 @@ export function ImportBallroomDialog({ ballroom, onSuccess, onCancel }: ImportBa
     };
 
     return (
-        <DialogContent className="neon-glass-form neon-form max-w-2xl p-0 overflow-hidden rounded-3xl">
+        <DialogContent className="neon-glass-form neon-form max-w-2xl p-0 overflow-hidden rounded-3xl font-montserrat">
             <DialogHeader className="sr-only">
                 <DialogTitle>Import {ballroom.name}</DialogTitle>
                 <DialogDescription>Configure details to import this space template into your local inventory.</DialogDescription>
@@ -63,26 +63,22 @@ export function ImportBallroomDialog({ ballroom, onSuccess, onCancel }: ImportBa
             <div className="flex flex-col h-[90vh] md:h-auto max-h-[85vh]">
                 {/* Visual Header */}
                 <div className="relative h-48 bg-muted/30 overflow-hidden border-b border-border/40">
-                    <div className="absolute inset-0 flex items-center justify-center p-12">
+                    <div className="absolute inset-0 flex items-center justify-end p-6 mr-4">
                         {ballroom.image ? (
-                            <img src={ballroom.image} alt={ballroom.name} className="h-full w-full object-contain drop-shadow-2xl" />
+                            <div className="h-full w-[40%] overflow-hidden rounded-3xl border-2 border-primary/20 shadow-2xl isolate">
+                                <img src={ballroom.image} alt={ballroom.name} className="h-full w-full object-cover" />
+                            </div>
                         ) : (
-                            <Box className="size-20 text-muted-foreground/20" />
+                            <Box className="size-20 text-muted-foreground/20 mr-6" />
                         )}
                     </div>
                     <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
-                    <div className="absolute bottom-4 left-6 right-6 flex items-end justify-between">
+                    <div className="absolute inset-y-0 left-6 right-6 flex items-center justify-between">
                         <div className="space-y-1">
                             <Badge variant="outline" className="bg-background/50 backdrop-blur border-border/50 text-[10px] font-black uppercase tracking-tighter py-0">
                                 {ballroom.atlas_ballroom_categories?.name || "Global Space"}
                             </Badge>
                             <h2 className="text-2xl font-black tracking-tighter leading-none text-foreground">{ballroom.name}</h2>
-                        </div>
-                        <div className="flex gap-2">
-                            <div className="flex flex-col items-center px-3 py-1 bg-background/50 backdrop-blur rounded-xl border border-border/50">
-                                <span className="text-xs font-black text-primary leading-none">{width}x{depth}</span>
-                                <span className="text-[8px] font-black uppercase text-muted-foreground">{unitType}</span>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -94,11 +90,11 @@ export function ImportBallroomDialog({ ballroom, onSuccess, onCancel }: ImportBa
                             <div className="space-y-4">
                                 <div className="flex items-center gap-2 text-primary">
                                     <Info className="size-4" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">General Information</span>
+                                    <span className="text-xs font-semibold uppercase tracking-widest">General Information</span>
                                 </div>
 
                                 <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Internal Name</label>
+                                    <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Internal Name</label>
                                     <Input
                                         placeholder="e.g. Grand Ballroom A"
                                         value={name}
@@ -109,7 +105,7 @@ export function ImportBallroomDialog({ ballroom, onSuccess, onCancel }: ImportBa
 
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
+                                        <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
                                             <Users className="size-3" /> Max Capacity
                                         </label>
                                         <Input
@@ -120,7 +116,7 @@ export function ImportBallroomDialog({ ballroom, onSuccess, onCancel }: ImportBa
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
+                                        <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
                                             Unit
                                         </label>
                                         <Select value={unitType} onValueChange={(v: any) => setUnitType(v)}>
@@ -136,16 +132,16 @@ export function ImportBallroomDialog({ ballroom, onSuccess, onCancel }: ImportBa
                                 </div>
                             </div>
 
-                            {/* Dimensions & Description */}
+                            {/* Dimensions */}
                             <div className="space-y-4">
                                 <div className="flex items-center gap-2 text-primary">
                                     <Maximize2 className="size-4" />
-                                    <span className="text-[10px] font-black uppercase tracking-widest">Dimensions</span>
+                                    <span className="text-xs font-semibold uppercase tracking-widest">Dimensions</span>
                                 </div>
 
                                 <div className="grid grid-cols-2 gap-3">
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Width</label>
+                                        <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Width</label>
                                         <Input
                                             type="number"
                                             value={width}
@@ -154,7 +150,7 @@ export function ImportBallroomDialog({ ballroom, onSuccess, onCancel }: ImportBa
                                         />
                                     </div>
                                     <div className="space-y-2">
-                                        <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Depth</label>
+                                        <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground">Depth</label>
                                         <Input
                                             type="number"
                                             value={depth}
@@ -164,28 +160,30 @@ export function ImportBallroomDialog({ ballroom, onSuccess, onCancel }: ImportBa
                                     </div>
                                 </div>
 
-                                <div className="space-y-2">
-                                    <label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
-                                        <FileText className="size-3" /> Description
-                                    </label>
-                                    <Textarea
-                                        placeholder="Describe the space..."
-                                        value={description}
-                                        onChange={(e) => setDescription(e.target.value)}
-                                        className="min-h-[100px] rounded-xl resize-none font-medium text-xs"
-                                    />
-                                </div>
+                            </div>
+
+                            {/* Description */}
+                            <div className="space-y-2 md:col-span-2">
+                                <label className="text-xs font-semibold uppercase tracking-widest text-muted-foreground flex items-center gap-1.5">
+                                    <FileText className="size-3" /> Description
+                                </label>
+                                <Textarea
+                                    placeholder="Describe the space..."
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                    className="min-h-[120px] rounded-xl resize-none font-medium text-xs"
+                                />
                             </div>
                         </div>
 
                         {/* Admin Approval Notice */}
-                        <div className="bg-amber-500/10 border border-amber-500/20 rounded-2xl p-4 flex gap-4 items-start">
-                            <div className="size-10 rounded-xl bg-amber-500/20 flex items-center justify-center shrink-0">
-                                <Info className="size-5 text-amber-500" />
+                        <div className="bg-primary/10 border border-primary/20 rounded-2xl p-4 flex gap-4 items-start">
+                            <div className="size-10 rounded-xl bg-primary/20 flex items-center justify-center shrink-0">
+                                <Info className="size-5 text-primary" />
                             </div>
                             <div className="space-y-1">
-                                <p className="text-xs font-black text-amber-600 uppercase tracking-widest">Admin Approval Required</p>
-                                <p className="text-[11px] text-amber-700/80 font-medium leading-tight">
+                                <p className="text-xs font-semibold text-primary uppercase tracking-widest">Admin Approval Required</p>
+                                <p className="text-[11px] text-primary/70 font-medium leading-tight">
                                     Your request will be sent to the admin for approval. Once approved, the ballroom will be available for use in your inventory.
                                 </p>
                             </div>
