@@ -57,9 +57,11 @@ export default function AxisProductionPage() {
         x: targetX,
         y: targetY,
         scale: 0.8,
+        rotation: 0,
         flipX: false,
         flipY: false,
         isLocked: false,
+        rotationAllowed: item.rotation_allowed ?? true,
       },
     ]);
   };
@@ -71,8 +73,11 @@ export default function AxisProductionPage() {
     }));
   };
 
-  const updateAssetProperties = (ids: string[], properties: any) => {
-    setCanvasAssets((prev) => prev.map(a => ids.includes(a.id) ? { ...a, ...properties } : a));
+  const updateAssetProperties = (updates: { id: string, properties: any }[]) => {
+    setCanvasAssets((prev) => prev.map(a => {
+      const update = updates.find(u => u.id === a.id);
+      return update ? { ...a, ...update.properties } : a;
+    }));
   };
 
   const deleteAsset = (ids: string[]) => {
@@ -102,6 +107,7 @@ export default function AxisProductionPage() {
           ? {
             ...a,
             scale: 0.8,
+            rotation: 0,
             flipX: false,
             flipY: false,
             isLocked: false,
@@ -143,6 +149,17 @@ export default function AxisProductionPage() {
 
       return newAssets;
     });
+  };
+
+  const rotateAssets = (ids: string[], direction: "cw" | "ccw") => {
+    const step = direction === "cw" ? 15 : -15;
+    setCanvasAssets((prev) =>
+      prev.map((a) =>
+        ids.includes(a.id) && (a.rotationAllowed !== false)
+          ? { ...a, rotation: (a.rotation || 0) + step }
+          : a
+      )
+    );
   };
 
   const handleDropAsset = (e: React.DragEvent) => {
@@ -199,6 +216,7 @@ export default function AxisProductionPage() {
               onDuplicateAsset={duplicateAsset}
               onResetAsset={resetAsset}
               onUpdateAssetLayering={updateAssetLayering}
+              onRotateAssets={rotateAssets}
             />
           </main>
 

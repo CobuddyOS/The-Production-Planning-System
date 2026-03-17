@@ -12,6 +12,7 @@ import {
     Maximize2,
     Copy,
     RotateCcw,
+    RotateCw,
     Lock,
     Unlock,
     ChevronFirst,
@@ -44,11 +45,12 @@ interface AxisCanvasProps {
     onSelectAssets: (ids: string[]) => void;
     onDropAsset: (e: any) => void;
     onUpdateAssetPosition: (updates: { id: string, x: number, y: number }[]) => void;
-    onUpdateAssetProperties: (ids: string[], properties: any) => void;
+    onUpdateAssetProperties: (updates: { id: string, properties: any }[]) => void;
     onDeleteAsset: (ids: string[]) => void;
     onDuplicateAsset: (ids: string[]) => void;
     onResetAsset: (ids: string[]) => void;
     onUpdateAssetLayering: (ids: string[], action: "front" | "back" | "forward" | "backward") => void;
+    onRotateAssets: (ids: string[], direction: "cw" | "ccw") => void;
 }
 
 function AxisCanvasInternal({
@@ -63,6 +65,7 @@ function AxisCanvasInternal({
     onDuplicateAsset,
     onResetAsset,
     onUpdateAssetLayering,
+    onRotateAssets,
 }: AxisCanvasProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
@@ -124,6 +127,7 @@ function AxisCanvasInternal({
                         selectedAssetIds={selectedAssetIds}
                         onSelectAssets={onSelectAssets}
                         onUpdateAssetPosition={onUpdateAssetPosition}
+                        onUpdateAssetProperties={onUpdateAssetProperties}
                     />
                 )}
 
@@ -159,7 +163,7 @@ function AxisCanvasInternal({
                                                 disabled={selectedAssetIds.length === 0}
                                                 onClick={() => {
                                                     const asset = canvasAssets.find(a => selectedAssetIds.includes(a.id));
-                                                    if (asset) onUpdateAssetProperties(selectedAssetIds, { scale: asset.scale + 0.1 });
+                                                    if (asset) onUpdateAssetProperties(selectedAssetIds.map(id => ({ id, properties: { scale: asset.scale + 0.1 } })));
                                                 }}
                                             >
                                                 <ZoomIn className="size-3.5" />
@@ -179,7 +183,7 @@ function AxisCanvasInternal({
                                                 disabled={selectedAssetIds.length === 0}
                                                 onClick={() => {
                                                     const asset = canvasAssets.find(a => selectedAssetIds.includes(a.id));
-                                                    if (asset && asset.scale > 0.1) onUpdateAssetProperties(selectedAssetIds, { scale: asset.scale - 0.1 });
+                                                    if (asset && asset.scale > 0.1) onUpdateAssetProperties(selectedAssetIds.map(id => ({ id, properties: { scale: asset.scale - 0.1 } })));
                                                 }}
                                             >
                                                 <ZoomOut className="size-3.5" />
@@ -202,7 +206,7 @@ function AxisCanvasInternal({
                                                 disabled={selectedAssetIds.length === 0}
                                                 onClick={() => {
                                                     const asset = canvasAssets.find(a => selectedAssetIds.includes(a.id));
-                                                    if (asset) onUpdateAssetProperties(selectedAssetIds, { flipX: !asset.flipX });
+                                                    if (asset) onUpdateAssetProperties(selectedAssetIds.map(id => ({ id, properties: { flipX: !asset.flipX } })));
                                                 }}
                                             >
                                                 <FlipHorizontal className="size-3.5" />
@@ -222,7 +226,7 @@ function AxisCanvasInternal({
                                                 disabled={selectedAssetIds.length === 0}
                                                 onClick={() => {
                                                     const asset = canvasAssets.find(a => selectedAssetIds.includes(a.id));
-                                                    if (asset) onUpdateAssetProperties(selectedAssetIds, { flipY: !asset.flipY });
+                                                    if (asset) onUpdateAssetProperties(selectedAssetIds.map(id => ({ id, properties: { flipY: !asset.flipY } })));
                                                 }}
                                             >
                                                 <FlipVertical className="size-3.5" />
@@ -230,6 +234,40 @@ function AxisCanvasInternal({
                                         </TooltipTrigger>
                                         <TooltipContent side="top">
                                             <p>Flip Vertical</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className={toolBtnClass}
+                                                disabled={selectedAssetIds.length === 0 || canvasAssets.some(a => selectedAssetIds.includes(a.id) && a.rotationAllowed === false)}
+                                                onClick={() => onRotateAssets(selectedAssetIds, "ccw")}
+                                            >
+                                                <RotateCcw className="size-3.5" />
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="top">
+                                            <p>{canvasAssets.some(a => selectedAssetIds.includes(a.id) && a.rotationAllowed === false) ? "Rotation Locked" : "Rotate CCW"}</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Button
+                                                variant="ghost"
+                                                size="icon"
+                                                className={toolBtnClass}
+                                                disabled={selectedAssetIds.length === 0 || canvasAssets.some(a => selectedAssetIds.includes(a.id) && a.rotationAllowed === false)}
+                                                onClick={() => onRotateAssets(selectedAssetIds, "cw")}
+                                            >
+                                                <RotateCw className="size-3.5" />
+                                            </Button>
+                                        </TooltipTrigger>
+                                        <TooltipContent side="top">
+                                            <p>{canvasAssets.some(a => selectedAssetIds.includes(a.id) && a.rotationAllowed === false) ? "Rotation Locked" : "Rotate CW"}</p>
                                         </TooltipContent>
                                     </Tooltip>
 
@@ -350,7 +388,7 @@ function AxisCanvasInternal({
                                                 disabled={selectedAssetIds.length === 0}
                                                 onClick={() => {
                                                     const anyLocked = canvasAssets.some(a => selectedAssetIds.includes(a.id) && a.isLocked);
-                                                    onUpdateAssetProperties(selectedAssetIds, { isLocked: !anyLocked });
+                                                    onUpdateAssetProperties(selectedAssetIds.map(id => ({ id, properties: { isLocked: !anyLocked } })));
                                                 }}
                                             >
                                                 {canvasAssets.some(a => selectedAssetIds.includes(a.id) && a.isLocked) ? <Lock className="size-3.5 text-amber-400" /> : <Unlock className="size-3.5" />}
