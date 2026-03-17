@@ -45,6 +45,7 @@ export function ImportAssetDialog({
     const [power, setPower] = useState("");
     const [footprintWidth, setFootprintWidth] = useState("");
     const [footprintDepth, setFootprintDepth] = useState("");
+    const [rotationAllowed, setRotationAllowed] = useState(true);
 
 
     const [loading, setLoading] = useState(false);
@@ -71,7 +72,7 @@ export function ImportAssetDialog({
             footprint_depth: footprintDepth ? parseFloat(footprintDepth) : null,
             pricing: pricing ? parseFloat(pricing) : null,
             approval_status: 'pending' as const,
-            rotation_allowed: true,
+            rotation_allowed: rotationAllowed,
         };
 
         const validation = warehouseItemSchema.safeParse(payload);
@@ -263,7 +264,22 @@ export function ImportAssetDialog({
                                     onChange={(e) => setFootprintDepth(e.target.value)}
                                 />
                             </div>
-                            <div className="md:col-span-1"></div>
+                            <div className="flex flex-col space-y-1">
+                                <label className="text-xs font-medium">Rotation Allowed</label>
+                                <button
+                                    type="button"
+                                    onClick={() => setRotationAllowed((prev) => !prev)}
+                                    className={`inline-flex h-9 w-20 items-center rounded-full border border-input px-1 transition-colors ${rotationAllowed ? "bg-emerald-500/40" : "bg-white/5"
+                                        }`}
+                                >
+                                    <span
+                                        className={`inline-flex h-7 w-7 items-center justify-center rounded-full bg-background shadow transition-transform ${rotationAllowed ? "translate-x-10" : "translate-x-0"
+                                            }`}
+                                    >
+                                        {rotationAllowed ? "On" : "Off"}
+                                    </span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

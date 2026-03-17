@@ -38,6 +38,7 @@ export function UpdateInventoryItemDialog({
     const [power, setPower] = useState(item.power || "");
     const [footprintWidth, setFootprintWidth] = useState(item.footprint_width?.toString() || "");
     const [footprintDepth, setFootprintDepth] = useState(item.footprint_depth?.toString() || "");
+    const [rotationAllowed, setRotationAllowed] = useState(item.rotation_allowed ?? true);
 
     const [loading, setLoading] = useState(false);
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -61,7 +62,7 @@ export function UpdateInventoryItemDialog({
             footprint_width: footprintWidth ? parseFloat(footprintWidth) : null,
             footprint_depth: footprintDepth ? parseFloat(footprintDepth) : null,
             pricing: pricing ? parseFloat(pricing) : null,
-            rotation_allowed: item.rotation_allowed,
+            rotation_allowed: rotationAllowed,
             approval_status: item.approval_status,
         };
 
@@ -199,6 +200,22 @@ export function UpdateInventoryItemDialog({
                             <div className="space-y-1">
                                 <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground" htmlFor="item-f-depth">Footprint Depth (m)</label>
                                 <Input id="item-f-depth" type="number" step="0.01" value={footprintDepth} onChange={(e) => setFootprintDepth(e.target.value)} className="rounded-xl" />
+                            </div>
+                            <div className="space-y-1">
+                                <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Rotation Allowed</label>
+                                <button
+                                    type="button"
+                                    onClick={() => setRotationAllowed((prev) => !prev)}
+                                    className={`inline-flex h-9 w-20 items-center rounded-full border border-input px-1 transition-colors ${rotationAllowed ? "bg-emerald-500/40" : "bg-white/5"
+                                        }`}
+                                >
+                                    <span
+                                        className={`inline-flex h-7 w-7 items-center justify-center rounded-full bg-background shadow transition-transform ${rotationAllowed ? "translate-x-10" : "translate-x-0"
+                                            }`}
+                                    >
+                                        {rotationAllowed ? "On" : "Off"}
+                                    </span>
+                                </button>
                             </div>
                         </div>
                     </div>
