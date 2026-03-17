@@ -15,7 +15,7 @@ export default function AxisProductionPage() {
   const [rightSidebarOpen, setRightSidebarOpen] = useState(false);
   const [selectedBallroomImage, setSelectedBallroomImage] = useState<string | null>(null);
   const [canvasAssets, setCanvasAssets] = useState<any[]>([]);
-  const [selectedAssetId, setSelectedAssetId] = useState<string | null>(null);
+  const [selectedAssetIds, setSelectedAssetIds] = useState<string[]>([]);
 
   const [infoModalOpen, setInfoModalOpen] = useState(false);
   const [summaryOpen, setSummaryOpen] = useState(false);
@@ -64,37 +64,41 @@ export default function AxisProductionPage() {
     ]);
   };
 
-  const updateAssetPosition = (id: string, x: number, y: number) => {
-    setCanvasAssets((prev) => prev.map(a => a.id === id ? { ...a, x, y } : a));
+  const updateAssetPosition = (updates: { id: string, x: number, y: number }[]) => {
+    setCanvasAssets((prev) => prev.map(a => {
+      const update = updates.find(u => u.id === a.id);
+      return update ? { ...a, x: update.x, y: update.y } : a;
+    }));
   };
 
-  const updateAssetProperties = (id: string, properties: any) => {
-    setCanvasAssets((prev) => prev.map(a => a.id === id ? { ...a, ...properties } : a));
+  const updateAssetProperties = (ids: string[], properties: any) => {
+    setCanvasAssets((prev) => prev.map(a => ids.includes(a.id) ? { ...a, ...properties } : a));
   };
 
-  const deleteAsset = (id: string) => {
-    setCanvasAssets((prev) => prev.filter((a) => a.id !== id));
-    if (selectedAssetId === id) setSelectedAssetId(null);
+  const deleteAsset = (ids: string[]) => {
+    setCanvasAssets((prev) => prev.filter((a) => !ids.includes(a.id)));
+    setSelectedAssetIds((prev) => prev.filter(id => !ids.includes(id)));
   };
 
-  const duplicateAsset = (id: string) => {
-    const asset = canvasAssets.find((a) => a.id === id);
-    if (!asset) return;
+  const duplicateAsset = (ids: string[]) => {
+    const assetsToDuplicate = canvasAssets.filter((a) => ids.includes(a.id));
+    if (assetsToDuplicate.length === 0) return;
 
-    const newAsset = {
+    const newAssets = assetsToDuplicate.map(asset => ({
       ...asset,
       id: Math.random().toString(36).substring(7),
       x: asset.x + 20,
       y: asset.y + 20,
-    };
-    setCanvasAssets((prev) => [...prev, newAsset]);
-    setSelectedAssetId(newAsset.id);
+    }));
+
+    setCanvasAssets((prev) => [...prev, ...newAssets]);
+    setSelectedAssetIds(newAssets.map(a => a.id));
   };
 
-  const resetAsset = (id: string) => {
+  const resetAsset = (ids: string[]) => {
     setCanvasAssets((prev) =>
       prev.map((a) =>
-        a.id === id
+        ids.includes(a.id)
           ? {
             ...a,
             scale: 0.8,
@@ -107,24 +111,34 @@ export default function AxisProductionPage() {
     );
   };
 
-  const updateAssetLayering = (id: string, action: "front" | "back" | "forward" | "backward") => {
+  const updateAssetLayering = (ids: string[], action: "front" | "back" | "forward" | "backward") => {
     setCanvasAssets((prev) => {
-      const index = prev.findIndex((a) => a.id === id);
-      if (index === -1) return prev;
+      // Find indices of all selected assets
+      const indices = ids.map(id => prev.findIndex(a => a.id === id)).filter(idx => idx !== -1);
+      if (indices.length === 0) return prev;
+
+      // Sort indices to maintain relative order while moving
+      indices.sort((a, b) => a - b);
 
       const newAssets = [...prev];
-      const [item] = newAssets.splice(index, 1);
+      const selectedItems = indices.map(idx => newAssets[idx]);
+
+      // Remove items from original positions (from back to front to avoid index shifting)
+      [...indices].reverse().forEach(idx => newAssets.splice(idx, 1));
 
       if (action === "front") {
-        newAssets.push(item);
+        newAssets.push(...selectedItems);
       } else if (action === "back") {
-        newAssets.unshift(item);
+        newAssets.unshift(...selectedItems);
       } else if (action === "forward") {
-        const newIndex = Math.min(index + 1, newAssets.length);
-        newAssets.splice(newIndex, 0, item);
+        // Find the new insertion point for the group
+        const maxIdx = Math.max(...indices);
+        const insertionIdx = Math.min(maxIdx + 1, prev.length - selectedItems.length + 1);
+        newAssets.splice(insertionIdx - selectedItems.length + 1, 0, ...selectedItems);
       } else if (action === "backward") {
-        const newIndex = Math.max(index - 1, 0);
-        newAssets.splice(newIndex, 0, item);
+        const minIdx = Math.min(...indices);
+        const insertionIdx = Math.max(minIdx - 1, 0);
+        newAssets.splice(insertionIdx, 0, ...selectedItems);
       }
 
       return newAssets;
@@ -176,8 +190,8 @@ export default function AxisProductionPage() {
             <AxisCanvas
               backgroundImage={selectedBallroomImage}
               canvasAssets={canvasAssets}
-              selectedAssetId={selectedAssetId}
-              onSelectAsset={setSelectedAssetId}
+              selectedAssetIds={selectedAssetIds}
+              onSelectAssets={setSelectedAssetIds}
               onDropAsset={handleDropAsset}
               onUpdateAssetPosition={updateAssetPosition}
               onUpdateAssetProperties={updateAssetProperties}

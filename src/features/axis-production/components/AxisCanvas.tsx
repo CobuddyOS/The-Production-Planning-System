@@ -40,22 +40,22 @@ const AxisKonvaStage = dynamic<any>(() => import("./AxisKonvaStage"), {
 interface AxisCanvasProps {
     backgroundImage: string | null;
     canvasAssets: any[];
-    selectedAssetId: string | null;
-    onSelectAsset: (id: string | null) => void;
+    selectedAssetIds: string[];
+    onSelectAssets: (ids: string[]) => void;
     onDropAsset: (e: any) => void;
-    onUpdateAssetPosition: (id: string, x: number, y: number) => void;
-    onUpdateAssetProperties: (id: string, properties: any) => void;
-    onDeleteAsset: (id: string) => void;
-    onDuplicateAsset: (id: string) => void;
-    onResetAsset: (id: string) => void;
-    onUpdateAssetLayering: (id: string, action: "front" | "back" | "forward" | "backward") => void;
+    onUpdateAssetPosition: (updates: { id: string, x: number, y: number }[]) => void;
+    onUpdateAssetProperties: (ids: string[], properties: any) => void;
+    onDeleteAsset: (ids: string[]) => void;
+    onDuplicateAsset: (ids: string[]) => void;
+    onResetAsset: (ids: string[]) => void;
+    onUpdateAssetLayering: (ids: string[], action: "front" | "back" | "forward" | "backward") => void;
 }
 
 function AxisCanvasInternal({
     backgroundImage,
     canvasAssets,
-    selectedAssetId,
-    onSelectAsset,
+    selectedAssetIds,
+    onSelectAssets,
     onDropAsset,
     onUpdateAssetPosition,
     onUpdateAssetProperties,
@@ -121,8 +121,8 @@ function AxisCanvasInternal({
                         height={dimensions.height}
                         backgroundImage={backgroundImage}
                         canvasAssets={canvasAssets}
-                        selectedAssetId={selectedAssetId}
-                        onSelectAsset={onSelectAsset}
+                        selectedAssetIds={selectedAssetIds}
+                        onSelectAssets={onSelectAssets}
                         onUpdateAssetPosition={onUpdateAssetPosition}
                     />
                 )}
@@ -140,8 +140,8 @@ function AxisCanvasInternal({
                 {/* Toolbar Overlay */}
                 <div
                     className={`absolute transition-all duration-500 ease-in-out z-20 ${isToolbarMinimized
-                            ? "bottom-4 right-4 translate-x-0"
-                            : "bottom-4 left-1/2 -translate-x-1/2"
+                        ? "bottom-4 right-4 translate-x-0"
+                        : "bottom-4 left-1/2 -translate-x-1/2"
                         }`}
                 >
                     <div className={`flex items-center gap-1.5 p-1.5 bg-zinc-950/95 backdrop-blur-md border border-white/20 rounded-xl shadow-[0_0_30px_rgba(0,0,0,0.5)] ${isToolbarMinimized ? "w-11 h-11 justify-center" : "w-auto"
@@ -156,10 +156,10 @@ function AxisCanvasInternal({
                                                 variant="ghost"
                                                 size="icon"
                                                 className={toolBtnClass}
-                                                disabled={!selectedAssetId}
+                                                disabled={selectedAssetIds.length === 0}
                                                 onClick={() => {
-                                                    const asset = canvasAssets.find(a => a.id === selectedAssetId);
-                                                    if (asset) onUpdateAssetProperties(selectedAssetId!, { scale: asset.scale + 0.1 });
+                                                    const asset = canvasAssets.find(a => selectedAssetIds.includes(a.id));
+                                                    if (asset) onUpdateAssetProperties(selectedAssetIds, { scale: asset.scale + 0.1 });
                                                 }}
                                             >
                                                 <ZoomIn className="size-3.5" />
@@ -176,10 +176,10 @@ function AxisCanvasInternal({
                                                 variant="ghost"
                                                 size="icon"
                                                 className={toolBtnClass}
-                                                disabled={!selectedAssetId}
+                                                disabled={selectedAssetIds.length === 0}
                                                 onClick={() => {
-                                                    const asset = canvasAssets.find(a => a.id === selectedAssetId);
-                                                    if (asset && asset.scale > 0.1) onUpdateAssetProperties(selectedAssetId!, { scale: asset.scale - 0.1 });
+                                                    const asset = canvasAssets.find(a => selectedAssetIds.includes(a.id));
+                                                    if (asset && asset.scale > 0.1) onUpdateAssetProperties(selectedAssetIds, { scale: asset.scale - 0.1 });
                                                 }}
                                             >
                                                 <ZoomOut className="size-3.5" />
@@ -199,10 +199,10 @@ function AxisCanvasInternal({
                                                 variant="ghost"
                                                 size="icon"
                                                 className={toolBtnClass}
-                                                disabled={!selectedAssetId}
+                                                disabled={selectedAssetIds.length === 0}
                                                 onClick={() => {
-                                                    const asset = canvasAssets.find(a => a.id === selectedAssetId);
-                                                    if (asset) onUpdateAssetProperties(selectedAssetId!, { flipX: !asset.flipX });
+                                                    const asset = canvasAssets.find(a => selectedAssetIds.includes(a.id));
+                                                    if (asset) onUpdateAssetProperties(selectedAssetIds, { flipX: !asset.flipX });
                                                 }}
                                             >
                                                 <FlipHorizontal className="size-3.5" />
@@ -219,10 +219,10 @@ function AxisCanvasInternal({
                                                 variant="ghost"
                                                 size="icon"
                                                 className={toolBtnClass}
-                                                disabled={!selectedAssetId}
+                                                disabled={selectedAssetIds.length === 0}
                                                 onClick={() => {
-                                                    const asset = canvasAssets.find(a => a.id === selectedAssetId);
-                                                    if (asset) onUpdateAssetProperties(selectedAssetId!, { flipY: !asset.flipY });
+                                                    const asset = canvasAssets.find(a => selectedAssetIds.includes(a.id));
+                                                    if (asset) onUpdateAssetProperties(selectedAssetIds, { flipY: !asset.flipY });
                                                 }}
                                             >
                                                 <FlipVertical className="size-3.5" />
@@ -242,8 +242,8 @@ function AxisCanvasInternal({
                                                 variant="ghost"
                                                 size="icon"
                                                 className={toolBtnClass}
-                                                disabled={!selectedAssetId}
-                                                onClick={() => onUpdateAssetLayering(selectedAssetId!, "front")}
+                                                disabled={selectedAssetIds.length === 0}
+                                                onClick={() => onUpdateAssetLayering(selectedAssetIds, "front")}
                                             >
                                                 <ChevronLast className="size-3.5 rotate-[270deg]" />
                                             </Button>
@@ -259,8 +259,8 @@ function AxisCanvasInternal({
                                                 variant="ghost"
                                                 size="icon"
                                                 className={toolBtnClass}
-                                                disabled={!selectedAssetId}
-                                                onClick={() => onUpdateAssetLayering(selectedAssetId!, "forward")}
+                                                disabled={selectedAssetIds.length === 0}
+                                                onClick={() => onUpdateAssetLayering(selectedAssetIds, "forward")}
                                             >
                                                 <ArrowUpFromLine className="size-3.5" />
                                             </Button>
@@ -276,8 +276,8 @@ function AxisCanvasInternal({
                                                 variant="ghost"
                                                 size="icon"
                                                 className={toolBtnClass}
-                                                disabled={!selectedAssetId}
-                                                onClick={() => onUpdateAssetLayering(selectedAssetId!, "backward")}
+                                                disabled={selectedAssetIds.length === 0}
+                                                onClick={() => onUpdateAssetLayering(selectedAssetIds, "backward")}
                                             >
                                                 <ArrowDownToLine className="size-3.5" />
                                             </Button>
@@ -293,8 +293,8 @@ function AxisCanvasInternal({
                                                 variant="ghost"
                                                 size="icon"
                                                 className={toolBtnClass}
-                                                disabled={!selectedAssetId}
-                                                onClick={() => onUpdateAssetLayering(selectedAssetId!, "back")}
+                                                disabled={selectedAssetIds.length === 0}
+                                                onClick={() => onUpdateAssetLayering(selectedAssetIds, "back")}
                                             >
                                                 <ChevronFirst className="size-3.5 rotate-[270deg]" />
                                             </Button>
@@ -313,8 +313,8 @@ function AxisCanvasInternal({
                                                 variant="ghost"
                                                 size="icon"
                                                 className={toolBtnClass}
-                                                disabled={!selectedAssetId}
-                                                onClick={() => onDuplicateAsset(selectedAssetId!)}
+                                                disabled={selectedAssetIds.length === 0}
+                                                onClick={() => onDuplicateAsset(selectedAssetIds)}
                                             >
                                                 <Copy className="size-3.5" />
                                             </Button>
@@ -330,8 +330,8 @@ function AxisCanvasInternal({
                                                 variant="ghost"
                                                 size="icon"
                                                 className={toolBtnClass}
-                                                disabled={!selectedAssetId}
-                                                onClick={() => onResetAsset(selectedAssetId!)}
+                                                disabled={selectedAssetIds.length === 0}
+                                                onClick={() => onResetAsset(selectedAssetIds)}
                                             >
                                                 <RotateCcw className="size-3.5" />
                                             </Button>
@@ -347,17 +347,17 @@ function AxisCanvasInternal({
                                                 variant="ghost"
                                                 size="icon"
                                                 className={toolBtnClass}
-                                                disabled={!selectedAssetId}
+                                                disabled={selectedAssetIds.length === 0}
                                                 onClick={() => {
-                                                    const asset = canvasAssets.find(a => a.id === selectedAssetId);
-                                                    if (asset) onUpdateAssetProperties(selectedAssetId!, { isLocked: !asset.isLocked });
+                                                    const anyLocked = canvasAssets.some(a => selectedAssetIds.includes(a.id) && a.isLocked);
+                                                    onUpdateAssetProperties(selectedAssetIds, { isLocked: !anyLocked });
                                                 }}
                                             >
-                                                {canvasAssets.find(a => a.id === selectedAssetId)?.isLocked ? <Lock className="size-3.5 text-amber-400" /> : <Unlock className="size-3.5" />}
+                                                {canvasAssets.some(a => selectedAssetIds.includes(a.id) && a.isLocked) ? <Lock className="size-3.5 text-amber-400" /> : <Unlock className="size-3.5" />}
                                             </Button>
                                         </TooltipTrigger>
                                         <TooltipContent side="top">
-                                            <p>{canvasAssets.find(a => a.id === selectedAssetId)?.isLocked ? "Unlock" : "Lock"}</p>
+                                            <p>{canvasAssets.some(a => selectedAssetIds.includes(a.id) && a.isLocked) ? "Unlock All" : "Lock All"}</p>
                                         </TooltipContent>
                                     </Tooltip>
 
@@ -367,14 +367,14 @@ function AxisCanvasInternal({
                                                 variant="ghost"
                                                 size="icon"
                                                 className="size-8 text-rose-300 hover:bg-white/10 hover:text-rose-200 rounded-lg disabled:opacity-30"
-                                                disabled={!selectedAssetId}
-                                                onClick={() => onDeleteAsset(selectedAssetId!)}
+                                                disabled={selectedAssetIds.length === 0}
+                                                onClick={() => onDeleteAsset(selectedAssetIds)}
                                             >
                                                 <Trash2 className="size-4" />
                                             </Button>
                                         </TooltipTrigger>
                                         <TooltipContent side="top">
-                                            <p>Delete Asset</p>
+                                            <p>Delete Selected</p>
                                         </TooltipContent>
                                     </Tooltip>
 

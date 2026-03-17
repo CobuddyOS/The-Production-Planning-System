@@ -15,10 +15,12 @@ interface URLImageProps {
     isSelected: boolean;
     draggable: boolean;
     onDragEnd?: (e: any) => void;
+    onDragMove?: (e: any) => void;
     onClick?: (e: any) => void;
     isBackground?: boolean;
     width?: number;
     height?: number;
+    imageRef?: (node: any) => void;
 }
 
 export const URLImage = memo(({
@@ -32,10 +34,12 @@ export const URLImage = memo(({
     isSelected,
     draggable,
     onDragEnd,
+    onDragMove,
     onClick,
     isBackground = false,
     width,
     height,
+    imageRef,
 }: URLImageProps) => {
     const [img] = useImage(src, "anonymous");
     const [isHovered, setIsHovered] = useState(false);
@@ -69,10 +73,12 @@ export const URLImage = memo(({
 
     return (
         <Group
+            ref={imageRef}
             x={x}
             y={y}
             draggable={!isLocked && draggable}
             onDragEnd={onDragEnd}
+            onDragMove={onDragMove}
             onClick={onClick}
             onTap={onClick}
             onMouseEnter={(e: any) => {
@@ -129,9 +135,9 @@ interface AxisKonvaStageProps {
     height: number;
     backgroundImage: string | null;
     canvasAssets: any[];
-    selectedAssetId: string | null;
-    onSelectAsset: (id: string | null) => void;
-    onUpdateAssetPosition: (id: string, x: number, y: number) => void;
+    selectedAssetIds: string[];
+    onSelectAssets: (ids: string[]) => void;
+    onUpdateAssetPosition: (updates: { id: string, x: number, y: number }[]) => void;
 }
 
 const AxisKonvaStage = ({
@@ -139,10 +145,12 @@ const AxisKonvaStage = ({
     height,
     backgroundImage,
     canvasAssets,
-    selectedAssetId,
-    onSelectAsset,
+    selectedAssetIds,
+    onSelectAssets,
     onUpdateAssetPosition,
 }: AxisKonvaStageProps) => {
+    const nodeRefs = new Map<string, any>();
+
     return (
         <Stage
             width={width}
@@ -150,7 +158,7 @@ const AxisKonvaStage = ({
             className="absolute inset-0 z-10"
             onClick={(e) => {
                 if (e.target === e.target.getStage()) {
-                    onSelectAsset(null);
+                    onSelectAssets([]);
                 }
             }}
         >
@@ -169,12 +177,17 @@ const AxisKonvaStage = ({
                         height={height}
                         isBackground={true}
                         draggable={false}
+                        onClick={() => onSelectAssets([])}
                     />
                 )}
 
                 {canvasAssets.map((asset) => (
                     <URLImage
                         key={asset.id}
+                        imageRef={(node) => {
+                            if (node) nodeRefs.set(asset.id, node);
+                            else nodeRefs.delete(asset.id);
+                        }}
                         src={asset.item.asset?.image}
                         x={asset.x}
                         y={asset.y}
@@ -182,14 +195,56 @@ const AxisKonvaStage = ({
                         flipX={asset.flipX}
                         flipY={asset.flipY}
                         isLocked={asset.isLocked}
-                        isSelected={selectedAssetId === asset.id}
+                        isSelected={selectedAssetIds.includes(asset.id)}
                         draggable={true}
                         onClick={(e) => {
                             e.cancelBubble = true;
-                            onSelectAsset(asset.id);
+                            const isCtrl = e.evt.ctrlKey || e.evt.metaKey;
+
+                            if (isCtrl) {
+                                if (selectedAssetIds.includes(asset.id)) {
+                                    onSelectAssets(selectedAssetIds.filter(id => id !== asset.id));
+                                } else {
+                                    onSelectAssets([...selectedAssetIds, asset.id]);
+                                }
+                            } else {
+                                onSelectAssets([asset.id]);
+                            }
+                        }}
+                        onDragMove={(e: any) => {
+                            if (!selectedAssetIds.includes(asset.id) || selectedAssetIds.length <= 1) return;
+
+                            const dx = e.target.x() - asset.x;
+                            const dy = e.target.y() - asset.y;
+
+                            selectedAssetIds.forEach(id => {
+                                if (id === asset.id) return;
+                                const node = nodeRefs.get(id);
+                                if (node) {
+                                    const originalAsset = canvasAssets.find(a => a.id === id);
+                                    if (originalAsset) {
+                                        node.x(originalAsset.x + dx);
+                                        node.y(originalAsset.y + dy);
+                                    }
+                                }
+                            });
                         }}
                         onDragEnd={(e: any) => {
-                            onUpdateAssetPosition(asset.id, e.target.x(), e.target.y());
+                            const dx = e.target.x() - asset.x;
+                            const dy = e.target.y() - asset.y;
+
+                            if (selectedAssetIds.includes(asset.id)) {
+                                const updates = selectedAssetIds.map(id => {
+                                    const a = canvasAssets.find(ca => ca.id === id);
+                                    if (!a) return null;
+                                    if (id === asset.id) return { id, x: e.target.x(), y: e.target.y() };
+                                    return { id, x: a.x + dx, y: a.y + dy };
+                                }).filter((u): u is { id: string, x: number, y: number } => u !== null);
+
+                                onUpdateAssetPosition(updates);
+                            } else {
+                                onUpdateAssetPosition([{ id: asset.id, x: e.target.x(), y: e.target.y() }]);
+                            }
                         }}
                     />
                 ))}
