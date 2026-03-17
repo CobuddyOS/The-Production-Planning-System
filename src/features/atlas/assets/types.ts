@@ -1,4 +1,4 @@
-export type AssetPlacementType = 'click' | 'drag';
+export type AssetPlacementType = 'canvas' | 'staff' | 'table' | 'case' | 'slider';
 export type AssetScale = 'low' | 'medium' | 'large';
 export type AssetStatus = 'active' | 'inactive';
 

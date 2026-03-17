@@ -36,7 +36,7 @@ export function AssetFormDialog({
     const [name, setName] = useState(asset?.name || "");
     const [categoryId, setCategoryId] = useState(asset?.category_id || "none");
     const [imageUrl, setImageUrl] = useState(asset?.image || "");
-    const [placementType, setPlacementType] = useState(asset?.placement_type || "click");
+    const [placementType, setPlacementType] = useState<any>(asset?.placement_type || "canvas");
     const [defaultScale, setDefaultScale] = useState(asset?.default_scale || "medium");
     const [status, setStatus] = useState<"active" | "inactive">(asset?.status || "active");
 
@@ -345,8 +345,11 @@ export function AssetFormDialog({
                                     <SelectValue placeholder="Select type" />
                                 </SelectTrigger>
                                 <SelectContent>
-                                    <SelectItem value="click">Click</SelectItem>
-                                    <SelectItem value="drag">Drag</SelectItem>
+                                    <SelectItem value="canvas">Canvas</SelectItem>
+                                    <SelectItem value="table">Table</SelectItem>
+                                    <SelectItem value="case">Case</SelectItem>
+                                    <SelectItem value="staff">Staff</SelectItem>
+                                    <SelectItem value="slider">Slider</SelectItem>
                                 </SelectContent>
                             </Select>
                             {fieldErrors.placement_type && (

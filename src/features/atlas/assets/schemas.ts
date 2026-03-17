@@ -4,7 +4,7 @@ export const assetSchema = z.object({
     name: z.string().min(1, "Name is required").max(100, "Name must be less than 100 characters"),
     category_id: z.string().uuid("Invalid category selected").nullable(),
     image: z.string().url("Invalid image URL or path"),
-    placement_type: z.enum(['click', 'drag'] as const, {
+    placement_type: z.enum(['canvas', 'staff', 'table', 'case', 'slider'] as const, {
         error: "Please select a placement type",
     }),
     default_scale: z.enum(['low', 'medium', 'large'] as const, {
