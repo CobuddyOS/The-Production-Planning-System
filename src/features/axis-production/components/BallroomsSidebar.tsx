@@ -4,9 +4,11 @@ import { useBallrooms } from "@/features/ballrooms/hooks/useBallrooms";
 
 interface BallroomsSidebarProps {
     isOpen: boolean;
+    selectedBallroomImage: string | null;
+    onSelectBallroom: (image: string | null) => void;
 }
 
-export function BallroomsSidebar({ isOpen }: BallroomsSidebarProps) {
+export function BallroomsSidebar({ isOpen, selectedBallroomImage, onSelectBallroom }: BallroomsSidebarProps) {
     const { ballrooms, loading } = useBallrooms();
 
     return (
@@ -34,7 +36,11 @@ export function BallroomsSidebar({ isOpen }: BallroomsSidebarProps) {
                             ballrooms.map((ballroom) => (
                                 <div
                                     key={ballroom.id}
-                                    className="group bg-white/5 rounded-lg overflow-hidden shadow-[0_0_18px_rgba(0,0,0,0.35)] hover:shadow-[0_0_28px_rgba(56,189,248,0.18)] transition-all cursor-pointer w-[92px] h-[92px]"
+                                    onClick={() => ballroom.image && onSelectBallroom(ballroom.image)}
+                                    className={cn(
+                                        "group bg-white/5 rounded-lg overflow-hidden shadow-[0_0_18px_rgba(0,0,0,0.35)] hover:shadow-[0_0_28px_rgba(56,189,248,0.18)] transition-all cursor-pointer w-[92px] h-[92px]",
+                                        selectedBallroomImage === ballroom.image && "ring-2 ring-sky-500 shadow-[0_0_28px_rgba(56,189,248,0.3)]"
+                                    )}
                                 >
                                     <div className="h-full w-full bg-black/20 flex items-center justify-center overflow-hidden">
                                         {ballroom.image ? (

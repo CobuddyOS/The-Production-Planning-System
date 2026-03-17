@@ -8,9 +8,11 @@ import { CATEGORY_ICONS } from "../constants";
 
 interface AssetsSidebarProps {
     isOpen: boolean;
+    hasBallroom: boolean;
+    onAddAsset: (item: any) => void;
 }
 
-export function AssetsSidebar({ isOpen }: AssetsSidebarProps) {
+export function AssetsSidebar({ isOpen, hasBallroom, onAddAsset }: AssetsSidebarProps) {
     const [searchQuery, setSearchQuery] = useState("");
     const { inventory, loading: inventoryLoading } = useInventory();
     const { categories, activeCategoryId, setActiveCategoryId } = useAtlasCategories();
@@ -90,33 +92,58 @@ export function AssetsSidebar({ isOpen }: AssetsSidebarProps) {
                             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-sky-300"></div>
                         </div>
                     ) : (
-                        visibleInventory.map((item) => (
-                            <div
-                                key={item.id}
-                                title={[
-                                    item.title || item.asset?.name || "Unknown Item",
-                                    item.brand ? `Brand: ${item.brand}` : null,
-                                    item.model ? `Model: ${item.model}` : null,
-                                    item.quantity ? `Qty: ${item.quantity}` : null,
-                                    item.pricing ? `Price: $${item.pricing}/Day` : null,
-                                ]
-                                    .filter(Boolean)
-                                    .join("\n")}
-                                className="group bg-white/5 rounded-lg p-2 flex flex-col items-center text-center gap-1.5 shadow-[0_0_18px_rgba(0,0,0,0.35)] hover:shadow-[0_0_28px_rgba(56,189,248,0.18)] transition-all cursor-grab active:cursor-grabbing"
-                            >
-                                <div className="w-full aspect-square bg-black/20 rounded-md flex items-center justify-center group-hover:bg-white/5 transition-colors overflow-hidden">
-                                    {item.asset?.image ? (
-                                        <img
-                                            src={item.asset.image}
-                                            alt={item.title || item.asset.name}
-                                            className="w-full h-full object-contain"
-                                        />
-                                    ) : (
-                                        <Box className="size-8 text-white/30 group-hover:text-emerald-200" />
+                        visibleInventory.map((item) => {
+                            const isCanvasItem = item.asset?.placement_type === "canvas";
+                            const canPlace = hasBallroom && isCanvasItem;
+
+                            return (
+                                <div
+                                    key={item.id}
+                                    title={[
+                                        item.title || item.asset?.name || "Unknown Item",
+                                        item.brand ? `Brand: ${item.brand}` : null,
+                                        item.model ? `Model: ${item.model}` : null,
+                                        item.quantity ? `Qty: ${item.quantity}` : null,
+                                        item.pricing ? `Price: $${item.pricing}/Day` : null,
+                                        !isCanvasItem ? "(Not for canvas placement)" : null,
+                                        (!hasBallroom && isCanvasItem) ? "(Select a ballroom first)" : null,
+                                    ]
+                                        .filter(Boolean)
+                                        .join("\n")}
+                                    onClick={() => canPlace && onAddAsset(item)}
+                                    draggable={canPlace}
+                                    onDragStart={(e) => {
+                                        if (canPlace) {
+                                            e.dataTransfer.setData("application/json", JSON.stringify(item));
+                                            e.dataTransfer.effectAllowed = "copy";
+                                        } else {
+                                            e.preventDefault();
+                                        }
+                                    }}
+                                    className={cn(
+                                        "group bg-white/5 rounded-lg p-2 flex flex-col items-center text-center gap-1.5 shadow-[0_0_18px_rgba(0,0,0,0.35)] transition-all",
+                                        canPlace
+                                            ? "hover:shadow-[0_0_28px_rgba(56,189,248,0.18)] cursor-grab active:cursor-grabbing hover:bg-white/10"
+                                            : "cursor-not-allowed opacity-40 grayscale"
                                     )}
+                                >
+                                    <div className={cn(
+                                        "w-full aspect-square bg-black/20 rounded-md flex items-center justify-center overflow-hidden transition-colors",
+                                        canPlace && "group-hover:bg-white/5"
+                                    )}>
+                                        {item.asset?.image ? (
+                                            <img
+                                                src={item.asset.image}
+                                                alt={item.title || item.asset.name}
+                                                className="w-full h-full object-contain pointer-events-none"
+                                            />
+                                        ) : (
+                                            <Box className={cn("size-8 text-white/30", canPlace && "group-hover:text-emerald-200")} />
+                                        )}
+                                    </div>
                                 </div>
-                            </div>
-                        ))
+                            );
+                        })
                     )}
                     {!inventoryLoading && visibleInventory.length === 0 && (
                         <div className="col-span-3 text-center py-8">
