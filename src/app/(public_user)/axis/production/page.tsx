@@ -108,8 +108,7 @@ export default function AxisProductionPage() {
     const isApproved = item.approval_status === "approved" || !item.approval_status;
     if (!isApproved) return false;
     if (!activeCategoryId) return true;
-    if (!item.asset?.category_id) return true;
-    return item.asset.category_id === activeCategoryId;
+    return item.asset?.category_id === activeCategoryId;
   });
   const visibleInventory = filteredInventory.filter((item) => {
     if (!normalizedSearch) return true;
@@ -199,10 +198,10 @@ export default function AxisProductionPage() {
               leftSidebarOpen ? "w-35" : "w-0 -translate-x-full opacity-0 pointer-events-none"
             )}
           >
-            
+
 
             <div className="flex-1 overflow-y-auto scrollbar-hide p-3 space-y-4">
-             
+
 
               <div className="pt-3">
                 <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest mb-3 block">Ballrooms</span>
@@ -238,7 +237,7 @@ export default function AxisProductionPage() {
             {/* Main Canvas Area */}
             <div className="flex-1 p-2 flex flex-col gap-2 overflow-hidden">
               {/* The Actual Canvas Container - Remove inner card padding, maximize space */}
-            <div className="flex-1 overflow-hidden rounded-xl neon-glass-card shadow-[0_0_35px_rgba(56,189,248,0.25)] relative group">
+              <div className="flex-1 overflow-hidden rounded-xl neon-glass-card shadow-[0_0_35px_rgba(56,189,248,0.25)] relative group">
                 {/* Floating Canvas Controls */}
                 <div className="absolute top-4 right-4 flex flex-col gap-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
                   <Button variant="secondary" size="icon" className="bg-white/90 backdrop-blur shadow-md hover:bg-white" onClick={() => { }}>
@@ -256,10 +255,10 @@ export default function AxisProductionPage() {
                 />
 
                 {/* Selection Properties Overlay (When item is selected) */}
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 p-1.5 bg-black/40 backdrop-blur border border-white/15 rounded-xl shadow-[0_0_24px_rgba(34,197,94,0.25)] z-10 scale-90 md:scale-100">
-                <div className="flex items-center gap-0.5 px-2">
-                  <Button variant="ghost" size="icon" className={toolBtnClass} title="Scale Up"><ArrowUp className="size-3.5" /></Button>
-                  <Button variant="ghost" size="icon" className={toolBtnClass} title="Scale Down"><ArrowDown className="size-3.5" /></Button>
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 p-1.5 bg-black/40 backdrop-blur border border-white/15 rounded-xl shadow-[0_0_24px_rgba(34,197,94,0.25)] z-10 scale-90 md:scale-100">
+                  <div className="flex items-center gap-0.5 px-2">
+                    <Button variant="ghost" size="icon" className={toolBtnClass} title="Scale Up"><ArrowUp className="size-3.5" /></Button>
+                    <Button variant="ghost" size="icon" className={toolBtnClass} title="Scale Down"><ArrowDown className="size-3.5" /></Button>
                     <Separator orientation="vertical" className="h-3 bg-white/20 mx-1" />
                     <Button variant="ghost" size="icon" className={toolBtnClass} title="Flip"><FlipVertical className="size-3.5" /></Button>
                     <Button variant="ghost" size="icon" className={toolBtnClass} title="Rotate"><FlipHorizontal className="size-3.5" /></Button>
@@ -332,39 +331,39 @@ export default function AxisProductionPage() {
               <div className="grid grid-cols-3 gap-2">
                 {inventoryLoading ? (
                   <div className="col-span-3 flex justify-center p-8">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-sky-300"></div>
+                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-sky-300"></div>
                   </div>
                 ) : (
                   visibleInventory.map((item) => (
-                      <div
-                        key={item.id}
-                        title={[
-                          item.title || item.asset?.name || "Unknown Item",
-                          item.brand ? `Brand: ${item.brand}` : null,
-                          item.model ? `Model: ${item.model}` : null,
-                          item.quantity ? `Qty: ${item.quantity}` : null,
-                          item.pricing ? `Price: $${item.pricing}/Day` : null,
-                        ]
-                          .filter(Boolean)
-                          .join("\n")}
-                        className="group bg-white/5 rounded-lg p-2 flex flex-col items-center text-center gap-1.5 shadow-[0_0_18px_rgba(0,0,0,0.35)] hover:shadow-[0_0_28px_rgba(56,189,248,0.18)] transition-all cursor-grab active:cursor-grabbing"
-                      >
-                        <div className="w-full aspect-square bg-black/20 rounded-md flex items-center justify-center group-hover:bg-white/5 transition-colors overflow-hidden">
-                          {item.asset?.image ? (
-                            <img src={item.asset.image} alt={item.title || item.asset.name} className="w-full h-full object-contain" />
-                          ) : (
-                            <Box className="size-8 text-white/30 group-hover:text-emerald-200" />
-                          )}
-                        </div>
+                    <div
+                      key={item.id}
+                      title={[
+                        item.title || item.asset?.name || "Unknown Item",
+                        item.brand ? `Brand: ${item.brand}` : null,
+                        item.model ? `Model: ${item.model}` : null,
+                        item.quantity ? `Qty: ${item.quantity}` : null,
+                        item.pricing ? `Price: $${item.pricing}/Day` : null,
+                      ]
+                        .filter(Boolean)
+                        .join("\n")}
+                      className="group bg-white/5 rounded-lg p-2 flex flex-col items-center text-center gap-1.5 shadow-[0_0_18px_rgba(0,0,0,0.35)] hover:shadow-[0_0_28px_rgba(56,189,248,0.18)] transition-all cursor-grab active:cursor-grabbing"
+                    >
+                      <div className="w-full aspect-square bg-black/20 rounded-md flex items-center justify-center group-hover:bg-white/5 transition-colors overflow-hidden">
+                        {item.asset?.image ? (
+                          <img src={item.asset.image} alt={item.title || item.asset.name} className="w-full h-full object-contain" />
+                        ) : (
+                          <Box className="size-8 text-white/30 group-hover:text-emerald-200" />
+                        )}
                       </div>
-                    ))
+                    </div>
+                  ))
                 )}
                 {!inventoryLoading && visibleInventory.length === 0 && (
-                    <div className="col-span-3 text-center py-8">
-                      <Box className="size-8 text-white/30 mx-auto mb-2" />
-                      <p className="text-[10px] font-bold text-white/50 uppercase">No items found</p>
-                    </div>
-                  )}
+                  <div className="col-span-3 text-center py-8">
+                    <Box className="size-8 text-white/30 mx-auto mb-2" />
+                    <p className="text-[10px] font-bold text-white/50 uppercase">No items found</p>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -373,44 +372,44 @@ export default function AxisProductionPage() {
 
         <div className="px-4 pb-3">
           <div className="flex gap-4 h-40">
-              <div className="flex-[2.0] bg-white/5 rounded-xl relative overflow-hidden group backdrop-blur">
-              <div className="absolute inset-0 flex items-center justify-center p-1 pt-2">
+            <div className="flex-[2.0] relative overflow-hidden group">
+              <div className="absolute inset-0 flex items-center justify-center pt-3 ">
                 <img src="/axis/table.png" alt="Tech Table" className="h-[250%] w-[250%] object-contain drop-shadow-[0_0_18px_rgba(56,189,248,0.35)]" />
               </div>
-                <div id="techAssetsContainer" className="absolute inset-0 flex items-center justify-center gap-2 p-3 pt-6" />
-              </div>
+              <div id="techAssetsContainer" className="absolute inset-0 flex items-center justify-center gap-2 p-3 pt-6" />
+            </div>
 
-              <div className="flex-1 bg-white/5 rounded-xl relative overflow-hidden group backdrop-blur">
-              <div className="absolute inset-0 flex items-center justify-center p-2 pt-6">
+            <div className="flex-1 relative overflow-hidden group">
+              <div className="absolute inset-0 flex items-center justify-center p-2 pt-3">
                 <img src="/axis/case.png" alt="Cable Case" className="h-[150%] w-[150%] object-contain scale-110 drop-shadow-[0_0_18px_rgba(14,165,233,0.35)]" />
               </div>
-                <div id="hardwareAssetsContainer" className="absolute inset-0 grid grid-cols-3 gap-1.5 p-3 pt-10" />
-              </div>
+              <div id="hardwareAssetsContainer" className="absolute inset-0 grid grid-cols-3 gap-1.5 p-3 pt-10" />
+            </div>
 
-              <div className="flex-[1.3] bg-white/5 rounded-xl relative overflow-hidden group backdrop-blur">
+            <div className="flex-[1.3] bg-white/5 rounded-xl relative overflow-hidden group backdrop-blur">
               <div className="absolute inset-0 flex items-center justify-center p-2 pt-4">
                 <img src="/staff.png" alt="Staff" className="h-[150%] w-[150%] object-contain scale-125 drop-shadow-[0_0_22px_rgba(132,204,22,0.7)]" />
               </div>
-              </div>
+            </div>
 
-              <div className="flex-[0.9] bg-white/5 rounded-xl relative overflow-hidden backdrop-blur">
-                <div className="absolute inset-0 flex items-center justify-center gap-6 p-4 pt-8">
-                  {["Frequency", "Color"].map((label) => (
-                    <div key={label} className="flex flex-col items-center gap-2">
-                      <span className="text-[10px] font-semibold text-white/70 uppercase tracking-[0.2em]">{label}</span>
-                      <input
-                        type="range"
-                        min={0}
-                        max={100}
-                        defaultValue={60}
-                        className="axis-slider h-28 w-3"
-                        style={{ writingMode: "vertical-rl" }}
-                      />
-                    </div>
-                  ))}
-                </div>
+            <div className="flex-[0.5] bg-white/5 rounded-xl relative overflow-hidden backdrop-blur">
+              <div className="absolute inset-0 flex items-center justify-center gap-6 p-4 pt-8">
+                {["Frequency", "Color"].map((label) => (
+                  <div key={label} className="flex flex-col items-center gap-2">
+                    <span className="text-[10px] font-semibold text-white/70 uppercase tracking-[0.2em]">{label}</span>
+                    <input
+                      type="range"
+                      min={0}
+                      max={100}
+                      defaultValue={60}
+                      className="axis-slider h-28 w-3"
+                      style={{ writingMode: "vertical-rl" }}
+                    />
+                  </div>
+                ))}
               </div>
             </div>
+          </div>
         </div>
       </div>
 
