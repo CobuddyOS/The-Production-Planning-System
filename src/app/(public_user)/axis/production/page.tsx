@@ -15,6 +15,7 @@ export default function AxisProductionPage() {
   const [rightSidebarOpen, setRightSidebarOpen] = useState(false);
   const [selectedBallroomImage, setSelectedBallroomImage] = useState<string | null>(null);
   const [canvasAssets, setCanvasAssets] = useState<any[]>([]);
+  const [tableAssets, setTableAssets] = useState<any[]>([]);
   const [selectedAssetIds, setSelectedAssetIds] = useState<string[]>([]);
 
   const [infoModalOpen, setInfoModalOpen] = useState(false);
@@ -32,7 +33,23 @@ export default function AxisProductionPage() {
 
   const handleAddAsset = (item: any, x?: number, y?: number) => {
     if (!selectedBallroomImage) return;
-    if (item.asset?.placement_type !== "canvas") return;
+
+    const placementType = item.asset?.placement_type;
+
+    if (placementType === "table") {
+      if (tableAssets.length < 8) {
+        setTableAssets((prev) => [
+          ...prev,
+          {
+            id: Math.random().toString(36).substring(7),
+            item,
+          },
+        ]);
+      }
+      return;
+    }
+
+    if (placementType !== "canvas") return;
 
     let targetX = x;
     let targetY = y;
@@ -83,6 +100,10 @@ export default function AxisProductionPage() {
   const deleteAsset = (ids: string[]) => {
     setCanvasAssets((prev) => prev.filter((a) => !ids.includes(a.id)));
     setSelectedAssetIds((prev) => prev.filter(id => !ids.includes(id)));
+  };
+
+  const removeTableAsset = (id: string) => {
+    setTableAssets((prev) => prev.filter(a => a.id !== id));
   };
 
   const duplicateAsset = (ids: string[]) => {
@@ -227,7 +248,10 @@ export default function AxisProductionPage() {
           />
         </div>
 
-        <AxisEnvironment />
+        <AxisEnvironment
+          tableAssets={tableAssets}
+          onRemoveTableAsset={removeTableAsset}
+        />
       </div>
 
       <WorkspaceGuideModal
@@ -300,6 +324,6 @@ export default function AxisProductionPage() {
           box-shadow: 0 0 12px rgba(132, 204, 22, 0.6);
         }
       `}</style>
-    </div>
+    </div >
   );
 }

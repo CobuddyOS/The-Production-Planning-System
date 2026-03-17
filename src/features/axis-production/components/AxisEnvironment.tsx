@@ -1,4 +1,11 @@
-export function AxisEnvironment() {
+import { cn } from "@/lib/utils";
+
+interface AxisEnvironmentProps {
+    tableAssets?: any[];
+    onRemoveTableAsset?: (id: string) => void;
+}
+
+export function AxisEnvironment({ tableAssets = [], onRemoveTableAsset }: AxisEnvironmentProps) {
     return (
         <div className="px-4 pb-3">
             <div className="flex gap-4 h-40">
@@ -12,8 +19,30 @@ export function AxisEnvironment() {
                     </div>
                     <div
                         id="techAssetsContainer"
-                        className="absolute inset-0 flex items-center justify-center gap-2 p-3 pt-6"
-                    />
+                        className="absolute inset-x-0 top-0 flex items-start justify-center px-12 pt-0"
+                    >
+                        <div className="flex w-full justify-center">
+                            {Array.from({ length: 8 }).map((_, i) => (
+                                <div
+                                    key={i}
+                                    onClick={() => tableAssets[i] && onRemoveTableAsset?.(tableAssets[i].id)}
+                                    className={cn(
+                                        "w-11 h-11 flex items-center justify-center overflow-hidden transition-all duration-300",
+                                        tableAssets[i] ? "cursor-pointer hover:scale-110 active:scale-95" : "opacity-0"
+                                    )}
+                                    style={{ transform: `translateY(${i * 4}px)` }}
+                                >
+                                    {tableAssets[i] && (
+                                        <img
+                                            src={tableAssets[i].item.asset?.image || tableAssets[i].item.asset?.thumbnail_url || tableAssets[i].item.asset?.image_url}
+                                            alt={tableAssets[i].item.title || "asset"}
+                                            className="w-9 h-9 object-contain drop-shadow-md"
+                                        />
+                                    )}
+                                </div>
+                            ))}
+                        </div>
+                    </div>
                 </div>
 
                 <div className="flex-1 relative overflow-hidden group">
@@ -60,6 +89,6 @@ export function AxisEnvironment() {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }

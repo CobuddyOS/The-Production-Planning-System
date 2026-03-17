@@ -94,7 +94,8 @@ export function AssetsSidebar({ isOpen, hasBallroom, onAddAsset }: AssetsSidebar
                     ) : (
                         visibleInventory.map((item) => {
                             const isCanvasItem = item.asset?.placement_type === "canvas";
-                            const canPlace = hasBallroom && isCanvasItem;
+                            const isTableItem = item.asset?.placement_type === "table";
+                            const canPlace = hasBallroom && (isCanvasItem || isTableItem);
 
                             return (
                                 <div
@@ -105,13 +106,13 @@ export function AssetsSidebar({ isOpen, hasBallroom, onAddAsset }: AssetsSidebar
                                         item.model ? `Model: ${item.model}` : null,
                                         item.quantity ? `Qty: ${item.quantity}` : null,
                                         item.pricing ? `Price: $${item.pricing}/Day` : null,
-                                        !isCanvasItem ? "(Not for canvas placement)" : null,
-                                        (!hasBallroom && isCanvasItem) ? "(Select a ballroom first)" : null,
+                                        (!isCanvasItem && !isTableItem) ? `(Placement: ${item.asset?.placement_type})` : null,
+                                        (!hasBallroom && (isCanvasItem || isTableItem)) ? "(Select a ballroom first)" : null,
                                     ]
                                         .filter(Boolean)
                                         .join("\n")}
                                     onClick={() => canPlace && onAddAsset(item)}
-                                    draggable={canPlace}
+                                    draggable={isCanvasItem && canPlace}
                                     onDragStart={(e) => {
                                         if (canPlace) {
                                             e.dataTransfer.setData("application/json", JSON.stringify(item));
