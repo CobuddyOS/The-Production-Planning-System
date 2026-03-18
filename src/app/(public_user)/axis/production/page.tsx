@@ -263,6 +263,8 @@ export default function AxisProductionPage() {
         isOpen={summaryOpen}
         onClose={() => setSummaryOpen(false)}
         numberOfDays={numberOfDays}
+        canvasAssets={canvasAssets}
+        tableAssets={tableAssets}
       />
 
       {/* Custom Styles */}
