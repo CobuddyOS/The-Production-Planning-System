@@ -40,20 +40,23 @@ const AxisKonvaStage = dynamic<any>(() => import("./AxisKonvaStage"), {
     )
 });
 
+import { Asset, CanvasAsset, LayerAction, RotationDirection } from "../types";
+
 interface AxisCanvasProps {
     backgroundImage: string | null;
-    canvasAssets: any[];
+    canvasAssets: CanvasAsset[];
     selectedAssetIds: string[];
     onSelectAssets: (ids: string[]) => void;
-    onDropAsset: (e: any) => void;
+    onDropAsset: (item: any, x: number, y: number) => void;
     onUpdateAssetPosition: (updates: { id: string, x: number, y: number }[]) => void;
-    onUpdateAssetProperties: (updates: { id: string, properties: any }[]) => void;
+    onUpdateAssetProperties: (updates: { id: string, properties: Partial<CanvasAsset> }[]) => void;
     onDeleteAsset: (ids: string[]) => void;
     onDuplicateAsset: (ids: string[]) => void;
     onResetAsset: (ids: string[]) => void;
-    onUpdateAssetLayering: (ids: string[], action: "front" | "back" | "forward" | "backward") => void;
-    onRotateAssets: (ids: string[], direction: "cw" | "ccw") => void;
+    onUpdateAssetLayering: (ids: string[], action: LayerAction) => void;
+    onRotateAssets: (ids: string[], direction: RotationDirection) => void;
 }
+
 
 interface ToolbarItem {
     icon: LucideIcon;
@@ -196,13 +199,6 @@ function AxisCanvasInternal({
                 id="myCanvas"
                 ref={containerRef}
                 className="flex-1 overflow-hidden rounded-xl neon-glass-card shadow-[0_0_35px_rgba(56,189,248,0.25)] relative group"
-                onDragOver={(e) => {
-                    e.preventDefault();
-                    e.dataTransfer.dropEffect = "copy";
-                }}
-                onDrop={(e) => {
-                    onDropAsset(e);
-                }}
             >
                 <div className="absolute top-4 right-4 flex flex-col gap-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Button
@@ -224,6 +220,7 @@ function AxisCanvasInternal({
                         canvasAssets={canvasAssets}
                         selectedAssetIds={selectedAssetIds}
                         onSelectAssets={onSelectAssets}
+                        onDropAsset={onDropAsset}
                         onUpdateAssetPosition={onUpdateAssetPosition}
                         onUpdateAssetProperties={onUpdateAssetProperties}
                     />

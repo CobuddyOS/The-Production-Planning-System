@@ -6,11 +6,14 @@ import { useInventory } from "@/features/inventory/hooks/useInventory";
 import { useAtlasCategories } from "@/features/axis-production/hooks/useAtlasCategories";
 import { CATEGORY_ICONS } from "../constants";
 
+import { Asset } from "../types";
+
 interface AssetsSidebarProps {
     isOpen: boolean;
     hasBallroom: boolean;
-    onAddAsset: (item: any) => void;
+    onAddAsset: (item: Asset) => void;
 }
+
 
 export function AssetsSidebar({ isOpen, hasBallroom, onAddAsset }: AssetsSidebarProps) {
     const [searchQuery, setSearchQuery] = useState("");

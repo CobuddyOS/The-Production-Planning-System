@@ -2,18 +2,21 @@
 
 import { cn } from "@/lib/utils";
 
+import { TableAsset } from "../types";
+
 interface AxisEnvironmentProps {
-    tableAssets?: any[];
+    tableAssets?: TableAsset[];
     onRemoveTableAsset?: (id: string) => void;
 }
 
 /**
  * Clean asset image extractor to avoid shotgun data mapping.
  */
-const getAssetImage = (assetData: any) => {
+const getAssetImage = (assetData: TableAsset) => {
     const asset = assetData?.item?.asset;
-    return asset?.image || asset?.thumbnail_url || asset?.image_url || "";
+    return asset?.image || "";
 };
+
 
 export function AxisEnvironment({ tableAssets = [], onRemoveTableAsset }: AxisEnvironmentProps) {
     return (

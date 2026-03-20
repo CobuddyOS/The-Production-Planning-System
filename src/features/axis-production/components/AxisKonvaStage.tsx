@@ -1,30 +1,7 @@
-"use client";
-
 import { Stage, Layer, Group, Rect, Image as KonvaImage, Circle, Line } from "react-konva";
 import useImage from "use-image";
 import { useState, memo, useRef, useCallback } from "react";
-
-/**
- * Interface for the properties of a single canvas asset.
- * This should match the data structure used in useAxisProductionState.
- */
-interface CanvasAsset {
-    id: string;
-    x: number;
-    y: number;
-    scale: number;
-    rotation: number;
-    flipX: boolean;
-    flipY: boolean;
-    isLocked: boolean;
-    rotationAllowed?: boolean;
-    item: {
-        title: string;
-        asset?: {
-            image: string;
-        };
-    };
-}
+import { CanvasAsset } from "../types";
 
 interface URLImageProps {
     asset: CanvasAsset;
@@ -33,11 +10,14 @@ interface URLImageProps {
     stageDimensions?: { width: number; height: number };
     onSelect: (e: any) => void;
     onUpdateProperties: (properties: Partial<CanvasAsset>) => void;
-    onUpdatePosition: (x: number, y: number) => void;
+    onDragStart: (e: any) => void;
+    onDragMove: (e: any) => void;
+    onDragEnd: (e: any) => void;
     onRotateStart: (e: any) => void;
     onRotateMove: (e: any) => void;
     onRotateEnd: (e: any) => void;
 }
+
 
 export const URLImage = memo(({
     asset,
@@ -46,7 +26,9 @@ export const URLImage = memo(({
     stageDimensions,
     onSelect,
     onUpdateProperties,
-    onUpdatePosition,
+    onDragStart,
+    onDragMove,
+    onDragEnd,
     onRotateStart,
     onRotateMove,
     onRotateEnd,
@@ -85,11 +67,13 @@ export const URLImage = memo(({
         <Group
             x={asset.x}
             y={asset.y}
+            name="asset-node"
+            id={asset.id}
             rotation={asset.rotation}
             draggable={!asset.isLocked && !isBackground}
-            onDragMove={(e) => {
-                onUpdatePosition(e.target.x(), e.target.y());
-            }}
+            onDragStart={onDragStart}
+            onDragMove={onDragMove}
+            onDragEnd={onDragEnd}
             onClick={onSelect}
             onTap={onSelect}
             onMouseEnter={(e: any) => {
@@ -174,6 +158,7 @@ interface AxisKonvaStageProps {
     canvasAssets: CanvasAsset[];
     selectedAssetIds: string[];
     onSelectAssets: (ids: string[]) => void;
+    onDropAsset: (item: any, x: number, y: number) => void;
     onUpdateAssetPosition: (updates: { id: string, x: number, y: number }[]) => void;
     onUpdateAssetProperties: (updates: { id: string, properties: any }[]) => void;
 }
@@ -185,6 +170,7 @@ const AxisKonvaStage = ({
     canvasAssets,
     selectedAssetIds,
     onSelectAssets,
+    onDropAsset,
     onUpdateAssetPosition,
     onUpdateAssetProperties,
 }: AxisKonvaStageProps) => {
@@ -211,6 +197,54 @@ const AxisKonvaStage = ({
         }
     }, []);
 
+    const dragOffsetRef = useRef<{ id: string, x: number, y: number }[]>([]);
+
+    const handleDragStart = useCallback((e: any) => {
+        if (selectedAssetIds.length > 1) {
+            dragOffsetRef.current = selectedAssetIds.map(id => {
+                const node = e.target.getStage().findOne(`#${id}`);
+                return { id, x: node?.x() || 0, y: node?.y() || 0 };
+            });
+        }
+    }, [selectedAssetIds]);
+
+    const handleDragMove = useCallback((e: any) => {
+        const assetId = e.target.id();
+        if (selectedAssetIds.includes(assetId) && selectedAssetIds.length > 1) {
+            const node = e.target;
+            const dx = node.x() - dragOffsetRef.current.find(o => o.id === assetId)!.x;
+            const dy = node.y() - dragOffsetRef.current.find(o => o.id === assetId)!.y;
+
+            selectedAssetIds.forEach(id => {
+                if (id === assetId) return;
+                const otherNode = e.target.getStage().findOne(`#${id}`);
+                const initial = dragOffsetRef.current.find(o => o.id === id);
+                if (otherNode && initial) {
+                    otherNode.x(initial.x + dx);
+                    otherNode.y(initial.y + dy);
+                }
+            });
+        }
+    }, [selectedAssetIds]);
+
+    const handleDragEnd = useCallback((e: any) => {
+        const assetId = e.target.id();
+        const updates: { id: string, x: number, y: number }[] = [];
+
+        if (selectedAssetIds.includes(assetId) && selectedAssetIds.length > 1) {
+            selectedAssetIds.forEach(id => {
+                const node = e.target.getStage().findOne(`#${id}`);
+                if (node) updates.push({ id, x: node.x(), y: node.y() });
+            });
+        } else {
+            updates.push({ id: assetId, x: e.target.x(), y: e.target.y() });
+        }
+
+        onUpdateAssetPosition(updates);
+        dragOffsetRef.current = [];
+    }, [selectedAssetIds, onUpdateAssetPosition]);
+
+    // Optimize rotation similarly
     const handleRotateMove = useCallback((e: any) => {
         e.cancelBubble = true;
         if (!rotationState.current) return;
@@ -219,61 +253,56 @@ const AxisKonvaStage = ({
         const pos = stage.getPointerPosition();
         if (pos) {
             const { startAngle, startRotation, assetId } = rotationState.current;
-            const asset = canvasAssets.find(a => a.id === assetId);
-            if (!asset) return;
+            const assetNode = stage.findOne(`#${assetId}`);
+            if (!assetNode) return;
 
-            const dx = pos.x - asset.x;
-            const dy = pos.y - asset.y;
+            const dx = pos.x - assetNode.x();
+            const dy = pos.y - assetNode.y();
             const currentAngle = Math.atan2(dy, dx);
             const deltaRotation = (currentAngle - startAngle) * (180 / Math.PI);
             const newRotation = startRotation + deltaRotation;
 
-            // Multi-selection rotation
+            // Update node(s) imperatively first
             if (selectedAssetIds.includes(assetId)) {
-                const diff = newRotation - asset.rotation;
-                const updates = selectedAssetIds.map(id => {
-                    const target = canvasAssets.find(ca => ca.id === id);
-                    if (target && target.rotationAllowed !== false) {
-                        return { id, properties: { rotation: target.rotation + diff } };
+                const diff = newRotation - assetNode.rotation();
+                selectedAssetIds.forEach(id => {
+                    const node = stage.findOne(`#${id}`);
+                    if (node) {
+                        const meta = canvasAssets.find(ca => ca.id === id);
+                        if (meta && meta.rotationAllowed !== false) {
+                            node.rotation(node.rotation() + diff);
+                        }
                     }
-                    return null;
-                }).filter(Boolean) as { id: string, properties: any }[];
-
-                onUpdateAssetProperties(updates);
+                });
             } else {
-                onUpdateAssetProperties([{ id: assetId, properties: { rotation: newRotation } }]);
+                assetNode.rotation(newRotation);
             }
         }
-
         // Keep handle centered visually during drag
         e.target.x(0);
-    }, [canvasAssets, selectedAssetIds, onUpdateAssetProperties]);
+    }, [canvasAssets, selectedAssetIds]);
 
     const handleRotateEnd = useCallback((e: any) => {
         e.cancelBubble = true;
+        if (rotationState.current) {
+            const { assetId } = rotationState.current;
+            const stage = e.target.getStage();
+            const updates: { id: string, properties: any }[] = [];
+
+            if (selectedAssetIds.includes(assetId)) {
+                selectedAssetIds.forEach(id => {
+                    const node = stage.findOne(`#${id}`);
+                    if (node) updates.push({ id, properties: { rotation: node.rotation() } });
+                });
+            } else {
+                const assetNode = stage.findOne(`#${assetId}`);
+                if (assetNode) updates.push({ id: assetId, properties: { rotation: assetNode.rotation() } });
+            }
+            onUpdateAssetProperties(updates);
+        }
         rotationState.current = null;
         e.target.x(0);
-    }, []);
-
-    const handleDragMove = useCallback((assetId: string, x: number, y: number) => {
-        const asset = canvasAssets.find(a => a.id === assetId);
-        if (!asset || asset.isLocked) return;
-
-        if (selectedAssetIds.includes(assetId) && selectedAssetIds.length > 1) {
-            const dx = x - asset.x;
-            const dy = y - asset.y;
-
-            const updates = selectedAssetIds.map(id => {
-                const a = canvasAssets.find(ca => ca.id === id);
-                if (a) return { id, x: a.x + dx, y: a.y + dy };
-                return null;
-            }).filter(Boolean) as { id: string, x: number, y: number }[];
-
-            onUpdateAssetPosition(updates);
-        } else {
-            onUpdateAssetPosition([{ id: assetId, x, y }]);
-        }
-    }, [canvasAssets, selectedAssetIds, onUpdateAssetPosition]);
+    }, [selectedAssetIds, onUpdateAssetProperties]);
 
     return (
         <Stage
@@ -283,26 +312,59 @@ const AxisKonvaStage = ({
             onClick={(e) => {
                 if (e.target === e.target.getStage()) onSelectAssets([]);
             }}
+            onDragOver={(e: any) => {
+                e.evt.preventDefault();
+            }}
+            onDrop={(e: any) => {
+                e.evt.preventDefault();
+                const stage = e.target.getStage();
+                if (!stage) return;
+
+                stage.setPointersPositions(e.evt);
+                const pos = stage.getRelativePointerPosition();
+                if (!pos) return;
+
+                try {
+                    const item = JSON.parse(e.evt.dataTransfer?.getData("application/json") || "{}");
+                    onDropAsset(item, pos.x, pos.y);
+                } catch (err) {
+                    console.error("Failed to parse dropped item", err);
+                }
+            }}
         >
             <Layer>
                 {backgroundImage && (
                     <URLImage
                         asset={{
                             id: backgroundImage,
-                            x: 0, y: 0, scale: 1, rotation: 0, flipX: false, flipY: false,
-                            isLocked: true, item: { title: "Background" }
-                        } as any}
+                            x: 0,
+                            y: 0,
+                            scale: 1,
+                            rotation: 0,
+                            flipX: false,
+                            flipY: false,
+                            isLocked: true,
+                            rotationAllowed: false,
+                            item: {
+                                id: 'bg',
+                                title: "Background",
+                                asset: { image: backgroundImage }
+                            } as any
+                        }}
                         isSelected={false}
                         isBackground={true}
                         stageDimensions={{ width, height }}
                         onSelect={() => onSelectAssets([])}
                         onUpdateProperties={() => { }}
-                        onUpdatePosition={() => { }}
+                        onDragStart={() => { }}
+                        onDragMove={() => { }}
+                        onDragEnd={() => { }}
                         onRotateStart={() => { }}
                         onRotateMove={() => { }}
                         onRotateEnd={() => { }}
                     />
                 )}
+
 
                 {canvasAssets.map((asset) => (
                     <URLImage
@@ -322,7 +384,9 @@ const AxisKonvaStage = ({
                             }
                         }}
                         onUpdateProperties={(props) => onUpdateAssetProperties([{ id: asset.id, properties: props }])}
-                        onUpdatePosition={(x, y) => handleDragMove(asset.id, x, y)}
+                        onDragStart={handleDragStart}
+                        onDragMove={handleDragMove}
+                        onDragEnd={handleDragEnd}
                         onRotateStart={(e) => handleRotateStart(asset, e)}
                         onRotateMove={handleRotateMove}
                         onRotateEnd={handleRotateEnd}
