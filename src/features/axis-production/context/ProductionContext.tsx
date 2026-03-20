@@ -18,6 +18,7 @@ const initialState: ProductionState = {
     leftSidebarOpen: false,
     rightSidebarOpen: false,
     selectedBallroomImage: null,
+    selectedBallroomId: null,
     infoModalOpen: false,
     summaryOpen: false,
     mounted: false,
@@ -31,8 +32,8 @@ function productionReducer(state: ProductionState, action: ProductionAction): Pr
             return { ...state, leftSidebarOpen: action.open ?? !state.leftSidebarOpen };
         case 'TOGGLE_RIGHT_SIDEBAR':
             return { ...state, rightSidebarOpen: action.open ?? !state.rightSidebarOpen };
-        case 'SET_BALLROOM_IMAGE':
-            return { ...state, selectedBallroomImage: action.image };
+        case 'SET_BALLROOM':
+            return { ...state, selectedBallroomImage: action.image, selectedBallroomId: action.id };
         case 'ADD_CANVAS_ASSET':
             return { ...state, canvasAssets: [...state.canvasAssets, action.asset] };
         case 'REMOVE_CANVAS_ASSET':

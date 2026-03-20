@@ -16,6 +16,7 @@ function AxisProductionContent() {
     leftSidebarOpen,
     rightSidebarOpen,
     selectedBallroomImage,
+    selectedBallroomId,
     canvasAssets,
     tableAssets,
     selectedAssetIds,
@@ -82,8 +83,8 @@ function AxisProductionContent() {
       >
         <BallroomsSidebar
           isOpen={leftSidebarOpen}
-          selectedBallroomImage={selectedBallroomImage}
-          onSelectBallroom={(image) => dispatch({ type: 'SET_BALLROOM_IMAGE', image })}
+          selectedBallroomId={selectedBallroomId}
+          onSelectBallroom={(id, image) => dispatch({ type: 'SET_BALLROOM', id, image })}
         />
 
         <AxisCanvas

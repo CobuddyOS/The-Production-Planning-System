@@ -30,6 +30,7 @@ export interface ProductionState {
     leftSidebarOpen: boolean;
     rightSidebarOpen: boolean;
     selectedBallroomImage: string | null;
+    selectedBallroomId: string | null;
     infoModalOpen: boolean;
     summaryOpen: boolean;
     mounted: boolean;
@@ -43,7 +44,7 @@ export type ProductionAction =
     | { type: 'SET_SELECTED_ASSETS'; ids: string[] }
     | { type: 'TOGGLE_LEFT_SIDEBAR'; open?: boolean }
     | { type: 'TOGGLE_RIGHT_SIDEBAR'; open?: boolean }
-    | { type: 'SET_BALLROOM_IMAGE'; image: string | null }
+    | { type: 'SET_BALLROOM'; id: string | null, image: string | null }
     | { type: 'SET_MODAL_OPEN'; modal: 'info' | 'summary'; open: boolean }
     | { type: 'SET_MOUNTED'; mounted: boolean }
     | { type: 'DUPLICATE_ASSETS'; assets: CanvasAsset[] }

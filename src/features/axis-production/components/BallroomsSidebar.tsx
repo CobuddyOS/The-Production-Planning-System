@@ -4,11 +4,11 @@ import { useBallrooms } from "@/features/ballrooms/hooks/useBallrooms";
 
 interface BallroomsSidebarProps {
     isOpen: boolean;
-    selectedBallroomImage: string | null;
-    onSelectBallroom: (image: string | null) => void;
+    selectedBallroomId: string | null;
+    onSelectBallroom: (id: string, image: string | null) => void;
 }
 
-export function BallroomsSidebar({ isOpen, selectedBallroomImage, onSelectBallroom }: BallroomsSidebarProps) {
+export function BallroomsSidebar({ isOpen, selectedBallroomId, onSelectBallroom }: BallroomsSidebarProps) {
     const { ballrooms, loading } = useBallrooms();
 
     return (
@@ -23,7 +23,7 @@ export function BallroomsSidebar({ isOpen, selectedBallroomImage, onSelectBallro
                     <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest mb-3 block">
                         Ballrooms
                     </span>
-                    <div className="grid grid-cols-1 gap-2 justify-items-center">
+                    <div className="grid grid-cols-1 gap-4">
                         {loading ? (
                             <div className="flex justify-center p-4">
                                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-sky-300"></div>
@@ -36,10 +36,10 @@ export function BallroomsSidebar({ isOpen, selectedBallroomImage, onSelectBallro
                             ballrooms.map((ballroom) => (
                                 <div
                                     key={ballroom.id}
-                                    onClick={() => ballroom.image && onSelectBallroom(ballroom.image)}
+                                    onClick={() => onSelectBallroom(ballroom.id, ballroom.image)}
                                     className={cn(
-                                        "group bg-white/5 rounded-lg overflow-hidden shadow-[0_0_18px_rgba(0,0,0,0.35)] hover:shadow-[0_0_28px_rgba(56,189,248,0.18)] transition-all cursor-pointer w-[92px] h-[92px]",
-                                        selectedBallroomImage === ballroom.image && "ring-2 ring-sky-500 shadow-[0_0_28px_rgba(56,189,248,0.3)]"
+                                        "group bg-white/5 rounded-xl overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.4)] hover:shadow-[0_0_30px_rgba(56,189,248,0.25)] transition-all cursor-pointer w-full aspect-[4/3] relative",
+                                        selectedBallroomId === ballroom.id && "ring-2 ring-sky-500 shadow-[0_0_35px_rgba(56,189,248,0.35)]"
                                     )}
                                 >
                                     <div className="h-full w-full bg-black/20 flex items-center justify-center overflow-hidden">
