@@ -194,11 +194,11 @@ function AxisCanvasInternal({
     ];
 
     return (
-        <div className="flex-1 p-2 flex flex-col gap-2 overflow-hidden">
+        <div className="h-full w-full p-2 flex flex-col gap-2 overflow-hidden min-w-0 min-h-0">
             <div
                 id="myCanvas"
                 ref={containerRef}
-                className="flex-1 overflow-hidden rounded-xl neon-glass-card shadow-[0_0_35px_rgba(56,189,248,0.25)] relative group"
+                className="flex-1 overflow-hidden rounded-xl neon-glass-card shadow-[0_0_35px_rgba(56,189,248,0.25)] relative group min-h-0"
             >
                 <div className="absolute top-4 right-4 flex flex-col gap-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
                     <Button

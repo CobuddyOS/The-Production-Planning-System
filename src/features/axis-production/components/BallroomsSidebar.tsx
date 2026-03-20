@@ -14,8 +14,8 @@ export function BallroomsSidebar({ isOpen, selectedBallroomImage, onSelectBallro
     return (
         <aside
             className={cn(
-                "mb-3 rounded-2xl overflow-hidden border-r border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(56,189,248,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col transition-all duration-300 ease-in-out z-20 shrink-0",
-                isOpen ? "w-35" : "w-0 -translate-x-full opacity-0 pointer-events-none"
+                "h-full overflow-hidden border-r border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(56,189,248,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col min-w-0 min-h-0",
+                !isOpen && "pointer-events-none"
             )}
         >
             <div className="flex-1 overflow-y-auto scrollbar-hide p-3 space-y-4">

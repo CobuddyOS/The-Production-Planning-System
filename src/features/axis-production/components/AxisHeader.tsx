@@ -34,7 +34,7 @@ export function AxisHeader({
     eventDate = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
 }: AxisHeaderProps) {
     return (
-        <header className="flex flex-col shrink-0 z-30 glass-header h-12">
+        <header className="flex flex-col z-30 glass-header h-full min-h-0">
             <div className="relative flex flex-row items-center justify-between px-4 h-full">
                 {/* Logo and Left Sidebar Toggle */}
                 <div className="flex items-center gap-4 z-10 h-full">
