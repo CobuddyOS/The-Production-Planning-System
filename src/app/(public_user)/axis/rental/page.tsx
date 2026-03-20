@@ -19,9 +19,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
 
 export default function AxisRentalPage() {
     const [mounted, setMounted] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         setMounted(true);
@@ -39,7 +41,7 @@ export default function AxisRentalPage() {
                             variant="ghost"
                             size="icon"
                             className="rounded-full"
-                            onClick={() => window.location.href = '/cue'}
+                            onClick={() => router.push('/cue')}
                         >
                             <ArrowLeft className="size-4" />
                         </Button>

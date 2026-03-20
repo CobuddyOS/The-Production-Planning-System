@@ -28,10 +28,14 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 
+import { useRouter } from "next/navigation";
+
 export default function CuePage() {
     const [step, setStep] = useState(1);
     const [mounted, setMounted] = useState(false);
     const [serviceMode, setServiceMode] = useState<"production" | "rental" | null>(null);
+    const router = useRouter();
+
     const [formData, setFormData] = useState({
         event_type: "",
         event_name: "",
@@ -314,7 +318,7 @@ export default function CuePage() {
                             <div className="fixed bottom-12 right-12 animate-in fade-in zoom-in slide-in-from-bottom-8 duration-700 z-50">
                                 <button
                                     className="btn-primary h-16 px-12 rounded-[1.8rem] font-black text-xl flex items-center gap-4 group active:scale-95 transition-all shadow-2xl"
-                                    onClick={() => window.location.href = `/axis/${serviceMode}`}
+                                    onClick={() => router.push(`/axis/${serviceMode}`)}
                                 >
                                     Proceed to {serviceMode.charAt(0).toUpperCase() + serviceMode.slice(1)} View
                                     <ChevronRight className="size-6 group-hover:translate-x-1.5 transition-transform" />
@@ -332,3 +336,4 @@ export default function CuePage() {
         </div>
     );
 }
+
