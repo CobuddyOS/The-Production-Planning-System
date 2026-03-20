@@ -40,11 +40,11 @@ export function AssetsSidebar({ isOpen, hasBallroom, onAddAsset }: AssetsSidebar
     return (
         <aside
             className={cn(
-                "h-full overflow-hidden border-l border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(56,189,248,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col min-w-0 min-h-0",
+                "h-full overflow-hidden bg-zinc-950/80 backdrop-blur-xl flex flex-col min-w-0 min-h-0",
                 !isOpen && "pointer-events-none"
             )}
         >
-            <div className="p-3 flex flex-col gap-3 bg-white/5">
+            <div className="p-3 flex flex-col gap-3">
                 <div className="flex items-center justify-between">
                     <span className="text-[11px] font-bold text-white/60 uppercase tracking-widest flex items-center gap-2">
                         <LayoutGrid className="size-3.5" />
@@ -63,7 +63,7 @@ export function AssetsSidebar({ isOpen, hasBallroom, onAddAsset }: AssetsSidebar
                 </div>
             </div>
 
-            <div className="p-2 bg-white/5">
+            <div className="p-2 border-t border-white/5">
                 <div className="grid grid-cols-6 gap-1">
                     {categories.map((cat) => {
                         const Icon = CATEGORY_ICONS[cat.name] || LayoutGrid;
@@ -89,7 +89,7 @@ export function AssetsSidebar({ isOpen, hasBallroom, onAddAsset }: AssetsSidebar
             </div>
 
             <div className="flex-1 overflow-y-auto scrollbar-hide p-4">
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-3 gap-3">
                     {inventoryLoading ? (
                         <div className="col-span-3 flex justify-center p-8">
                             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-sky-300"></div>
@@ -125,24 +125,34 @@ export function AssetsSidebar({ isOpen, hasBallroom, onAddAsset }: AssetsSidebar
                                         }
                                     }}
                                     className={cn(
-                                        "group bg-white/5 rounded-lg p-2 flex flex-col items-center text-center gap-1.5 shadow-[0_0_18px_rgba(0,0,0,0.35)] transition-all",
-                                        canPlace
-                                            ? "hover:shadow-[0_0_28px_rgba(56,189,248,0.18)] cursor-grab active:cursor-grabbing hover:bg-white/10"
-                                            : "cursor-not-allowed opacity-40 grayscale"
+                                        "group flex flex-col items-center gap-1.5 transition-all",
+                                        canPlace ? "cursor-grab active:cursor-grabbing" : "cursor-not-allowed opacity-40 grayscale"
                                     )}
                                 >
-                                    <div className={cn(
-                                        "w-full aspect-square bg-black/20 rounded-md flex items-center justify-center overflow-hidden transition-colors",
-                                        canPlace && "group-hover:bg-white/5"
-                                    )}>
+                                    <div
+                                        className={cn(
+                                            "w-full aspect-square bg-white/[0.08] border border-white/10 rounded-xl flex items-center justify-center overflow-hidden transition-all duration-300 shadow-[0_0_15px_rgba(0,0,0,0.5)] relative",
+                                            canPlace && "group-hover:bg-white/[0.12] group-hover:border-sky-500/50 group-hover:shadow-[0_0_25px_rgba(56,189,248,0.25)] group-hover:scale-[1.02]"
+                                        )}
+                                        style={{
+                                            backgroundImage: `
+                                                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                                                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)
+                                            `,
+                                            backgroundSize: '8px 8px'
+                                        }}
+                                    >
+                                        {/* Core Lighting Highlight */}
+                                        <div className="absolute inset-x-0 top-0 h-1/2 bg-gradient-to-bottom from-white/[0.05] to-transparent pointer-events-none" />
+
                                         {item.asset?.image ? (
                                             <img
                                                 src={item.asset.image}
                                                 alt={item.title || item.asset.name}
-                                                className="w-full h-full object-contain pointer-events-none"
+                                                className="w-full h-full object-contain p-3 relative z-10 pointer-events-none transition-transform duration-500 group-hover:scale-110"
                                             />
                                         ) : (
-                                            <Box className={cn("size-8 text-white/30", canPlace && "group-hover:text-emerald-200")} />
+                                            <Box className={cn("size-8 text-white/30 relative z-10", canPlace && "group-hover:text-sky-300")} />
                                         )}
                                     </div>
                                 </div>

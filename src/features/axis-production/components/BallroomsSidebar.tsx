@@ -14,7 +14,7 @@ export function BallroomsSidebar({ isOpen, selectedBallroomId, onSelectBallroom 
     return (
         <aside
             className={cn(
-                "h-full overflow-hidden border-r border-white/5 bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(56,189,248,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col min-w-0 min-h-0",
+                "h-full overflow-hidden bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(56,189,248,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col min-w-0 min-h-0",
                 !isOpen && "pointer-events-none"
             )}
         >
