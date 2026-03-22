@@ -1,5 +1,7 @@
 "use client";
 
+import { useMemo } from "react";
+
 import { AxisHeader } from "@/features/axis-production/components/AxisHeader";
 import { BallroomsSidebar } from "@/features/axis-production/components/BallroomsSidebar";
 import { AxisCanvas } from "@/features/axis-production/components/AxisCanvas";
@@ -26,6 +28,12 @@ function AxisProductionContent() {
   } = useProduction();
 
   const numberOfDays = 1;
+
+  const equipmentTotal = useMemo(() => {
+    return [...canvasAssets, ...tableAssets].reduce((sum, asset) => {
+      return sum + (parseFloat(asset.item.pricing as any) || 0);
+    }, 0);
+  }, [canvasAssets, tableAssets]);
 
   if (!mounted) return null;
 
@@ -76,6 +84,7 @@ function AxisProductionContent() {
         setRightSidebarOpen={(open) => dispatch({ type: 'TOGGLE_RIGHT_SIDEBAR', open })}
         onOpenSummary={() => dispatch({ type: 'SET_MODAL_OPEN', modal: 'summary', open: true })}
         onOpenGuide={() => dispatch({ type: 'SET_MODAL_OPEN', modal: 'info', open: true })}
+        totalCost={equipmentTotal}
         eventName="Summer Gala"
       />
 

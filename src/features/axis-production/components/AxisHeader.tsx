@@ -20,6 +20,7 @@ interface AxisHeaderProps {
     setRightSidebarOpen: (v: boolean) => void;
     onOpenSummary: () => void;
     onOpenGuide: () => void;
+    totalCost?: number;
     eventName?: string;
     eventDate?: string;
 }
@@ -31,6 +32,7 @@ export function AxisHeader({
     setRightSidebarOpen,
     onOpenSummary,
     onOpenGuide,
+    totalCost = 0,
     eventName = "New Event",
     eventDate = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
 }: AxisHeaderProps) {
@@ -42,9 +44,9 @@ export function AxisHeader({
                     <Image
                         src="/cobuddy_logo.png"
                         alt="Cobuddy"
-                        width={100}
-                        height={32}
-                        className="h-10 w-auto object-contain"
+                        width={300}
+                        height={300}
+                        className="h-13 w-auto object-contain"
                     />
                     <Button
                         variant="ghost"
@@ -77,6 +79,17 @@ export function AxisHeader({
                             <CalendarDays className="size-3.5 text-emerald-400" />
                             <span className="text-[11px] font-medium text-white/70">
                                 {eventDate}
+                            </span>
+                        </div>
+                    </div>
+
+                    {/* Cost Counter */}
+                    <div className="flex flex-col items-end px-3">
+                        <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.2em] mb-0.5 leading-none">Live Cost</span>
+                        <div className="flex items-center gap-2">
+                            <div className="size-1.5 rounded-full bg-primary animate-pulse" />
+                            <span className="text-lg font-black font-orbitron text-primary tracking-tighter drop-shadow-[0_0_8px_oklch(0.75_0.18_190_/_0.5)]">
+                                ${totalCost.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 0 })}
                             </span>
                         </div>
                     </div>
