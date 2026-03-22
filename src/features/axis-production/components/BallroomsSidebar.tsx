@@ -20,7 +20,7 @@ export function BallroomsSidebar({ isOpen, selectedBallroomId, onSelectBallroom 
         >
             <div className="p-3 pb-0 pt-6">
                 <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest block">
-                    Ballrooms
+                    Event Spaces
                 </span>
             </div>
             <div className="flex-1 overflow-y-auto scrollbar-hide px-3 pb-3 pt-3">

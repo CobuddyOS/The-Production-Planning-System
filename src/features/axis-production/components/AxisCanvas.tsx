@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Maximize2 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import dynamic from "next/dynamic";
 
 // Dynamically import the Konva Stage component to avoid SSR issues
@@ -68,16 +66,7 @@ function AxisCanvasInternal({
                 ref={containerRef}
                 className="flex-1 overflow-hidden rounded-xl neon-glass-card shadow-[0_0_35px_rgba(56,189,248,0.25)] relative group min-h-0"
             >
-                <div className="absolute top-4 right-4 flex flex-col gap-2 z-20 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <Button
-                        variant="secondary"
-                        size="icon"
-                        className="bg-white/90 backdrop-blur shadow-md hover:bg-white"
-                        onClick={() => { }}
-                    >
-                        <Maximize2 className="size-4" />
-                    </Button>
-                </div>
+
 
                 {/* Konva Stage */}
                 {isClient && dimensions.width > 0 && (

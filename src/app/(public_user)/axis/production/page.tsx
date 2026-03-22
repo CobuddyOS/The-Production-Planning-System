@@ -37,7 +37,7 @@ function AxisProductionContent() {
    *   Row 2 → Middle  (flexible `fr` ratio)
    *   Row 3 → Bottom  (fixed `fr` ratio)
    */
-  const gridRowTemplate = `${rows.header}fr ${rows.middle}fr ${rows.bottom}fr`;
+  const gridRowTemplate = `auto ${rows.middle}fr ${rows.bottom}fr`;
 
   /**
    * Middle-section column template.

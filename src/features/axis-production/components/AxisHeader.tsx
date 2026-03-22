@@ -36,9 +36,9 @@ export function AxisHeader({
 }: AxisHeaderProps) {
     return (
         <header className="flex flex-col z-30 glass-header h-full min-h-0">
-            <div className="relative flex flex-row items-center justify-between px-4 h-full">
+            <div className="relative flex flex-wrap items-center justify-center md:justify-between gap-4 px-4 py-3 h-full overflow-y-auto scrollbar-hide">
                 {/* Left Section: Logo, Left Sidebar Toggle, and Toolbar */}
-                <div className="flex items-center gap-4 z-10 h-full">
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 md:gap-4 z-10">
                     <Image
                         src="/cobuddy_logo.png"
                         alt="Cobuddy"
@@ -50,7 +50,7 @@ export function AxisHeader({
                         variant="ghost"
                         size="icon"
                         className={cn(
-                            "size-8 transition-colors hover:bg-white/10",
+                            "size-8 transition-colors hover:bg-white/10 md:hidden",
                             leftSidebarOpen && "bg-white/10 text-white"
                         )}
                         onClick={() => setLeftSidebarOpen(!leftSidebarOpen)}
@@ -58,13 +58,13 @@ export function AxisHeader({
                         <PanelLeft className="size-4" />
                     </Button>
 
-                    <Separator orientation="vertical" className="h-6 bg-white/10 mx-2" />
+                    <Separator orientation="vertical" className="hidden md:block h-6 bg-white/10 mx-2" />
 
                     <AxisToolbar />
                 </div>
 
                 {/* Right Section: Event Info and Right Actions */}
-                <div className="flex items-center gap-4 z-10">
+                <div className="flex flex-wrap items-center justify-center md:justify-end gap-2 md:gap-4 z-10">
                     <div className="neon-banner-accent rounded-full px-5 py-1.5 flex items-center gap-4 shrink-0 shadow-[0_0_15px_rgba(30,30,30,0.5)]">
                         <div className="flex items-center gap-2">
                             <Layers className="size-3.5 text-primary" />
@@ -79,13 +79,6 @@ export function AxisHeader({
                                 {eventDate}
                             </span>
                         </div>
-                    </div>
-
-                    <Separator orientation="vertical" className="h-6 bg-white/10 mx-1" />
-
-                    <div className="flex items-center gap-2 bg-white/5 border border-white/5 rounded-full px-3 py-1 backdrop-blur-md">
-                        <div className="size-1.5 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.5)]"></div>
-                        <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest">Auto-saved</span>
                     </div>
 
                     <div className="flex items-center gap-1">
@@ -116,13 +109,13 @@ export function AxisHeader({
                         <ChevronRight className="size-3.5 ml-1" />
                     </Button>
 
-                    <Separator orientation="vertical" className="h-5 bg-white/10 mx-1" />
+                    <Separator orientation="vertical" className="md:hidden h-5 bg-white/10 mx-1" />
 
                     <Button
                         variant="ghost"
                         size="icon"
                         className={cn(
-                            "size-8 transition-colors hover:bg-white/10",
+                            "size-8 transition-colors hover:bg-white/10 md:hidden",
                             rightSidebarOpen && "bg-white/10 text-white"
                         )}
                         onClick={() => setRightSidebarOpen(!rightSidebarOpen)}
