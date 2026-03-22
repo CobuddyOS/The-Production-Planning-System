@@ -18,7 +18,7 @@ const getAssetImage = (assetData: TableAsset) => {
 
 /**
  * AxisEnvironment renders 4 direct children that map 1-to-1 to the parent
- * grid's bottom-row column tracks (Table | Case | Staff | Slider).
+ * grid's bottom-row column tracks (NIO | Table | Case | Staff | Slider).
  *
  * Each section uses `object-contain` with `w-full h-full` so the images
  * fill their dedicated space seamlessly without cropping.
@@ -29,7 +29,16 @@ const getAssetImage = (assetData: TableAsset) => {
 export function AxisEnvironment({ tableAssets = [], onRemoveTableAsset }: AxisEnvironmentProps) {
     return (
         <>
-            {/* ─── Column 1: Tech Table ─── */}
+            {/* ─── Column 1: NIO ─── */}
+            <div className="relative overflow-hidden min-w-0 min-h-0">
+                <img
+                    src="/axis/nio.png"
+                    alt="NIO"
+                    className="absolute inset-0 w-full h-full object-contain drop-shadow-[0_0_12px_rgba(167,139,250,0.2)]"
+                />
+            </div>
+
+            {/* ─── Column 2: Tech Table ─── */}
             <div className="relative overflow-hidden min-w-0 min-h-0">
                 <img
                     src="/axis/table.png"
@@ -63,7 +72,7 @@ export function AxisEnvironment({ tableAssets = [], onRemoveTableAsset }: AxisEn
                 </div>
             </div>
 
-            {/* ─── Column 2: Cable Case ─── */}
+            {/* ─── Column 3: Cable Case ─── */}
             <div className="relative overflow-hidden min-w-0 min-h-0">
                 <img
                     src="/axis/case.png"
@@ -72,7 +81,7 @@ export function AxisEnvironment({ tableAssets = [], onRemoveTableAsset }: AxisEn
                 />
             </div>
 
-            {/* ─── Column 3: Staff ─── */}
+            {/* ─── Column 4: Staff ─── */}
             <div className="relative overflow-hidden min-w-0 min-h-0">
                 <img
                     src="/staff.png"
@@ -81,10 +90,10 @@ export function AxisEnvironment({ tableAssets = [], onRemoveTableAsset }: AxisEn
                 />
             </div>
 
-            {/* ─── Column 4: Environment Controls (Sliders) ─── */}
+            {/* ─── Column 5: Environment Controls (Sliders) ─── */}
             <div className="relative overflow-hidden min-w-0 min-h-0 flex items-center justify-center">
                 <div className="flex items-center justify-center gap-6 p-4">
-                    {["Frequency", "Color"].map((label) => (
+                    {["Freq.", "Col."].map((label) => (
                         <div key={label} className="flex flex-col items-center gap-2">
                             <span className="text-[9px] font-bold text-white/40 uppercase tracking-[0.2em]">
                                 {label}

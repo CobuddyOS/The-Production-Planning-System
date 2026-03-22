@@ -50,8 +50,15 @@ function AxisProductionContent() {
     rightSidebarOpen ? `${middle.assets}fr` : "0fr",
   ].join(" ");
 
-  /** Bottom-section column template — always visible, no toggling. */
-  const bottomColTemplate = `${bottom.table}fr ${bottom.case}fr ${bottom.staff}fr ${bottom.slider}fr`;
+  /**
+   * Bottom-section column template.
+   * Inherits the width toggles of the top columns matching the prompt's layout.
+   */
+  const bottomColTemplate = [
+    leftSidebarOpen ? `${bottom.nio}fr` : "0fr",
+    `${bottom.table}fr ${bottom.case}fr`,
+    rightSidebarOpen ? `${bottom.staff}fr ${bottom.slider}fr` : "0fr 0fr",
+  ].join(" ");
 
   return (
     <div
@@ -155,7 +162,7 @@ function AxisProductionContent() {
         />
       </div>
 
-      {/* ─── Row 3: Bottom (Table | Case | Staff | Slider) ─── */}
+      {/* ─── Row 3: Bottom (NIO | Table | Case | Staff | Slider) ─── */}
       <div
         className="min-h-0 min-w-0"
         style={{
