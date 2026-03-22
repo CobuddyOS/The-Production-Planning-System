@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { Box, Upload, X } from "lucide-react";
+import { Box, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useBallrooms } from "@/features/ballrooms/hooks/useBallrooms";
 
@@ -48,7 +48,7 @@ export function BallroomsSidebar({ isOpen, selectedBallroomId, onSelectBallroom 
                             {/* Upload Action */}
                             {!uploadedImage ? (
                                 <div
-                                    className="group bg-white/5 border border-dashed border-white/20 rounded-xl overflow-hidden hover:bg-white/10 hover:border-sky-400/50 hover:shadow-[0_0_20px_rgba(56,189,248,0.15)] transition-all cursor-pointer w-full aspect-[4/3] flex flex-col items-center justify-center gap-3 relative"
+                                    className="group bg-white/5 rounded-xl overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.4)] hover:shadow-[0_0_30px_rgba(56,189,248,0.25)] transition-all cursor-pointer w-full aspect-[4/3] relative"
                                     onClick={() => fileInputRef.current?.click()}
                                 >
                                     <input
@@ -58,12 +58,13 @@ export function BallroomsSidebar({ isOpen, selectedBallroomId, onSelectBallroom 
                                         ref={fileInputRef}
                                         onChange={handleFileUpload}
                                     />
-                                    <div className="bg-black/20 p-3 rounded-full group-hover:bg-sky-500/20 transition-colors">
-                                        <Upload className="size-5 text-white/50 group-hover:text-sky-300 transition-colors" />
+                                    <div className="h-full w-full bg-black/20 flex items-center justify-center overflow-hidden">
+                                        <img
+                                            src="/upload.png"
+                                            alt="Upload Custom Ballroom"
+                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                        />
                                     </div>
-                                    <span className="text-[10px] font-bold text-white/50 group-hover:text-white uppercase tracking-widest">
-                                        Upload
-                                    </span>
                                 </div>
                             ) : (
                                 <div

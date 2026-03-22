@@ -47,7 +47,7 @@ export function AxisEnvironment({ tableAssets = [], onRemoveTableAsset }: AxisEn
                 />
 
                 {/* Asset slots overlaid on the table */}
-                <div className="absolute inset-x-0 top-[25%] flex items-start justify-center px-[10%]">
+                <div className="absolute inset-x-0 top-[15%] flex items-start justify-center px-[10%]">
                     <div className="flex w-full justify-center gap-1">
                         {Array.from({ length: 8 }).map((_, i) => (
                             <div
@@ -57,7 +57,9 @@ export function AxisEnvironment({ tableAssets = [], onRemoveTableAsset }: AxisEn
                                     "w-10 h-10 flex items-center justify-center overflow-hidden transition-all duration-300",
                                     tableAssets[i] ? "cursor-pointer hover:scale-110 active:scale-95" : "opacity-0"
                                 )}
-                                style={{ transform: `translateY(${Math.sin(i / 1.5) * 3}px)` }}
+                                style={{
+                                    transform: `translateY(${i * 4}px) scale(${1 - i * 0.025})`
+                                }}
                             >
                                 {tableAssets[i] && (
                                     <img
