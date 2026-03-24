@@ -172,7 +172,7 @@ export function AxisToolbar() {
                                             <item.icon className={cn("size-3.5", item.iconClass)} />
                                         </Button>
                                     </TooltipTrigger>
-                                    <TooltipContent side="bottom" className="bg-zinc-900 border-white/10 text-white text-[10px]">
+                                    <TooltipContent side="bottom" arrowClassName="bg-[#bef264] fill-[#bef264]" className="bg-zinc-900 border-white/10 text-[#bef264] text-[10px]">
                                         <p>{item.label}</p>
                                     </TooltipContent>
                                 </Tooltip>

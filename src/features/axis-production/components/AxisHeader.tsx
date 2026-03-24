@@ -49,7 +49,9 @@ export function AxisHeader({
     ].join(" ");
 
     return (
-        <header className="flex flex-col z-30 glass-header h-full min-h-0">
+        <header className="flex flex-col z-30 glass-header h-full min-h-0 relative overflow-hidden">
+            {/* Global Header Ambient Light */}
+            <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-sky-500/[0.03] to-black/20 pointer-events-none" />
             <div
                 className="grid items-center h-full transition-[grid-template-columns] duration-300 ease-in-out overflow-hidden"
                 style={{ gridTemplateColumns: gridColTemplate }}
@@ -77,8 +79,13 @@ export function AxisHeader({
                 </div>
 
                 {/* ─── Column 2: Toolbar (Starts from Canva) ─── */}
-                <div className="flex items-center pl-1 pr-6 h-full min-w-0 overflow-x-auto scrollbar-hide">
-                    <AxisToolbar />
+                <div className="flex items-center pl-1 pr-6 h-full min-w-0 overflow-x-auto scrollbar-hide relative group">
+                    {/* Aura Ambient Light */}
+                    <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.15)_0%,transparent_70%)] pointer-events-none group-hover:bg-[radial-gradient(circle_at_center,rgba(56,189,248,0.22)_0%,transparent_70%)] transition-colors duration-700" />
+
+                    <div className="relative z-10 w-full flex items-center">
+                        <AxisToolbar />
+                    </div>
                 </div>
 
                 {/* ─── Column 3: Event Info & Actions ─── */}

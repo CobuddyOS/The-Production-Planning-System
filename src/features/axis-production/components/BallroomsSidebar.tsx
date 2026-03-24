@@ -28,12 +28,14 @@ export function BallroomsSidebar({ isOpen, selectedBallroomId, onSelectBallroom 
     return (
         <aside
             className={cn(
-                "h-full overflow-hidden bg-[radial-gradient(120%_85%_at_50%_100%,rgba(255,255,255,0.06)_0%,rgba(56,189,248,0.22)_35%,rgba(0,0,0,0.7)_70%)] backdrop-blur-xl flex flex-col min-w-0 min-h-0",
+                "h-full overflow-hidden bg-[radial-gradient(140%_100%_at_0%_0%,rgba(56,189,248,0.15)_0%,transparent_50%),radial-gradient(140%_100%_at_100%_100%,rgba(56,189,248,0.2)_0%,transparent_50%),rgba(5,5,10,0.85)] backdrop-blur-2xl flex flex-col min-w-0 min-h-0 relative",
                 !isOpen && "pointer-events-none"
             )}
         >
+            {/* Ambient Background Aura */}
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_100%,rgba(56,189,248,0.18),transparent_70%)] pointer-events-none" />
             <div className="p-4 pb-2 pt-6">
-                <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] block">
+                <span className="text-[12px] font-bold text-white/60 uppercase tracking-[0.25em] block text-center">
                     Event Spaces
                 </span>
             </div>
