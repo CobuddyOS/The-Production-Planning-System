@@ -34,7 +34,7 @@ export function AxisEnvironment({ tableAssets = [], onRemoveTableAsset }: AxisEn
                 <img
                     src="/axis/nio.png"
                     alt="NIO"
-                    className="absolute inset-0 w-full h-full object-contain drop-shadow-[0_0_12px_rgba(167,139,250,0.2)]"
+                    className="absolute inset-0 w-full h-full object-contain"
                 />
             </div>
 
@@ -43,29 +43,29 @@ export function AxisEnvironment({ tableAssets = [], onRemoveTableAsset }: AxisEn
                 <img
                     src="/axis/table.png"
                     alt="Tech Table"
-                    className="absolute inset-0 w-full h-full object-contain drop-shadow-[0_0_12px_rgba(56,189,248,0.2)]"
+                    className="absolute inset-0 w-full h-full object-contain"
                 />
 
                 {/* Asset slots overlaid on the table */}
-                <div className="absolute inset-x-0 top-[15%] flex items-start justify-center px-[10%]">
-                    <div className="flex w-full justify-center gap-1">
-                        {Array.from({ length: 8 }).map((_, i) => (
+                <div className="absolute inset-x-0 top-[5%] left-[5%] flex items-start justify-center px-[8%]">
+                    <div className="flex w-full justify-center gap-2">
+                        {Array.from({ length: 6 }).map((_, i) => (
                             <div
                                 key={i}
                                 onClick={() => tableAssets[i] && onRemoveTableAsset?.(tableAssets[i].id)}
                                 className={cn(
-                                    "w-10 h-10 flex items-center justify-center overflow-hidden transition-all duration-300",
-                                    tableAssets[i] ? "cursor-pointer hover:scale-110 active:scale-95" : "opacity-0"
+                                    "w-14 h-14 flex items-center justify-center overflow-hidden transition-all duration-300",
+                                    tableAssets[i] ? "cursor-pointer hover:scale-110 active:scale-95 text-sky-400" : "opacity-0"
                                 )}
                                 style={{
-                                    transform: `translateY(${i * 4}px) scale(${1 - i * 0.025})`
+                                    transform: `translateY(${i * 6}px) scale(${1 - i * 0.03})`
                                 }}
                             >
                                 {tableAssets[i] && (
                                     <img
                                         src={getAssetImage(tableAssets[i])}
                                         alt={tableAssets[i]?.item?.title || "asset"}
-                                        className="w-8 h-8 object-contain drop-shadow-[0_0_5px_rgba(255,255,255,0.2)]"
+                                        className="w-12 h-12 object-contain"
                                     />
                                 )}
                             </div>
@@ -79,7 +79,7 @@ export function AxisEnvironment({ tableAssets = [], onRemoveTableAsset }: AxisEn
                 <img
                     src="/axis/case.png"
                     alt="Cable Case"
-                    className="absolute inset-0 w-full h-full object-contain drop-shadow-[0_0_12px_rgba(14,165,233,0.2)]"
+                    className="absolute inset-0 w-full h-full object-contain"
                 />
             </div>
 
@@ -88,7 +88,7 @@ export function AxisEnvironment({ tableAssets = [], onRemoveTableAsset }: AxisEn
                 <img
                     src="/staff.png"
                     alt="Staff"
-                    className="absolute inset-0 w-full h-full object-contain drop-shadow-[0_0_15px_rgba(132,204,22,0.4)]"
+                    className="absolute inset-0 w-full h-full object-contain"
                 />
             </div>
 

@@ -121,7 +121,7 @@ function productionReducer(state: ProductionState, action: ProductionAction): Pr
             };
         }
         case 'ADD_TABLE_ASSET':
-            if (state.tableAssets.length >= 8) return state;
+            if (state.tableAssets.length >= 6) return state;
             return {
                 ...state,
                 tableAssets: [...state.tableAssets, { id: crypto.randomUUID(), item: action.asset }]
