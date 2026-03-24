@@ -55,13 +55,13 @@ export function AxisHeader({
                 style={{ gridTemplateColumns: gridColTemplate }}
             >
                 {/* ─── Column 1: Logo & Sidebar Toggle ─── */}
-                <div className="flex items-center gap-4 px-4 h-full border-r border-white/5 bg-black/10 overflow-hidden">
+                <div className="flex items-center justify-center gap-4 px-6 py-2 h-full border-r border-white/5 bg-black/20 overflow-hidden">
                     <Image
                         src="/cobuddy_logo.png"
                         alt="Cobuddy"
-                        width={300}
-                        height={300}
-                        className="h-13 w-auto object-contain shrink-0"
+                        width={600}
+                        height={200}
+                        className="max-h-10 w-full object-contain shrink-0"
                     />
                     <Button
                         variant="ghost"
