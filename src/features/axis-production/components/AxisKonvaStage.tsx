@@ -41,22 +41,29 @@ export const URLImage = memo(({
 
     let displayWidth = img.width;
     let displayHeight = img.height;
+    let offsetX = 0;
+    let offsetY = 0;
 
     // Background fitting logic
     if (isBackground && stageDimensions) {
         const stageRatio = stageDimensions.width / stageDimensions.height;
         const imgRatio = img.width / img.height;
 
+        // Use 'cover' strategy but with centering
         if (imgRatio > stageRatio) {
             displayHeight = stageDimensions.height;
             displayWidth = stageDimensions.height * imgRatio;
+            offsetX = (displayWidth - stageDimensions.width) / 2;
         } else {
             displayWidth = stageDimensions.width;
             displayHeight = stageDimensions.width / imgRatio;
+            offsetY = (displayHeight - stageDimensions.height) / 2;
         }
     } else {
         displayWidth = img.width * asset.scale;
         displayHeight = img.height * asset.scale;
+        offsetX = displayWidth / 2;
+        offsetY = displayHeight / 2;
     }
 
     const selectionColor = "#D946EF";
@@ -93,8 +100,8 @@ export const URLImage = memo(({
                 image={img}
                 width={displayWidth}
                 height={displayHeight}
-                offsetX={isBackground ? 0 : displayWidth / 2}
-                offsetY={isBackground ? 0 : displayHeight / 2}
+                offsetX={offsetX}
+                offsetY={offsetY}
                 scaleX={asset.flipX ? -1 : 1}
                 scaleY={asset.flipY ? -1 : 1}
             />
