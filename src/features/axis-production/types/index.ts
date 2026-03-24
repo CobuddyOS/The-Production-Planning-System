@@ -34,6 +34,7 @@ export interface ProductionState {
     infoModalOpen: boolean;
     summaryOpen: boolean;
     mounted: boolean;
+    numberOfDays: number;
 }
 
 export type ProductionAction =
@@ -52,4 +53,5 @@ export type ProductionAction =
     | { type: 'UPDATE_LAYERING'; ids: string[], action: LayerAction }
     | { type: 'ROTATE_ASSETS'; ids: string[], direction: RotationDirection }
     | { type: 'REMOVE_TABLE_ASSET'; id: string }
-    | { type: 'ADD_TABLE_ASSET'; asset: WarehouseItem };
+    | { type: 'ADD_TABLE_ASSET'; asset: WarehouseItem }
+    | { type: 'SET_DAYS'; days: number };

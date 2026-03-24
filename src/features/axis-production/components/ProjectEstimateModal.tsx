@@ -35,7 +35,7 @@ export function ProjectEstimateModal({
             if (itemsMap.has(itemId)) {
                 const existing = itemsMap.get(itemId);
                 existing.quantity += 1;
-                existing.total = existing.quantity * (parseFloat(item.pricing) || 0);
+                existing.total = existing.quantity * (parseFloat(item.pricing) || 0) * numberOfDays;
             } else {
                 itemsMap.set(itemId, {
                     id: itemId,
@@ -43,19 +43,21 @@ export function ProjectEstimateModal({
                     image: item.asset?.image || item.asset?.thumbnail_url || item.asset?.image_url,
                     price: parseFloat(item.pricing) || 0,
                     quantity: 1,
-                    total: parseFloat(item.pricing) || 0,
+                    total: (parseFloat(item.pricing) || 0) * numberOfDays,
                 });
             }
         });
 
         return Array.from(itemsMap.values());
-    }, [canvasAssets, tableAssets]);
+    }, [canvasAssets, tableAssets, numberOfDays]);
 
-    const equipmentTotal = useMemo(() => {
+    const projectTotal = useMemo(() => {
         return aggregatedItems.reduce((sum, item) => sum + item.total, 0);
     }, [aggregatedItems]);
 
-    const projectTotal = equipmentTotal * numberOfDays;
+    const equipmentBaseTotal = useMemo(() => {
+        return aggregatedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    }, [aggregatedItems]);
 
     return (
         <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
@@ -154,7 +156,7 @@ export function ProjectEstimateModal({
                                     Equipment Total
                                 </p>
                                 <p className="text-2xl font-black text-white font-orbitron tracking-tight">
-                                    ${equipmentTotal.toLocaleString()}
+                                    ${equipmentBaseTotal.toLocaleString()}
                                 </p>
                             </div>
                             <div className="p-4 rounded-xl bg-black/40 border border-white/5 relative overflow-hidden group">

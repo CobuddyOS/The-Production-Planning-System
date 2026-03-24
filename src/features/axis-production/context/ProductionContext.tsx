@@ -22,6 +22,7 @@ const initialState: ProductionState = {
     infoModalOpen: false,
     summaryOpen: false,
     mounted: false,
+    numberOfDays: 1,
 };
 
 function productionReducer(state: ProductionState, action: ProductionAction): ProductionState {
@@ -130,6 +131,11 @@ function productionReducer(state: ProductionState, action: ProductionAction): Pr
             return {
                 ...state,
                 tableAssets: state.tableAssets.filter(a => a.id !== action.id)
+            };
+        case 'SET_DAYS':
+            return {
+                ...state,
+                numberOfDays: isNaN(action.days) || action.days < 1 ? 1 : action.days
             };
         default:
             return state;

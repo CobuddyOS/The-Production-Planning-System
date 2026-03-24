@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import {
     PanelLeft,
@@ -22,6 +23,8 @@ interface AxisHeaderProps {
     onOpenSummary: () => void;
     onOpenGuide: () => void;
     totalCost?: number;
+    numberOfDays?: number;
+    setNumberOfDays?: (v: number) => void;
     eventName?: string;
     eventDate?: string;
 }
@@ -34,10 +37,26 @@ export function AxisHeader({
     onOpenSummary,
     onOpenGuide,
     totalCost = 0,
+    numberOfDays = 1,
+    setNumberOfDays = () => { },
     eventName = "New Event",
     eventDate = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
 }: AxisHeaderProps) {
     const { middle } = LAYOUT;
+
+    const [localDays, setLocalDays] = useState(numberOfDays.toString());
+
+    useEffect(() => {
+        setLocalDays(numberOfDays.toString());
+    }, [numberOfDays]);
+
+    const handleDaysChange = (val: string) => {
+        setLocalDays(val);
+        const parsed = parseInt(val);
+        if (!isNaN(parsed) && parsed > 0) {
+            setNumberOfDays(parsed);
+        }
+    };
 
     /**
      * Mirror the middle section column template for perfect alignment.
@@ -104,6 +123,28 @@ export function AxisHeader({
                                 {eventDate}
                             </span>
                         </div>
+                    </div>
+
+                    {/* Days Input */}
+                    <div className="flex items-center px-3 h-full relative border-l border-white/5 bg-white/[0.02] gap-2 z-10">
+                        <div className="relative flex items-center z-10">
+                            <input
+                                type="number"
+                                min={1}
+                                value={localDays}
+                                onChange={(e) => handleDaysChange(e.target.value)}
+                                onBlur={() => {
+                                    if (parseInt(localDays) <= 0 || isNaN(parseInt(localDays))) {
+                                        setLocalDays("1");
+                                        setNumberOfDays(1);
+                                    }
+                                }}
+                                className="w-12 h-7 bg-black/40 border border-white/10 rounded-lg text-xs font-black text-[#bef264] text-center focus:outline-none focus:border-primary/40 focus:ring-1 focus:ring-primary/20 transition-all [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none relative z-10"
+                            />
+                        </div>
+                        <span className="text-[10px] font-black text-white/30 uppercase tracking-[0.2em]">
+                            Days
+                        </span>
                     </div>
 
                     {/* Cost Counter */}

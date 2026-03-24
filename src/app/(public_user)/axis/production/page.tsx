@@ -24,16 +24,16 @@ function AxisProductionContent() {
     selectedAssetIds,
     infoModalOpen,
     summaryOpen,
+    numberOfDays,
     dispatch,
   } = useProduction();
 
-  const numberOfDays = 1;
-
   const equipmentTotal = useMemo(() => {
-    return [...canvasAssets, ...tableAssets].reduce((sum, asset) => {
+    const unitTotal = [...canvasAssets, ...tableAssets].reduce((sum, asset) => {
       return sum + (parseFloat(asset.item.pricing as any) || 0);
     }, 0);
-  }, [canvasAssets, tableAssets]);
+    return unitTotal * numberOfDays;
+  }, [canvasAssets, tableAssets, numberOfDays]);
 
   if (!mounted) return null;
 
@@ -85,6 +85,8 @@ function AxisProductionContent() {
         onOpenSummary={() => dispatch({ type: 'SET_MODAL_OPEN', modal: 'summary', open: true })}
         onOpenGuide={() => dispatch({ type: 'SET_MODAL_OPEN', modal: 'info', open: true })}
         totalCost={equipmentTotal}
+        numberOfDays={numberOfDays}
+        setNumberOfDays={(days) => dispatch({ type: 'SET_DAYS', days })}
         eventName="Summer Gala"
       />
 
