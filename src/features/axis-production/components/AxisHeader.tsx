@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { AxisToolbar } from "./AxisToolbar";
+import { LAYOUT } from "../constants";
 
 interface AxisHeaderProps {
     leftSidebarOpen: boolean;
@@ -36,17 +37,31 @@ export function AxisHeader({
     eventName = "New Event",
     eventDate = new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }),
 }: AxisHeaderProps) {
+    const { middle } = LAYOUT;
+
+    /**
+     * Mirror the middle section column template for perfect alignment.
+     */
+    const gridColTemplate = [
+        leftSidebarOpen ? `${middle.ballroom}fr` : "0fr",
+        `${middle.canvas}fr`,
+        rightSidebarOpen ? `${middle.assets}fr` : "0fr",
+    ].join(" ");
+
     return (
         <header className="flex flex-col z-30 glass-header h-full min-h-0">
-            <div className="relative flex flex-wrap items-center justify-center md:justify-between gap-4 px-4 py-3 h-full overflow-y-auto scrollbar-hide">
-                {/* Left Section: Logo, Left Sidebar Toggle, and Toolbar */}
-                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 md:gap-4 z-10">
+            <div
+                className="grid items-center h-full transition-[grid-template-columns] duration-300 ease-in-out overflow-hidden"
+                style={{ gridTemplateColumns: gridColTemplate }}
+            >
+                {/* ─── Column 1: Logo & Sidebar Toggle ─── */}
+                <div className="flex items-center gap-4 px-4 h-full border-r border-white/5 bg-black/10 overflow-hidden">
                     <Image
                         src="/cobuddy_logo.png"
                         alt="Cobuddy"
                         width={300}
                         height={300}
-                        className="h-13 w-auto object-contain"
+                        className="h-13 w-auto object-contain shrink-0"
                     />
                     <Button
                         variant="ghost"
@@ -59,14 +74,15 @@ export function AxisHeader({
                     >
                         <PanelLeft className="size-4" />
                     </Button>
+                </div>
 
-                    <Separator orientation="vertical" className="hidden md:block h-6 bg-white/10 mx-2" />
-
+                {/* ─── Column 2: Toolbar (Starts from Canva) ─── */}
+                <div className="flex items-center pl-1 pr-6 h-full min-w-0 overflow-x-auto scrollbar-hide">
                     <AxisToolbar />
                 </div>
 
-                {/* Right Section: Event Info and Right Actions */}
-                <div className="flex flex-wrap items-center justify-center md:justify-end gap-2 md:gap-4 z-10">
+                {/* ─── Column 3: Event Info & Actions ─── */}
+                <div className="flex items-center justify-end gap-3 px-4 h-full bg-black/10 border-l border-white/5 min-w-0">
                     <div className="neon-banner-accent rounded-full px-5 py-1.5 flex items-center gap-4 shrink-0 shadow-[0_0_15px_rgba(30,30,30,0.5)]">
                         <div className="flex items-center gap-2">
                             <Layers className="size-3.5 text-primary" />
@@ -84,8 +100,7 @@ export function AxisHeader({
                     </div>
 
                     {/* Cost Counter */}
-                    <div className="flex flex-col items-end px-3">
-                        <span className="text-[9px] font-bold text-white/30 uppercase tracking-[0.2em] mb-0.5 leading-none">Live Cost</span>
+                    <div className="flex items-center px-4 h-full relative border-l border-white/5 bg-black/5">
                         <div className="flex items-center gap-2">
                             <div className="size-1.5 rounded-full bg-primary animate-pulse" />
                             <span className="text-lg font-black font-orbitron text-primary tracking-tighter drop-shadow-[0_0_8px_oklch(0.75_0.18_190_/_0.5)]">

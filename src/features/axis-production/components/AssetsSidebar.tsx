@@ -44,13 +44,10 @@ export function AssetsSidebar({ isOpen, hasBallroom, onAddAsset }: AssetsSidebar
                 !isOpen && "pointer-events-none"
             )}
         >
-            <div className="p-3 flex flex-col gap-3">
-                <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-bold text-white/60 uppercase tracking-widest flex items-center gap-2">
-                        <LayoutGrid className="size-3.5" />
-                        Assets Library
-                    </span>
-                </div>
+            <div className="p-4 pb-2 pt-6 flex flex-col gap-3">
+                <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] block text-left">
+                    Assets Library
+                </span>
 
                 <div className="relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-3.5 text-white/40" />
@@ -74,7 +71,7 @@ export function AssetsSidebar({ isOpen, hasBallroom, onAddAsset }: AssetsSidebar
                                 onClick={() => setActiveCategoryId(cat.id)}
                                 title={cat.name}
                                 className={cn(
-                                    "h-8 w-8 rounded-lg transition-all flex items-center justify-center",
+                                    "h-8 w-8 rounded-xl transition-all flex items-center justify-center",
                                     isActive
                                         ? "bg-white/15 text-white shadow-[0_0_16px_rgba(56,189,248,0.35)]"
                                         : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white"

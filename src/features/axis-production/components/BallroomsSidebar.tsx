@@ -32,8 +32,8 @@ export function BallroomsSidebar({ isOpen, selectedBallroomId, onSelectBallroom 
                 !isOpen && "pointer-events-none"
             )}
         >
-            <div className="p-3 pb-0 pt-6">
-                <span className="text-[10px] font-bold text-white/50 uppercase tracking-widest block">
+            <div className="p-4 pb-2 pt-6">
+                <span className="text-[10px] font-bold text-white/40 uppercase tracking-[0.2em] block">
                     Event Spaces
                 </span>
             </div>
@@ -101,7 +101,7 @@ export function BallroomsSidebar({ isOpen, selectedBallroomId, onSelectBallroom 
                                         <X className="size-3 text-white" />
                                     </div>
                                     <div
-                                        className="absolute bottom-2 left-2 right-2 px-2 py-1 bg-black/60 backdrop-blur-md rounded border border-white/10 opacity-0 group-hover:opacity-100 transition-all font-bold text-[9px] text-white/80 text-center z-20"
+                                        className="absolute bottom-2 left-2 right-2 px-2 py-1 bg-black/60 backdrop-blur-md rounded-lg border border-white/10 opacity-0 group-hover:opacity-100 transition-all font-bold text-[9px] text-white/80 text-center z-20"
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             fileInputRef.current?.click();

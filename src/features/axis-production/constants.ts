@@ -23,8 +23,8 @@ export const LAYOUT = {
     /** Row ratios — used as CSS Grid `fr` units */
     rows: {
         header: 90,   // 8.33 %
-        middle: 630,  // 58.33 %
-        bottom: 360,  // 33.33 %
+        middle: 690,  // 58.33 %
+        bottom: 300,  // 33.33 %
     },
 
     /** Middle-section column ratios */

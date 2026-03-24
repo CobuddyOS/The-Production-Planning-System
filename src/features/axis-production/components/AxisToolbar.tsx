@@ -68,7 +68,7 @@ export function AxisToolbar() {
     const onRotateAssets = (ids: string[], direction: any) => dispatch({ type: 'ROTATE_ASSETS', ids, direction });
 
     const toolBtnClass =
-        "h-8 w-8 p-0 rounded-md transition-all duration-200 border border-white/10 text-white/50 bg-white/5 hover:text-white hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-white/5";
+        "h-8 w-8 p-0 rounded-xl transition-all duration-200 border border-white/10 text-white/50 bg-white/5 hover:text-white hover:bg-white/10 disabled:opacity-30 disabled:hover:bg-white/5";
 
     const TOOLBAR_CONFIG: ToolbarGroup[] = [
         {
@@ -154,7 +154,7 @@ export function AxisToolbar() {
     ];
 
     return (
-        <div className="flex items-center gap-1 bg-white/5 border border-white/10 px-2 py-1 rounded-lg backdrop-blur-sm">
+        <div className="flex items-center gap-1 bg-white/5 border border-white/10 px-2 py-1 rounded-xl backdrop-blur-sm">
             <TooltipProvider>
                 <div className="flex items-center gap-1">
                     {TOOLBAR_CONFIG.map((group, gIdx) => (
