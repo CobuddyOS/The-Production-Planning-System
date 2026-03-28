@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Cobuddy OS Boot</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600&display=swap" rel="stylesheet">
+
+<style>
+
+body{
+margin:0;
+background:black;
+color:#00ff88;
+font-family:'Orbitron',sans-serif;
+overflow:hidden;
+}
+
+/* Boot Screen */
+
+.boot{
+position:absolute;
+top:50%;
+left:50%;
+transform:translate(-50%,-50%);
+width:80%;
+max-width:700px;
+font-size:18px;
+line-height:32px;
+z-index:10;
+}
+
+.boot span{
+display:block;
+opacity:0;
+}
+
+/* Video Intro Hidden Initially */
+
+.video-intro{
+position:absolute;
+top:0;
+left:0;
+width:100%;
+height:100%;
+opacity:0;
+transition:opacity 1.5s ease;
+background:black;
+display:flex;
+justify-content:center;
+align-items:center;
+z-index:5;
+}
+
+.video-intro video{
+width:100%;
+height:100%;
+object-fit:cover;
+background:black;
+}
+
+/* Fallback Intro Hidden Initially */
+
+.intro{
+opacity:0;
+transition:opacity 2s;
+position:absolute;
+width:100%;
+height:100%;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+z-index:1;
+}
+
+/* Stage */
+
+.stage{
+position:absolute;
+bottom:0;
+width:100%;
+height:40%;
+background:linear-gradient(#111,#000);
+}
+
+/* COBUDDY Logo */
+
+.logo{
+font-size:70px;
+letter-spacing:12px;
+display:flex;
+gap:10px;
+}
+
+.logo span{
+opacity:0;
+transform:translateY(-200px);
+}
+
+.drop{
+animation:drop .6s forwards;
+}
+
+@keyframes drop{
+
+0%{opacity:0;transform:translateY(-200px);}
+80%{transform:translateY(10px);}
+100%{opacity:1;transform:translateY(0);}
+
+}
+
+/* NIO */
+
+.nio{
+position:absolute;
+top:30%;
+left:-200px;
+font-size:30px;
+opacity:0;
+}
+
+.nio.fly{
+animation:flyIn 2s forwards;
+}
+
+@keyframes flyIn{
+
+0%{left:-200px;opacity:0;}
+100%{left:45%;opacity:1;}
+
+}
+
+/* Cable */
+
+.cable{
+position:absolute;
+height:4px;
+background:#00ff88;
+width:0;
+top:60%;
+left:50%;
+transform:translate(-50%,-50%);
+}
+
+.cable.draw{
+animation:cableDraw 1.5s forwards;
+}
+
+@keyframes cableDraw{
+0%{width:0;}
+100%{width:420px;}
+}
+
+/* OS Drawing */
+
+.os path{
+stroke-dasharray:300;
+stroke-dashoffset:300;
+}
+
+.os path.draw{
+animation:writeOS 2s forwards;
+}
+
+@keyframes writeOS{
+to{stroke-dashoffset:0;}
+}
+
+/* Pulse */
+
+.pulse{
+position:absolute;
+width:12px;
+height:12px;
+border-radius:50%;
+background:#00ff88;
+top:60%;
+left:50%;
+opacity:0;
+}
+
+.pulse.run{
+animation:pulseMove 2s forwards;
+}
+
+@keyframes pulseMove{
+0%{opacity:1;transform:scale(1);}
+100%{opacity:0;transform:scale(45);}
+}
+
+</style>
+
+</head>
+
+<body>
+
+<!-- Boot Screen -->
+
+<div class="boot">
+
+<span id="b1">INITIALIZING COBUDDY OS...</span>
+<span id="b2">Loading Atlas Module...</span>
+<span id="b3">Loading Axis Runtime...</span>
+<span id="b4">Connecting Libra Engine...</span>
+<span id="b5">Starting Nexus Control...</span>
+<span id="b6">Neo Intelligence Online...</span>
+<span id="b7">SYSTEM READY</span>
+
+</div>
+
+<!-- Video Intro -->
+
+<div class="video-intro" id="videoIntro">
+  <video id="introVideo" autoplay muted playsinline>
+    <source src="./logo-intro.MP4" type="video/mp4">
+  </video>
+</div>
+
+<!-- Fallback Intro -->
+
+<div class="intro">
+
+<div class="logo">
+<span>C</span>
+<span>O</span>
+<span>B</span>
+<span>U</span>
+<span>D</span>
+<span>D</span>
+<span>Y</span>
+</div>
+
+<div class="nio">NIO</div>
+
+<div class="cable"></div>
+
+<svg class="os" width="200" height="100" viewBox="0 0 200 100">
+<path id="osPath"
+d="M20 60 C10 20, 80 20, 70 60 S140 100,160 60"
+stroke="#00ff88"
+stroke-width="4"
+fill="none"
+stroke-linecap="round"/>
+</svg>
+
+<div class="pulse"></div>
+
+<div class="stage"></div>
+
+</div>
+
+<script>
+
+/* Boot loader lines */
+
+let lines=["b1","b2","b3","b4","b5","b6","b7"]
+
+lines.forEach((id,i)=>{
+setTimeout(()=>{
+document.getElementById(id).style.opacity=1
+},i*700)
+})
+
+/* Start intro after boot */
+
+setTimeout(()=>{
+
+document.querySelector(".boot").style.display="none"
+
+const videoWrap = document.getElementById("videoIntro")
+const video = document.getElementById("introVideo")
+
+videoWrap.style.opacity = 1
+
+/* If video fails, use fallback intro */
+video.addEventListener("error", () => {
+  videoWrap.style.display = "none"
+  document.querySelector(".intro").style.opacity = 1
+  startIntro()
+})
+
+/* If video ends, go to next page or fallback intro */
+video.addEventListener("ended", () => {
+  window.location.href = "./orbitsway.html"
+})
+
+},5000)
+
+
+function startIntro(){
+
+let letters=document.querySelectorAll(".logo span")
+
+letters.forEach((l,i)=>{
+setTimeout(()=>{l.classList.add("drop")},i*200)
+})
+
+setTimeout(()=>{
+document.querySelector(".nio").classList.add("fly")
+},2000)
+
+setTimeout(()=>{
+document.querySelector(".cable").classList.add("draw")
+},3500)
+
+setTimeout(()=>{
+document.querySelector("#osPath").classList.add("draw")
+},5000)
+
+setTimeout(()=>{
+document.querySelector(".pulse").classList.add("run")
+},6500)
+
+}
+
+</script>
+
+</body>
+
+</html>
