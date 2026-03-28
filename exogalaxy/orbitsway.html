@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>COBUDDY OS — OrbitsWay</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&display=swap" rel="stylesheet" />
+  <style>
+    :root { --green:#00ff88; --blue:#57c8ff; }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { background:#000; color:#fff; font-family:'Orbitron',sans-serif; overflow:hidden; width:100vw; height:100vh; }
+
+    #milkyway { position:fixed; inset:0; z-index:0; }
+
+    #headerBanner{
+      position:fixed;
+      top:0;
+      left:0;
+      width:100vw;
+      z-index:90;
+      display:flex;
+      align-items:flex-start;
+      justify-content:center;
+      height:210px;
+      padding-top:0;
+      background:linear-gradient(180deg,rgba(0,0,0,.78) 0%,rgba(0,5,2,.32) 35%,transparent 72%);
+      border-bottom:none;
+      pointer-events:none;
+      overflow:visible;
+    }
+
+    .logo-assembly {
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:0;
+      position:relative;
+    }
+
+    #heroLogoImg{
+      height:360px;
+      width:auto;
+      display:block;
+      transform:translateY(-48px) scaleX(.78);
+      transform-origin:center top;
+      mix-blend-mode:lighten;
+      opacity:.98;
+      filter:
+        brightness(1.06)
+        contrast(1.18)
+        saturate(1.05)
+        drop-shadow(0 0 8px rgba(0,255,136,.22));
+    }
+
+    #galaxyWrap { position:fixed; inset:0; z-index:2; }
+
+    #raSun {
+      position:absolute; left:9%; top:30%;
+      transform:translate(-50%,-50%);
+      width:104px; height:104px; border-radius:999px; z-index:6;
+      cursor:pointer; overflow:hidden;
+      border:1px solid rgba(255,200,80,.10);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      text-align:center; user-select:none;
+      box-shadow:0 0 28px rgba(255,125,0,.55),0 0 70px rgba(255,70,0,.22),0 0 140px rgba(255,50,0,.09);
+      animation:raBreath 4s ease-in-out infinite;
+      background:#000;
+    }
+
+    #raSun img{
+      position:absolute; inset:0; width:100%; height:100%;
+      object-fit:cover; border-radius:999px;
+    }
+
+    #raSun::after{
+      content:""; position:absolute; inset:0; border-radius:999px;
+      background:radial-gradient(circle at 30% 25%, rgba(255,255,255,.18), transparent 35%),
+                 radial-gradient(circle at 70% 75%, rgba(0,0,0,.30), transparent 50%);
+      pointer-events:none; z-index:1;
+    }
+
+    @keyframes raBreath {
+      0%,100%{box-shadow:0 0 28px rgba(255,125,0,.55),0 0 70px rgba(255,70,0,.22),0 0 140px rgba(255,50,0,.09);opacity:.84;}
+      50%{box-shadow:0 0 42px rgba(255,140,0,.70),0 0 95px rgba(255,80,0,.30),0 0 180px rgba(255,60,0,.13);opacity:.96;}
+    }
+
+    #raSun .ra-label{
+      font-family:'Orbitron',sans-serif;font-size:16px;letter-spacing:4px;font-weight:900;
+      z-index:2;position:relative;color:#ffe090;text-shadow:0 0 14px rgba(255,190,80,.80);
+    }
+
+    #raSun .ra-desc {
+      font-family:'Orbitron',sans-serif;font-size:6px;opacity:.72;margin-top:3px;z-index:2;position:relative;letter-spacing:2px;color:#ffcc70;
+    }
+
+    .cMoon {
+      position:absolute; border-radius:999px;
+      background:radial-gradient(circle at 30% 30%,#1c1c30,#0d0d1a 60%,#000 92%);
+      border:1px solid rgba(87,200,255,.28); box-shadow:0 0 12px rgba(87,200,255,.18);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      pointer-events:none; z-index:5; opacity:1; transition:opacity .4s ease;
+    }
+
+    .cMoon.off{opacity:0;}
+
+    .cMoon .cl{
+      font-family:'Orbitron',sans-serif;font-size:5px;letter-spacing:1px;font-weight:800;color:var(--blue);
+      text-shadow:0 0 8px rgba(87,200,255,.75);text-align:center;line-height:1.3;padding:2px;
+      position:relative; z-index:2;
+    }
+
+    .cMoon img{
+      position:absolute;
+      inset:0;
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      border-radius:999px;
+      z-index:1;
+    }
+
+    #galaxyRot { position:absolute; inset:0; z-index:20; cursor:grab; touch-action:none; }
+    #galaxyRot:active { cursor:grabbing; }
+
+    .body {
+      position:absolute; border-radius:999px; border:1px solid rgba(255,255,255,.15);
+      display:flex; flex-direction:column; align-items:center; justify-content:center;
+      text-align:center; user-select:none; overflow:hidden;
+      transition:box-shadow .15s ease; will-change:transform,left,top;
+      background:#000;
+    }
+
+    .planet{cursor:pointer;}
+    .planet:hover{box-shadow:0 0 55px rgba(0,255,136,.38) !important;}
+
+    .planet::before{
+      content:"";position:absolute;inset:0;border-radius:999px;
+      background:radial-gradient(circle at 30% 25%,rgba(255,255,255,.24) 0%,rgba(255,255,255,.08) 28%,transparent 55%),
+                 radial-gradient(circle at 70% 75%,rgba(0,0,0,.30) 0%,transparent 50%);
+      pointer-events:none;z-index:2;
+    }
+
+    .planet::after{
+      content:"";position:absolute;inset:0;border-radius:999px;
+      background:radial-gradient(circle at 68% 68%,rgba(255,255,255,0),rgba(255,255,255,.05) 70%,rgba(255,255,255,.10) 100%);
+      pointer-events:none;z-index:3;
+    }
+
+    .planet-img{
+      position:absolute; inset:0; width:100%; height:100%;
+      object-fit:cover; border-radius:999px; z-index:1;
+    }
+
+    .p-label{
+      font-family:'Orbitron',sans-serif;font-size:15px;letter-spacing:2px;font-weight:800;text-transform:uppercase;
+      z-index:4;position:relative;text-shadow:0 0 12px rgba(0,0,0,.95),0 0 6px rgba(0,255,136,.28);
+    }
+
+    .p-desc {
+      font-family:'Orbitron',sans-serif;font-size:7px;opacity:.88;max-width:130px;line-height:1.35;margin-top:4px;
+      z-index:4;position:relative;letter-spacing:.3px;text-shadow:0 0 6px rgba(0,0,0,.95);
+    }
+
+    .moons{
+      margin-top:5px;font-family:'Orbitron',sans-serif;font-size:9px;opacity:.70;letter-spacing:4px;z-index:4;position:relative;
+    }
+
+    .orbRing {
+      position:absolute;inset:-12px;border-radius:999px;border:1px dashed rgba(0,255,136,.32);opacity:.46;
+      pointer-events:none;animation:ringPulse 3s ease-in-out infinite;z-index:5;
+    }
+
+    @keyframes ringPulse{0%,100%{opacity:.24}50%{opacity:.58}}
+
+    .libraRing{
+      position:absolute;inset:-10px;border-radius:999px;border:1.5px solid rgba(0,255,136,.34);pointer-events:none;z-index:5;
+    }
+
+    #oulFloaty{
+      position:absolute;font-size:20px;z-index:18;pointer-events:none;transform:translate(-50%,-50%);
+      filter:drop-shadow(0 0 8px rgba(0,200,80,.30));
+    }
+
+    .proprintMoon{
+      position:absolute;width:76px;height:76px;border-radius:999px;border:1px solid rgba(255,255,255,.14);
+      box-shadow:0 0 16px rgba(0,255,136,.12);cursor:pointer;overflow:hidden;z-index:18;
+      display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;background:#000;
+    }
+
+    .proprintMoon img{
+      position:absolute; inset:0; width:100%; height:100%; object-fit:cover; border-radius:999px; z-index:1;
+    }
+
+    .proprintMoon:hover{box-shadow:0 0 32px rgba(0,255,136,.28);}
+    .proprintMoon .p-label{font-size:8px;letter-spacing:1px;z-index:4;position:relative;}
+
+    #nioBubbleWrap {
+      position:absolute;
+      z-index:60;
+      cursor:pointer;
+      transform:translate(-50%,-50%);
+      animation:bubbleHover 3.8s ease-in-out infinite;
+      transition:opacity .3s ease;
+    }
+
+    @keyframes bubbleHover {
+      0%,100% { transform:translate(-50%,-50%) translateY(0px); }
+      50% { transform:translate(-50%,-50%) translateY(-18px); }
+    }
+
+    #nioBubbleWrap.firing {
+      animation:bubbleLaunch 2.2s cubic-bezier(.22,.61,.36,1) forwards !important;
+    }
+
+    @keyframes bubbleLaunch {
+      0% {
+        transform:translate(-50%,-50%) translateY(0) scale(1);
+        opacity:1;
+      }
+      10% {
+        transform:translate(-50%,-50%) translateY(10px) scale(1.04);
+      }
+      25% {
+        transform:translate(-50%,-50%) translate(60px,-80px) scale(1);
+      }
+      60% {
+        transform:translate(-50%,-50%) translate(220px,-260px) scale(0.55);
+        opacity:.85;
+      }
+      100% {
+        transform:translate(-50%,-50%) translate(500px,-500px) scale(0.05);
+        opacity:0;
+      }
+    }
+
+    #nioBoostTrail {
+      position:absolute; bottom:-28px; left:50%;
+      transform:translateX(-50%);
+      width:18px; display:flex; flex-direction:column; align-items:center; gap:2px;
+      opacity:0; pointer-events:none; transition:opacity .15s;
+    }
+
+    #nioBoostTrail.on { opacity:1; }
+
+    .boost-flame {
+      border-radius:999px;
+      background:linear-gradient(to bottom,#00ff88,rgba(0,255,136,0));
+      animation:flameFlicker .12s ease-in-out infinite alternate;
+    }
+
+    .boost-flame:nth-child(1){width:10px;height:28px;animation-delay:0s;}
+    .boost-flame:nth-child(2){width:6px;height:18px;animation-delay:.04s;}
+    .boost-flame:nth-child(3){width:4px;height:12px;animation-delay:.08s;}
+
+    @keyframes flameFlicker{
+      from{transform:scaleX(1)scaleY(1);}
+      to{transform:scaleX(1.3)scaleY(.88);}
+    }
+
+    #nioLaunchFlash{
+      position:fixed;inset:0;z-index:999;background:rgba(0,255,136,0);pointer-events:none;transition:background .18s;
+    }
+
+    #nioLaunchFlash.flash{background:rgba(0,255,136,.12);}
+
+    #nioBubbleImg{
+      width:220px;
+      height:auto;
+      display:block;
+      mix-blend-mode:multiply;
+      filter:drop-shadow(0 0 20px rgba(0,255,136,.35));
+      pointer-events:none;
+    }
+
+    #nioEnterLabel{
+      position:absolute;
+      left:50%;
+      top:100%;
+      transform:translateX(-50%);
+      margin-top:8px;
+      font-family:'Orbitron',sans-serif;
+      font-size:9px;
+      letter-spacing:2px;
+      color:#00ff88;
+      text-shadow:0 0 10px rgba(0,255,136,.55);
+      white-space:nowrap;
+      pointer-events:none;
+    }
+
+    .tooltip{
+      position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+      background:rgba(0,0,0,.82);border:1px solid rgba(0,255,136,.24);color:var(--green);
+      font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:2px;padding:6px 16px;border-radius:3px;
+      pointer-events:none;z-index:100;opacity:0;transition:opacity .2s ease;white-space:nowrap;
+    }
+
+    .tooltip.show{opacity:1;}
+
+    .scroll-hint{
+      position:fixed;bottom:8px;left:50%;transform:translateX(-50%);
+      font-family:'Orbitron',sans-serif;font-size:7px;letter-spacing:3px;color:rgba(255,255,255,.15);
+      pointer-events:none;z-index:90;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="milkyway"></canvas>
+
+<div id="headerBanner">
+  <div class="logo-assembly">
+    <img id="heroLogoImg" src="orbitsway-os.PNG" alt="COBUDDY OS">
+  </div>
+</div>
+
+<div id="galaxyWrap">
+
+  <div id="raSun" title="RA — Recorded Archives">
+    <img src="Orbitsway-ra.PNG" alt="RA Planet">
+    <div class="ra-label">RA</div>
+    <div class="ra-desc">Recorded Archives</div>
+  </div>
+
+  <div class="cMoon" id="cm0" style="width:60px;height:60px;">
+    <img src="orbitsway-zuz.PNG" alt="ZUZ">
+    <div class="cl">ZUZ</div>
+  </div>
+
+  <div class="cMoon" id="cm1" style="width:64px;height:64px;">
+    <img src="orbitsway-nova.PNG" alt="NOVA">
+    <div class="cl">NOVA</div>
+  </div>
+
+  <div class="cMoon" id="cm2" style="width:58px;height:58px;">
+    <img src="orbitsway-aph.PNG" alt="APH">
+    <div class="cl">APH</div>
+  </div>
+
+  <div id="galaxyRot">
+    <div class="body planet" data-i="0" data-route="/exogalaxy/orb" data-tip="ORB — Platform Command Center" style="width:148px;height:148px;">
+      <img class="planet-img" src="orbitsway-orb.PNG" alt="ORB Planet">
+      <div class="orbRing"></div>
+      <div class="p-label">ORB</div>
+      <div class="p-desc">Operational Resource Base</div>
+    </div>
+
+    <div class="body planet" data-i="1" data-route="/nio/commercial" data-tip="NIO — Network Intelligence Operator" style="width:138px;height:138px;">
+      <img class="planet-img" src="orbitsway-NIO.PNG" alt="NIO Planet">
+      <div class="p-label">NIO</div>
+      <div class="p-desc">Network Intelligence Operator</div>
+    </div>
+
+    <div class="body planet" data-i="2" data-route="/tenant/sign-in" data-tip="NEXUS — Tenant Cockpit" style="width:160px;height:160px;">
+      <img class="planet-img" src="orbitsway-nexus 2.PNG" alt="NEXUS Planet">
+      <div class="p-label">NEXUS</div>
+      <div class="p-desc">Native Executive Utility System</div>
+      <div class="moons">● ● ● ● ●</div>
+    </div>
+
+    <div class="body planet" data-i="3" data-route="/directory" data-tip="OUL — Company Discovery Directory" style="width:132px;height:132px;" id="oulPlanet">
+      <img class="planet-img" src="Orbitsway-oul.PNG" alt="OUL Planet">
+      <div class="p-label">OUL</div>
+      <div class="p-desc">Occupational Utility Locator</div>
+    </div>
+
+    <div class="body planet" data-i="4" data-route="/calendar" data-tip="CUE — Calendar Gateway" style="width:126px;height:126px;">
+      <img class="planet-img" src="orbitsway-cue.PNG" alt="CUE Planet">
+      <div class="p-label">CUE</div>
+      <div class="p-desc">Calendar Under Execution</div>
+    </div>
+
+    <div class="body planet" data-i="5" data-route="/exogalaxy/atlas" data-tip="ATLAS — Asset Hub & Inventory" style="width:138px;height:138px;">
+      <img class="planet-img" src="orbitsway-atlas.PNG" alt="ATLAS Planet">
+      <div class="p-label">ATLAS</div>
+      <div class="p-desc">Approved Technology &amp; Labor Asset System</div>
+    </div>
+
+    <div class="body planet" data-i="6" data-route="/exogalaxy/axis" data-tip="AXIS — Visual Design Runtime" style="width:138px;height:138px;">
+      <img class="planet-img" src="orbitsway-axis.PNG" alt="AXIS Planet">
+      <div class="p-label">AXIS</div>
+      <div class="p-desc">Advanced Execution Integration System</div>
+    </div>
+
+    <div class="body planet" data-i="7" data-route="/orb/public-axis" data-tip="LIBRA — Logistics & Blueprint Bridge" style="width:148px;height:148px;" id="libraPlanet">
+      <img class="planet-img" src="orbitsway-libra.JPEG" alt="LIBRA Planet">
+      <div class="libraRing"></div>
+      <div class="p-label">LIBRA</div>
+      <div class="p-desc">Logistics Interpretation Bridge Routing Apparatus</div>
+    </div>
+  </div>
+
+  <div id="oulFloaty">🦉</div>
+
+  <div class="proprintMoon" id="proprintMoon" data-route="/visitor/login?next=past-events">
+    <img src="orbitsway-proprint.PNG" alt="PROPRINT Moon">
+    <div class="p-label">PROPRINT</div>
+  </div>
+
+  <div id="nioBubbleWrap">
+    <div id="nioBoostTrail">
+      <div class="boost-flame"></div>
+      <div class="boost-flame"></div>
+      <div class="boost-flame"></div>
+    </div>
+    <img id="nioBubbleImg" src="nio-help-bot.png" alt="NIO Spaceship">
+    <div id="nioEnterLabel">[TAP TO ENTER EXOGALAXY]</div>
+  </div>
+
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+<div class="scroll-hint">← SCROLL TO EXPLORE ORBITSWAY →</div>
+
+<script>
+  (function(){
+    const canvas=document.getElementById("milkyway"),ctx=canvas.getContext("2d");
+    function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+    resize();
+    window.addEventListener("resize",resize);
+
+    const stars=Array.from({length:700},()=>({
+      x:Math.random(),y:Math.random(),r:Math.random()*1.4+0.2,a:Math.random()*.6+.2,
+      speed:Math.random()*.00008+.00003,tw:Math.random()*Math.PI*2
+    }));
+
+    const band=Array.from({length:350},()=>{
+      const t=Math.random();
+      return {
+        x:t+(Math.random()-.5)*.30,
+        y:.15+t*.70+(Math.random()-.5)*.20,
+        r:Math.random()*1.8+.3,
+        a:Math.random()*.35+.05,
+        hue:Math.random()>.6?200:280
+      };
+    });
+
+    function draw(){
+      const W=canvas.width,H=canvas.height;
+      ctx.clearRect(0,0,W,H);
+
+      const bg=ctx.createLinearGradient(0,0,W,H);
+      bg.addColorStop(0,"#000005");
+      bg.addColorStop(.3,"#01000a");
+      bg.addColorStop(.6,"#000508");
+      bg.addColorStop(1,"#000002");
+      ctx.fillStyle=bg;
+      ctx.fillRect(0,0,W,H);
+
+      const mw=ctx.createLinearGradient(0,H*.1,W,H*.9);
+      mw.addColorStop(0,"rgba(60,40,120,0)");
+      mw.addColorStop(.3,"rgba(80,60,160,.06)");
+      mw.addColorStop(.5,"rgba(100,80,200,.10)");
+      mw.addColorStop(.7,"rgba(80,60,160,.06)");
+      mw.addColorStop(1,"rgba(60,40,120,0)");
+      ctx.fillStyle=mw;
+      ctx.fillRect(0,0,W,H);
+
+      band.forEach(p=>{
+        ctx.beginPath();
+        ctx.arc(p.x*W,p.y*H,p.r,0,Math.PI*2);
+        ctx.fillStyle=`hsla(${p.hue},60%,85%,${p.a})`;
+        ctx.fill();
+      });
+
+      stars.forEach(s=>{
+        s.tw+=.015;
+        const fl=s.a*(.7+.3*Math.sin(s.tw));
+        s.y+=s.speed;
+        if(s.y>1)s.y-=1;
+        ctx.beginPath();
+        ctx.arc(s.x*W,s.y*H,s.r,0,Math.PI*2);
+        ctx.fillStyle=`rgba(255,255,255,${fl})`;
+        ctx.fill();
+        if(s.r>1.2){
+          ctx.beginPath();
+          ctx.arc(s.x*W,s.y*H,s.r*2.5,0,Math.PI*2);
+          ctx.fillStyle=`rgba(200,220,255,${fl*.12})`;
+          ctx.fill();
+        }
+      });
+
+      requestAnimationFrame(draw);
+    }
+
+    draw();
+  })();
+
+  const wrap=document.getElementById("galaxyWrap");
+  const rot=document.getElementById("galaxyRot");
+  const raSun=document.getElementById("raSun");
+  const tooltip=document.getElementById("tooltip");
+  const proprintMoon=document.getElementById("proprintMoon");
+  const oulFloaty=document.getElementById("oulFloaty");
+  const planets=[...document.querySelectorAll("#galaxyRot .body")];
+  const cMoons=[document.getElementById("cm0"),document.getElementById("cm1"),document.getElementById("cm2")];
+  const nioBubble=document.getElementById("nioBubbleWrap");
+  const N=planets.length;
+
+  let classifiedOn=false, launched=false;
+
+  function go(u){window.location.href=u;}
+
+  planets.forEach(el=>{
+    el.addEventListener("click",e=>{
+      e.stopPropagation();
+      const u=el.getAttribute("data-route");
+      if(u)go(u);
+    });
+    el.addEventListener("mouseenter",()=>{
+      const t=el.getAttribute("data-tip");
+      if(t){
+        tooltip.textContent=t;
+        tooltip.classList.add("show");
+      }
+    });
+    el.addEventListener("mouseleave",()=>tooltip.classList.remove("show"));
+  });
+
+  proprintMoon.addEventListener("click",e=>{
+    e.stopPropagation();
+    go(proprintMoon.getAttribute("data-route"));
+  });
+
+  raSun.addEventListener("click",e=>{
+    e.stopPropagation();
+    classifiedOn=!classifiedOn;
+    cMoons.forEach(m=>m.classList.toggle("off",classifiedOn));
+  });
+
+  const nioLaunchFlash=document.createElement('div');
+  nioLaunchFlash.id='nioLaunchFlash';
+  document.body.appendChild(nioLaunchFlash);
+
+  nioBubble.addEventListener("click", ()=>{
+    if(launched) return;
+    launched = true;
+
+    const trail = document.getElementById("nioBoostTrail");
+    if(trail) trail.classList.add("on");
+
+    setTimeout(()=>{
+      nioLaunchFlash.classList.add("flash");
+      setTimeout(()=>nioLaunchFlash.classList.remove("flash"),200);
+    },80);
+
+    nioBubble.classList.add("firing");
+
+    setTimeout(()=>{
+      go("./exogalaxy.html");
+    },2200);
+  });
+
+  function wrapDelta(d,n){
+    d=((d%n)+n)%n;
+    if(d>n/2)d-=n;
+    return d;
+  }
+
+  let pos=3,target=3,down=false,sx=0,st=0;
+  function lerp(a,b,t){return a+(b-a)*t;}
+
+  function layout(){
+    const r=wrap.getBoundingClientRect();
+    const W=r.width,H=r.height;
+    const cx=W/2;
+    const raX=W*.09, raY=H*.30;
+    const scrollY=H*.73;
+    const gap=Math.min(176,W*.152);
+    pos=lerp(pos,target,.095);
+
+    let lx=cx,ly=scrollY,ox=cx,oy=scrollY;
+
+    planets.forEach(el=>{
+      const i=Number(el.dataset.i||0);
+      const d=wrapDelta(i-pos,N);
+      const dist=Math.abs(d);
+      const x=cx+d*gap;
+      const y=scrollY+Math.min(68,dist*17);
+      const s=1+Math.max(0,(1-dist))*.80;
+      const z=1000-Math.round(dist*200);
+
+      el.style.left=`${x}px`;
+      el.style.top=`${y}px`;
+      el.style.zIndex=z;
+      el.style.transform=`translate(-50%,-50%) scale(${s})`;
+
+      const lbl=(el.querySelector(".p-label")?.textContent||"").trim().toUpperCase();
+      if(lbl==="LIBRA"){lx=x;ly=y;}
+      if(lbl==="OUL"){ox=x;oy=y;}
+    });
+
+    raSun.style.left=`${raX}px`;
+    raSun.style.top=`${raY}px`;
+
+    const raRect=raSun.getBoundingClientRect(),wRect=wrap.getBoundingClientRect();
+    const raCX=raRect.left+raRect.width/2-wRect.left;
+    const raCY=raRect.top+raRect.height/2-wRect.top;
+
+    const radii = [90,120,150];
+    const offsets = [0, Math.PI*.65, Math.PI*1.35];
+    const speeds = [3200,4100,3600];
+
+    cMoons.forEach((m,i)=>{
+      const ct = performance.now()/speeds[i] + offsets[i];
+      m.style.left = `${raCX + Math.cos(ct) * radii[i]}px`;
+      m.style.top  = `${raCY + Math.sin(ct) * radii[i]}px`;
+      m.style.transform = "translate(-50%,-50%)";
+      m.style.zIndex = 5;
+    });
+
+    const libraZ=parseInt(document.getElementById("libraPlanet")?.style.zIndex||"100");
+    const t=performance.now()/2200;
+    proprintMoon.style.left=`${lx+Math.cos(t)*115}px`;
+    proprintMoon.style.top=`${ly+Math.sin(t)*115}px`;
+    proprintMoon.style.zIndex=libraZ-1;
+
+    const ot=performance.now()/1800;
+    oulFloaty.style.left=`${ox+Math.cos(ot)*72}px`;
+    oulFloaty.style.top=`${oy+Math.sin(ot)*72}px`;
+    oulFloaty.style.zIndex=libraZ-1;
+
+    if(!launched){
+      const bubbleTop = 90 + (scrollY - 90) * 0.36;
+      nioBubble.style.left=`${cx}px`;
+      nioBubble.style.top=`${bubbleTop}px`;
+      nioBubble.style.zIndex=55;
+    }
+
+    requestAnimationFrame(layout);
+  }
+
+  layout();
+
+  rot.addEventListener("wheel",e=>{
+    e.preventDefault();
+    const dx=Math.abs(e.deltaX)>Math.abs(e.deltaY)?e.deltaX:e.deltaY;
+    target+=dx*.006;
+  },{passive:false});
+
+  rot.addEventListener("pointerdown",e=>{
+    down=true;
+    sx=e.clientX;
+    st=target;
+    rot.setPointerCapture(e.pointerId);
+  },true);
+
+  rot.addEventListener("pointermove",e=>{
+    if(!down)return;
+    target=st-(e.clientX-sx)*.008;
+  },true);
+
+  function snap(){
+    down=false;
+    target=Math.round(target);
+  }
+
+  rot.addEventListener("pointerup",snap,true);
+  rot.addEventListener("pointercancel",snap,true);
+  window.addEventListener("pointerup",snap);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1061 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>COBUDDY OS — EXOGALAXY</title>
+  <link rel="icon" type="image/png" sizes="64x64" href="cobuddy-favicon-64.png"/>
+  <link rel="apple-touch-icon" sizes="512x512" href="cobuddy-favicon-512.png"/>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --green:#00ff88; --blue:#57c8ff; --red:#ff3333; --gold:#ffaa00;
+      --dark:#000; --dark2:#050505; --dark3:#0a0a0a;
+      --silver:#c0c0c0;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html{scroll-behavior:smooth;}
+    body{background:var(--dark);color:#fff;font-family:'Orbitron',sans-serif;overflow-x:hidden;}
+
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:4px;}
+::-webkit-scrollbar-track{background:#000;}
+::-webkit-scrollbar-thumb{background:var(--green);border-radius:2px;}
+
+/* ── STICKY NAV ── */
+/* FIX: Nav spacing — increased padding, looser gaps, proper sizing */
+#mainNav {
+  position:fixed;top:0;left:0;width:100%;z-index:200;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 48px;height:70px;
+  background:rgba(0,0,0,.92);
+  border-bottom:1px solid rgba(0,255,136,.08);
+  backdrop-filter:blur(12px);
+  transition:background .3s;
+}
+.nav-logo {
+  font-family:'Orbitron',sans-serif;font-weight:900;font-size:18px;
+  letter-spacing:4px;
+  background:linear-gradient(135deg,#fff 0%,#bbb 30%,#fff 55%,#888 80%,#ddd 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  cursor:pointer;white-space:nowrap;
+  display:flex;align-items:center;
+  flex-shrink:0;
+}
+.nav-logo span{color:var(--green);-webkit-text-fill-color:var(--green);text-shadow:0 0 10px var(--green);}
+/* FIX: nav logo — mix-blend-mode screen to drop background box */
+.nav-logo img {
+  height:42px;width:auto;display:block;
+  filter:drop-shadow(0 0 8px rgba(0,255,136,.45));
+  mix-blend-mode:screen;
+  transition:filter .2s;
+}
+.nav-logo img:hover{filter:drop-shadow(0 0 16px rgba(0,255,136,.80));}
+/* FIX: nav-links — more gap, proper margin, no cramping */
+.nav-links{
+  display:flex;align-items:center;gap:36px;
+  margin-left:0;
+  flex:1;
+  justify-content:flex-end;
+  align-items:center;
+}
+.nav-links a {
+  font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:3px;font-weight:600;
+  color:rgba(255,255,255,.60) !important;-webkit-text-fill-color:rgba(255,255,255,.60);
+  text-decoration:none;text-transform:uppercase;
+  transition:color .2s;position:relative;
+  white-space:nowrap;
+}
+.nav-links a::after{content:"";position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--green);transition:width .25s;}
+.nav-links a:hover{color:#fff !important;-webkit-text-fill-color:#fff;}
+.nav-links a:hover::after{width:100%;}
+.nav-signup {
+  font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:3px;font-weight:800;
+  color:#000 !important;-webkit-text-fill-color:#000 !important;
+  background:var(--green);border:none;padding:10px 22px;
+  cursor:pointer;border-radius:2px;text-transform:uppercase;
+  box-shadow:0 0 18px rgba(0,255,136,.35);
+  transition:box-shadow .2s,transform .15s;text-decoration:none;
+  white-space:nowrap;
+  margin-left:8px;
+}
+.nav-signup:hover{box-shadow:0 0 32px rgba(0,255,136,.60);transform:translateY(-1px);}
+
+/* ── SECTIONS BASE ── */
+section{position:relative;width:100%;overflow:hidden;}
+
+#commercial,#gallery,#signup,#pricing{
+  background:rgba(5,5,5,0.82) !important;
+}
+#oul-section{
+  background:rgba(3,3,3,0.80) !important;
+}
+#about,#publicaxis,#testimonials,#contact{
+  background:transparent !important;
+}
+section::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(0,255,136,.06),transparent);
+  z-index:1;pointer-events:none;
+}
+
+/* ── HERO ── */
+#hero {
+  min-height:100vh;
+  position:relative;
+  display:flex;align-items:center;
+  overflow:hidden;
+  padding:120px 8vw 80px;
+}
+#heroCanvas{position:fixed;inset:0;z-index:-1;width:100vw;height:100vh;pointer-events:none;}
+
+/* FIX: Hero BG image — mix-blend-mode:screen removes dark box, positioned right */
+#heroBgImage {
+  position:absolute;
+  right:0;
+  top:50%;
+  transform:translateY(-50%);
+  width:clamp(500px, 65vw, 980px);
+  height:auto;
+  z-index:1;
+  pointer-events:none;
+  mix-blend-mode:screen;
+  opacity:0.97;
+}
+
+/* FIX: Hero content — higher z-index so text never overlaps image incorrectly */
+.hero-content {
+  position:relative;
+  z-index:3;
+  display:flex;flex-direction:column;
+  align-items:flex-start;
+  max-width:500px;
+  text-align:left;
+}
+.hero-eyebrow {
+  font-size:8px;letter-spacing:6px;color:var(--green);
+  text-shadow:0 0 12px rgba(0,255,136,.50);
+  margin-bottom:24px;
+  animation:fadeUp .8s ease both;
+}
+.hero-tagline {
+  font-size:clamp(9px,1.2vw,12px);letter-spacing:3px;
+  color:rgba(255,255,255,.55);line-height:2.2;
+  margin:0 0 40px;
+  animation:fadeUp 1s .2s ease both;
+}
+.hero-tagline strong{color:#fff;font-weight:800;}
+.hero-cta {
+  display:flex;gap:16px;flex-wrap:wrap;
+  animation:fadeUp 1s .3s ease both;
+}
+.btn-primary {
+  font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:3px;font-weight:800;
+  color:#000;background:var(--green);border:none;padding:16px 36px;
+  cursor:pointer;border-radius:2px;text-transform:uppercase;text-decoration:none;
+  box-shadow:0 0 24px rgba(0,255,136,.40);
+  transition:box-shadow .2s,transform .15s;display:inline-block;
+}
+.btn-primary:hover{box-shadow:0 0 44px rgba(0,255,136,.65);transform:translateY(-2px);}
+.btn-ghost {
+  font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:3px;font-weight:700;
+  color:rgba(255,255,255,.70);background:transparent;
+  border:1px solid rgba(255,255,255,.18);padding:16px 36px;
+  cursor:pointer;border-radius:2px;text-transform:uppercase;text-decoration:none;
+  transition:border-color .2s,color .2s;display:inline-block;
+}
+.btn-ghost:hover{border-color:var(--green);color:#fff;}
+.hero-scroll-hint {
+  position:absolute;bottom:32px;left:50%;transform:translateX(-50%);
+  font-size:7px;letter-spacing:4px;color:rgba(255,255,255,.22);
+  animation:scrollBounce 2s ease-in-out infinite;z-index:3;
+}
+@keyframes scrollBounce{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SECTION HEADERS ── */
+.section-label{font-size:8px;letter-spacing:6px;color:var(--green);margin-bottom:16px;text-shadow:0 0 10px rgba(0,255,136,.40);}
+.section-title{font-size:clamp(22px,4vw,48px);font-weight:900;letter-spacing:4px;line-height:1.1;margin-bottom:20px;}
+.section-sub{font-size:10px;letter-spacing:2px;color:rgba(255,255,255,.50);line-height:2;max-width:580px;}
+.section-divider{width:60px;height:2px;background:var(--green);margin:32px 0;box-shadow:0 0 10px rgba(0,255,136,.50);}
+
+/* ── COMMERCIAL ── */
+#commercial {
+  padding:120px 40px;
+  background:var(--dark2);
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+}
+.video-frame {
+  position:relative;width:100%;max-width:960px;margin-top:48px;
+  border-radius:4px;overflow:hidden;
+  border:1px solid rgba(0,255,136,.15);
+  box-shadow:0 0 60px rgba(0,255,136,.08),0 0 120px rgba(0,0,0,.80);
+}
+.video-frame video{width:100%;display:block;background:#000;}
+.video-placeholder {
+  width:100%;aspect-ratio:16/9;
+  background:radial-gradient(ellipse at center,#001a0a,#000);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
+  border:1px solid rgba(0,255,136,.12);
+}
+.video-placeholder .play-icon{font-size:64px;opacity:.30;}
+.video-placeholder p{font-size:9px;letter-spacing:4px;color:rgba(0,255,136,.40);}
+
+/* ── ABOUT ── */
+#about {
+  padding:120px 40px;
+  display:grid;grid-template-columns:1fr 1fr;gap:80px;
+  align-items:center;max-width:1200px;margin:0 auto;
+}
+.about-visual {
+  position:relative;display:flex;align-items:center;justify-content:center;
+}
+.about-nio-img {
+  position:relative;z-index:1;
+  width:clamp(240px,34vw,440px);
+  height:auto;border-radius:10px;
+  filter:drop-shadow(0 0 30px rgba(0,255,136,.20))
+         drop-shadow(0 20px 60px rgba(0,0,0,.85));
+  animation:floatOrb 5s ease-in-out infinite;
+}
+.about-orb {
+  width:280px;height:280px;border-radius:999px;
+  background:radial-gradient(circle at 35% 30%,#e0fff4 0%,#00e875 30%,#007a3d 60%,#001a0d 85%);
+  box-shadow:0 0 60px rgba(0,255,136,.25),0 0 120px rgba(0,255,136,.08);
+  display:flex;align-items:center;justify-content:center;
+  animation:floatOrb 5s ease-in-out infinite;
+}
+@keyframes floatOrb{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+.about-orb-text{font-size:11px;letter-spacing:3px;font-weight:800;text-align:center;line-height:2;}
+.about-ring {
+  position:absolute;width:340px;height:340px;border-radius:999px;
+  border:1px dashed rgba(0,255,136,.20);
+  animation:spinRing 20s linear infinite;
+}
+@keyframes spinRing{to{transform:rotate(360deg)}}
+.about-pillars{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:32px;}
+.pillar {
+  padding:20px;border:1px solid rgba(255,255,255,.06);border-radius:4px;
+  background:rgba(255,255,255,.02);
+  transition:border-color .2s,background .2s;
+}
+.pillar:hover{border-color:rgba(0,255,136,.25);background:rgba(0,255,136,.03);}
+.pillar-icon{font-size:22px;margin-bottom:10px;}
+.pillar-name{font-size:9px;letter-spacing:3px;font-weight:800;color:#fff;margin-bottom:6px;}
+.pillar-desc{font-size:8px;letter-spacing:1px;color:rgba(255,255,255,.40);line-height:1.8;}
+
+/* ── GALLERY ── */
+#gallery {
+  padding:120px 40px;
+  background:var(--dark2);
+  text-align:center;
+}
+.gallery-grid {
+  display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
+  max-width:1100px;margin:48px auto 0;
+}
+.gallery-card {
+  aspect-ratio:16/10;border-radius:4px;overflow:hidden;
+  border:1px solid rgba(255,255,255,.06);
+  background:var(--dark3);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;cursor:pointer;
+  transition:border-color .2s,transform .2s;
+}
+.gallery-card:hover{border-color:rgba(0,255,136,.30);transform:translateY(-4px);}
+.gallery-card:first-child{grid-column:span 2;}
+.gallery-card-inner{text-align:center;}
+.gallery-card-icon{font-size:36px;opacity:.18;margin-bottom:8px;}
+.gallery-card-label{font-size:7px;letter-spacing:3px;color:rgba(255,255,255,.25);}
+.gallery-card-glow{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(0,255,136,.04),transparent 70%);pointer-events:none;}
+.gallery-card-img{padding:0;overflow:hidden;background:#000;}
+.gallery-card-img:hover .gallery-img{transform:scale(1.04);}
+.gallery-img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease;}
+.gallery-card-overlay{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:14px 16px;
+  background:linear-gradient(transparent,rgba(0,0,0,.85));
+  pointer-events:none;
+}
+.gallery-card-overlay .gallery-card-label{font-size:7px;letter-spacing:3px;color:rgba(255,255,255,.70);}
+
+/* ── SYSTEM SECTION ── */
+#system, #the-system {
+  padding:120px 40px;
+  background:rgba(3,3,3,0.80);
+  display:flex;flex-direction:column;align-items:center;
+}
+.system-rows {
+  width:100%;max-width:1100px;
+  display:flex;flex-direction:column;gap:80px;
+  margin-top:56px;
+}
+.system-row {
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:60px;align-items:center;text-align:left;
+}
+.system-row-reverse{direction:rtl;}
+.system-row-reverse > *{direction:ltr;}
+.system-img {
+  width:100%;border-radius:6px;
+  border:1px solid rgba(0,255,136,.12);
+  box-shadow:0 0 40px rgba(0,255,136,.06),0 20px 60px rgba(0,0,0,.70);
+  transition:transform .4s ease,box-shadow .4s ease;
+}
+.system-img:hover{
+  transform:translateY(-4px);
+  box-shadow:0 0 60px rgba(0,255,136,.14),0 30px 80px rgba(0,0,0,.80);
+}
+.system-planet-label{font-size:7px;letter-spacing:4px;color:var(--green);text-shadow:0 0 10px rgba(0,255,136,.40);margin-bottom:12px;}
+.system-title{font-size:clamp(18px,3vw,32px);font-weight:900;letter-spacing:3px;line-height:1.2;margin-bottom:16px;}
+.system-divider{width:40px;height:2px;background:var(--green);margin:16px 0;box-shadow:0 0 8px rgba(0,255,136,.50);}
+.system-desc{font-size:9px;letter-spacing:1.5px;color:rgba(255,255,255,.50);line-height:2.2;}
+.system-planets{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;}
+.system-planet-tag{font-size:7px;letter-spacing:2px;font-weight:800;border:1px solid rgba(0,255,136,.20);color:rgba(0,255,136,.70);padding:5px 10px;border-radius:2px;background:rgba(0,255,136,.04);}
+@media(max-width:768px){
+  .system-row{grid-template-columns:1fr;}
+  .system-row-reverse{direction:ltr;}
+}
+
+/* ── NIO FEATURE ── */
+/* FIX: NIO feature section — left=nio-solo-1.PNG, right=brand-section.jpg */
+#nio-feature {
+  padding:120px 40px;
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+}
+.nio-feature-grid {
+  display:grid;grid-template-columns:1fr 1fr;gap:40px;
+  max-width:1100px;width:100%;margin-top:60px;align-items:center;
+}
+/* FIX: nio-solo-1.PNG — multiply to drop white background */
+.nio-solo-img {
+  width:100%;border-radius:6px;
+  mix-blend-mode:multiply;
+  filter:drop-shadow(0 0 40px rgba(0,255,136,.20));
+}
+/* FIX: right side is now brand-section image */
+.nio-brand-img {
+  width:100%;border-radius:6px;
+  border:1px solid rgba(0,255,136,.12);
+  box-shadow:0 0 40px rgba(0,255,136,.06),0 20px 60px rgba(0,0,0,.70);
+}
+@media(max-width:768px){.nio-feature-grid{grid-template-columns:1fr;}}
+
+/* ── PUBLIC AXIS ── */
+#publicaxis {
+  padding:120px 40px;
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+}
+.axis-preview {
+  width:100%;max-width:1000px;margin-top:48px;
+  border:1px solid rgba(0,255,136,.15);border-radius:4px;
+  background:var(--dark3);
+  aspect-ratio:16/9;
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;
+  position:relative;overflow:hidden;
+  box-shadow:0 0 80px rgba(0,255,136,.06);
+  cursor:pointer;transition:border-color .2s;
+}
+.axis-preview:hover{border-color:rgba(0,255,136,.30);}
+.axis-grid-bg {
+  position:absolute;inset:0;
+  background-image:linear-gradient(rgba(0,255,136,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,136,.04) 1px,transparent 1px);
+  background-size:40px 40px;
+}
+.axis-preview-label{font-size:11px;letter-spacing:4px;font-weight:800;z-index:1;color:rgba(255,255,255,.30);}
+.axis-preview-sub{font-size:8px;letter-spacing:3px;color:rgba(0,255,136,.35);z-index:1;}
+.axis-enter-btn {
+  z-index:1;font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:3px;font-weight:800;
+  color:#000;background:var(--green);border:none;padding:12px 28px;
+  cursor:pointer;border-radius:2px;
+  box-shadow:0 0 20px rgba(0,255,136,.35);transition:box-shadow .2s;
+}
+.axis-enter-btn:hover{box-shadow:0 0 36px rgba(0,255,136,.60);}
+
+/* ── PRICING ── */
+#pricing {
+  padding:120px 40px;
+  background:var(--dark2);
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+}
+.pricing-coming {
+  margin-top:48px;width:100%;max-width:700px;
+  border:1px solid rgba(0,255,136,.15);border-radius:4px;
+  padding:60px 40px;
+  background:radial-gradient(ellipse at center,rgba(0,255,136,.03),transparent 70%);
+  position:relative;overflow:hidden;
+}
+.pricing-orbits{font-size:clamp(28px,5vw,56px);font-weight:900;letter-spacing:6px;color:var(--green);text-shadow:0 0 20px rgba(0,255,136,.50);margin-bottom:16px;}
+.pricing-orbits span{font-size:14px;vertical-align:super;margin-right:4px;opacity:.7;}
+.pricing-desc{font-size:9px;letter-spacing:3px;color:rgba(255,255,255,.45);line-height:2;margin-bottom:32px;}
+.pricing-notify-btn {
+  font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:3px;font-weight:800;
+  color:#000;background:var(--green);border:none;padding:14px 32px;
+  cursor:pointer;border-radius:2px;text-transform:uppercase;
+  box-shadow:0 0 20px rgba(0,255,136,.35);transition:box-shadow .2s,transform .15s;
+}
+.pricing-notify-btn:hover{box-shadow:0 0 36px rgba(0,255,136,.60);transform:translateY(-1px);}
+.pricing-badge{position:absolute;top:16px;right:16px;font-size:7px;letter-spacing:3px;padding:6px 12px;border:1px solid rgba(255,170,0,.30);color:var(--gold);border-radius:2px;background:rgba(255,170,0,.06);}
+
+/* ── TESTIMONIALS ── */
+#testimonials {
+  padding:120px 40px;
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+}
+.testimonials-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;max-width:1100px;margin-top:48px;}
+.tcard{padding:32px;border:1px solid rgba(255,255,255,.06);border-radius:4px;background:rgba(255,255,255,.02);text-align:left;transition:border-color .2s;}
+.tcard:hover{border-color:rgba(0,255,136,.18);}
+.tcard-quote{font-size:9px;letter-spacing:1px;line-height:2.2;color:rgba(255,255,255,.60);margin-bottom:24px;font-style:italic;}
+.tcard-stars{color:var(--green);font-size:12px;letter-spacing:2px;margin-bottom:12px;}
+.tcard-name{font-size:8px;letter-spacing:3px;font-weight:800;color:#fff;margin-bottom:4px;}
+.tcard-role{font-size:7px;letter-spacing:2px;color:rgba(255,255,255,.35);}
+.tcard-placeholder{opacity:.35;}
+
+/* ── SIGNUP ── */
+#signup {
+  padding:120px 40px;
+  background:var(--dark2);
+  display:flex;flex-direction:column;align-items:center;text-align:center;
+}
+.signup-form{width:100%;max-width:560px;margin-top:48px;display:flex;flex-direction:column;gap:14px;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.form-input{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);border-radius:2px;padding:16px 18px;color:#fff;font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:2px;outline:none;transition:border-color .2s;}
+.form-input::placeholder{color:rgba(255,255,255,.25);}
+.form-input:focus{border-color:rgba(0,255,136,.40);}
+.form-select{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);border-radius:2px;padding:16px 18px;color:rgba(255,255,255,.70);font-family:'Orbitron',sans-serif;font-size:9px;letter-spacing:2px;outline:none;transition:border-color .2s;cursor:pointer;-webkit-appearance:none;}
+.form-select:focus{border-color:rgba(0,255,136,.40);}
+.form-select option{background:#0a0a0a;color:#fff;}
+.form-submit{width:100%;font-family:'Orbitron',sans-serif;font-size:10px;letter-spacing:4px;font-weight:800;color:#000;background:var(--green);border:none;padding:18px;cursor:pointer;border-radius:2px;text-transform:uppercase;box-shadow:0 0 24px rgba(0,255,136,.35);transition:box-shadow .2s,transform .15s;margin-top:6px;}
+.form-submit:hover{box-shadow:0 0 44px rgba(0,255,136,.60);transform:translateY(-2px);}
+.form-note{font-size:7px;letter-spacing:2px;color:rgba(255,255,255,.25);margin-top:8px;}
+#formSuccess{display:none;font-size:10px;letter-spacing:3px;color:var(--green);text-shadow:0 0 12px rgba(0,255,136,.50);padding:32px;border:1px solid rgba(0,255,136,.20);border-radius:4px;margin-top:24px;}
+
+/* ── CONTACT ── */
+#contact{padding:100px 40px;display:flex;flex-direction:column;align-items:center;text-align:center;}
+.contact-links{display:flex;gap:24px;flex-wrap:wrap;justify-content:center;margin-top:40px;}
+.contact-link{font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:3px;font-weight:700;color:rgba(255,255,255,.50);text-decoration:none;border:1px solid rgba(255,255,255,.10);padding:14px 24px;border-radius:2px;transition:border-color .2s,color .2s;}
+.contact-link:hover{border-color:var(--green);color:#fff;}
+
+/* ── FOOTER ── */
+#footer{padding:40px 40px 32px;border-top:1px solid rgba(255,255,255,.05);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;}
+.footer-logo{font-size:13px;letter-spacing:4px;font-weight:900;display:flex;align-items:center;}
+.footer-logo span{color:var(--green);text-shadow:0 0 8px rgba(0,255,136,.40);}
+.footer-links{display:flex;gap:24px;flex-wrap:wrap;}
+.footer-links a{font-size:7px;letter-spacing:2px;color:rgba(255,255,255,.30);text-decoration:none;transition:color .2s;}
+.footer-links a:hover{color:var(--green);}
+.footer-copy{font-size:7px;letter-spacing:2px;color:rgba(255,255,255,.20);}
+
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(30px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:900px){
+  #mainNav{padding:0 24px;height:64px;}
+  .nav-links{gap:20px;}
+  .nav-links a{font-size:8px;letter-spacing:2px;}
+}
+@media(max-width:768px){
+  #about{grid-template-columns:1fr;gap:40px;}
+  .gallery-grid{grid-template-columns:1fr 1fr;}
+  .gallery-card:first-child{grid-column:span 1;}
+  .testimonials-grid{grid-template-columns:1fr;}
+  .form-row{grid-template-columns:1fr;}
+  #mainNav{padding:0 20px;}
+  .nav-links{gap:14px;}
+  #footer{flex-direction:column;align-items:flex-start;}
+}
+@media(max-width:540px){
+  .nav-links .hide-mobile{display:none;}
+  .about-orb{width:200px;height:200px;}
+  .about-ring{width:250px;height:250px;}
+  .about-nio-img{width:240px;}
+  .nav-links{gap:12px;}
+}
+
+
+  </style>
+</head>
+<body>
+
+  <!-- ── STICKY NAV ── -->
+
+  <nav id="mainNav">
+    <div class="nav-logo" onclick="scrollTo({top:0,behavior:'smooth'})">
+      <!-- mix-blend-mode:screen on img drops background box -->
+      <img src="cobuddy-logo-nav.png" alt="COBUDDY OS"
+           onerror="this.style.display='none';document.getElementById('navFallback').style.display='inline-flex'"/>
+      <span id="navFallback" style="display:none;align-items:center;">COBUDDY <span style="margin-left:6px;">OS</span></span>
+    </div>
+    <div class="nav-links">
+      <a href="#hero"         class="hide-mobile">HOME</a>
+      <a href="#about"        class="hide-mobile">ABOUT</a>
+      <a href="#oul-section">OUL</a>
+      <a href="#the-system"  class="hide-mobile">SYSTEM</a>
+      <a href="#publicaxis">AXIS</a>
+      <a href="#pricing">PRICING</a>
+      <a href="#signup" class="nav-signup">SIGN UP</a>
+    </div>
+  </nav>
+
+  <!-- ── HERO ── -->
+
+  <!-- FIX: Hero restructured so text and image are independent layers -->
+
+  <!-- text is z-index:3, image is z-index:1, canvas is z-index:-1 -->
+
+  <!-- mix-blend-mode:screen on heroBgImage removes the dark box -->
+
+  <section id="hero">
+    <canvas id="heroCanvas"></canvas>
+
+
+<!-- FIX: This is the correct hero image (cobuddy-logo-hero.png = COBUDDY writing OS) -->
+<!-- mix-blend-mode:screen removes the dark bounding box -->
+<img id="heroBgImage" src="cobuddy-logo-hero.png" alt=""
+     onerror="this.style.display='none'"/>
+
+<div class="hero-content">
+  <div class="hero-eyebrow">THE EXOGALAXY — PRODUCTION PLANNING SYSTEM</div>
+  <p class="hero-tagline">
+    <strong>Visualize it. Construct it. Execute it.</strong><br/>
+    Before the truck is even loaded.
+  </p>
+  <div class="hero-cta">
+    <a href="#signup" class="btn-primary">JOIN THE WAITLIST</a>
+    <a href="#commercial" class="btn-ghost">WATCH THE DEMO</a>
+  </div>
+</div>
+<div class="hero-scroll-hint">↓ SCROLL TO EXPLORE</div>
+
+
+  </section>
+
+  <!-- ── COMMERCIAL ── -->
+
+  <section id="commercial">
+    <div class="section-label reveal">COBUDDY OS IN ACTION</div>
+    <h2 class="section-title reveal">See The System</h2>
+    <div class="section-divider reveal"></div>
+    <p class="section-sub reveal">Watch what happens when production planning meets spatial intelligence. This is not a form. This is not a spreadsheet. This is a new operating system for the event industry.</p>
+    <div class="video-frame reveal">
+      <video id="promoVideo" controls poster="" preload="none">
+        <source src="commercial.mp4" type="video/mp4">
+      </video>
+      <div class="video-placeholder" id="videoPlaceholder">
+        <div class="play-icon">▶</div>
+        <p>COBUDDY OS — COMMERCIAL COMING SOON</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ABOUT ── -->
+
+  <section id="about">
+    <div class="about-visual reveal">
+      <div class="about-ring"></div>
+      <img class="about-nio-img" src="nio-hero.jpeg" alt="NIO — Network Intelligence Operator"
+           onerror="this.style.display='none';document.getElementById('aboutOrbFallback').style.display='flex'"/>
+      <div id="aboutOrbFallback" class="about-orb" style="display:none;">
+        <div class="about-orb-text">COBUDDY<br/>OS</div>
+      </div>
+    </div>
+    <div class="about-content">
+      <div class="section-label reveal">WHAT IS COBUDDY OS</div>
+      <h2 class="section-title reveal">The World's First Visual Spatial Production Planning System</h2>
+      <div class="section-divider reveal"></div>
+      <p class="section-sub reveal">Built for AV professionals, event producers, and the entire live experience industry. Cobuddy OS lets you design, staff, and blueprint your entire production before a single cable is touched.</p>
+      <div class="about-pillars reveal">
+        <div class="pillar"><div class="pillar-icon">🛰️</div><div class="pillar-name">VISUALIZE</div><div class="pillar-desc">Drag and drop equipment onto a spatial canvas in real time</div></div>
+        <div class="pillar"><div class="pillar-icon">⚙️</div><div class="pillar-name">CONSTRUCT</div><div class="pillar-desc">Assign staff, build road cases, configure tech tables</div></div>
+        <div class="pillar"><div class="pillar-icon">📋</div><div class="pillar-name">EXECUTE</div><div class="pillar-desc">Generate production blueprints with one click</div></div>
+        <div class="pillar"><div class="pillar-icon">🌍</div><div class="pillar-name">SCALE</div><div class="pillar-desc">Built for AV, events, catering, rentals and more</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── OUL SECTION ── -->
+
+  <section id="oul-section" style="padding:120px 40px;background:var(--dark2);display:flex;flex-direction:column;align-items:center;text-align:center;">
+    <div class="section-label reveal">OUL — OCCUPATIONAL UTILITY LOCATOR</div>
+    <h2 class="section-title reveal">Find Your Production Partner</h2>
+    <div class="section-divider reveal"></div>
+    <p class="section-sub reveal">Search by location, event type, and capacity. Discover verified AV companies, event producers, and vendors in your area. The industry directory built for how production actually works.</p>
+    <div style="margin-top:48px;" class="reveal">
+      <a href="/directory" class="btn-primary">EXPLORE OUL DIRECTORY</a>
+    </div>
+  </section>
+
+  <!-- ── GALLERY ── -->
+
+  <section id="gallery">
+    <div class="section-label reveal">INSIDE THE SYSTEM</div>
+    <h2 class="section-title reveal">The ExoGalaxy</h2>
+    <div class="section-divider reveal"></div>
+    <p class="section-sub reveal" style="margin:0 auto;">A glimpse into the planets. Each system built with purpose. Each interaction designed for the production professional.</p>
+    <div class="gallery-grid reveal">
+
+
+  <!-- Card 1 — span 2 — cinematic planets -->
+  <div class="gallery-card gallery-card-img" style="grid-column:span 2;">
+    <img src="landing-visual-3.png" alt="Cobuddy OS — The ExoGalaxy Planets" class="gallery-img"/>
+    <div class="gallery-card-overlay">
+      <div class="gallery-card-label">THE EXOGALAXY — ALL PLANETS</div>
+    </div>
+  </div>
+
+  <!-- Card 2 — orbital map -->
+  <div class="gallery-card gallery-card-img">
+    <img src="landing-visual-1.png" alt="Cobuddy OS — Orbital Map" class="gallery-img"/>
+    <div class="gallery-card-overlay">
+      <div class="gallery-card-label">ORBITAL MAP — RA & THE PLANETS</div>
+    </div>
+  </div>
+
+  <!-- Card 3 — placeholder ATLAS -->
+  <div class="gallery-card"><div class="gallery-card-glow"></div><div class="gallery-card-inner"><div class="gallery-card-icon">🏗️</div><div class="gallery-card-label">ATLAS — INVENTORY · COMING SOON</div></div></div>
+
+  <!-- Card 4 — placeholder CUE -->
+  <div class="gallery-card"><div class="gallery-card-glow"></div><div class="gallery-card-inner"><div class="gallery-card-icon">🕰️</div><div class="gallery-card-label">CUE — CALENDAR · COMING SOON</div></div></div>
+
+  <!-- Card 5 — placeholder NEXUS -->
+  <div class="gallery-card"><div class="gallery-card-glow"></div><div class="gallery-card-inner"><div class="gallery-card-icon">🪐</div><div class="gallery-card-label">NEXUS — DASHBOARD · COMING SOON</div></div></div>
+
+</div>
+
+
+  </section>
+
+  <!-- ── INSIDE THE EXOGALAXY ── -->
+
+  <section id="the-system">
+    <div class="section-label reveal" style="text-align:center;">THE PLANETS</div>
+    <h2 class="section-title reveal" style="text-align:center;">Inside The ExoGalaxy</h2>
+    <div class="section-divider reveal" style="margin:32px auto;"></div>
+    <p class="section-sub reveal" style="text-align:center;margin:0 auto 80px;">Every planet is a system. Every system serves a purpose. Built for the production professional from the ground up.</p>
+
+
+<div class="system-rows">
+
+  <!-- Row 1 -->
+  <div class="system-row reveal">
+    <img class="system-img" src="landing-visual-1.png" alt="Cobuddy OS Orbital Map"/>
+    <div>
+      <div class="system-planet-label">EXOGALAXY — SYSTEM OVERVIEW</div>
+      <h3 class="system-title">Eight Planets.<br/>One Operating System.</h3>
+      <div class="system-divider"></div>
+      <p class="system-desc">RA sits at the center — the memory core and vault of the entire platform. Eight planets orbit around it, each handling a specific layer of your production workflow. From directory discovery to blueprint generation, every system connects.</p>
+      <div class="system-planets">
+        <span class="system-planet-tag">◎ RA</span>
+        <span class="system-planet-tag">◎ ORB</span>
+        <span class="system-planet-tag">◎ OUL</span>
+        <span class="system-planet-tag">◎ CUE</span>
+        <span class="system-planet-tag">◎ ATLAS</span>
+        <span class="system-planet-tag">◎ AXIS</span>
+        <span class="system-planet-tag">◎ LIBRA</span>
+        <span class="system-planet-tag">◎ NEXUS</span>
+        <span class="system-planet-tag">◎ PROPRINT</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2 -->
+  <div class="system-row system-row-reverse reveal">
+    <div>
+      <div class="system-planet-label">AXIS · LIBRA · PROPRINT</div>
+      <h3 class="system-title">Design. Route.<br/>Blueprint.</h3>
+      <div class="system-divider"></div>
+      <p class="system-desc">AXIS is the live spatial design canvas. Drop equipment, assign staff, configure your stage — all visually. LIBRA interprets your design and routes it through the logistics layer. PROPRINT outputs your complete production blueprint in one click.</p>
+      <div class="system-planets">
+        <span class="system-planet-tag">◎ AXIS — Design Canvas</span>
+        <span class="system-planet-tag">◎ LIBRA — Logistics</span>
+        <span class="system-planet-tag">◎ PROPRINT — Blueprint</span>
+      </div>
+    </div>
+    <img class="system-img" src="landing-visual-2.png" alt="Cobuddy OS System Diagram"/>
+  </div>
+
+</div>
+
+
+  </section>
+
+  <!-- ── NIO FEATURE ── -->
+
+  <!-- FIX: Left = nio-solo-1.PNG (NIO icon, multiply blend), Right = brand-section.jpg -->
+
+  <section id="nio-feature">
+    <div class="section-label reveal" style="text-align:center;">MEET NIO</div>
+    <h2 class="section-title reveal" style="text-align:center;">Network Intelligence Operator</h2>
+    <div class="section-divider reveal" style="margin:32px auto;"></div>
+    <p class="section-sub reveal" style="text-align:center;margin:0 auto;">NIO is the intelligence layer of Cobuddy OS. Guide. Calculator. Validator. System Enforcer. Calm, precise, always protecting order.</p>
+    <div class="nio-feature-grid reveal">
+      <!-- FIX: nio-solo-1.PNG — multiply removes white background -->
+      <img class="nio-solo-img" src="nio-solo-1.PNG" alt="NIO — Network Intelligence Operator"/>
+      <!-- FIX: Right image = brand-section.jpg (not hero-2) -->
+      <img class="nio-brand-img" src="brand-section.jpg" alt="Cobuddy OS Brand"/>
+    </div>
+  </section>
+
+  <!-- ── PUBLIC AXIS ── -->
+
+  <section id="publicaxis">
+    <div class="section-label reveal">AXIS — LIVE PREVIEW</div>
+    <h2 class="section-title reveal">Design Your Event. Right Now.</h2>
+    <div class="section-divider reveal"></div>
+    <p class="section-sub reveal">No account needed. Drop into the public design canvas and start building your production layout in real time.</p>
+    <div class="axis-preview reveal" onclick="window.location.href='/orb/public-axis'">
+      <img src="axis-placeholder.PNG" alt="AXIS Canvas"
+           style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0.70;pointer-events:none;"/>
+      <div class="axis-grid-bg" style="opacity:0.3;"></div>
+      <div class="axis-preview-label">PUBLIC AXIS CANVAS</div>
+      <div class="axis-preview-sub">INTERACTIVE DESIGN RUNTIME</div>
+      <button class="axis-enter-btn">ENTER AXIS →</button>
+    </div>
+  </section>
+
+  <!-- ── PRICING ── -->
+
+  <section id="pricing">
+    <div class="section-label reveal">SUBSCRIPTION PLANS</div>
+    <h2 class="section-title reveal">Powered by Orbits</h2>
+    <div class="section-divider reveal"></div>
+    <p class="section-sub reveal">Cobuddy OS runs on Orbits — our platform currency built for the production economy. Subscription tiers launching with the full platform.</p>
+    <div class="pricing-coming reveal">
+      <div class="pricing-badge">COMING SOON</div>
+      <div class="pricing-orbits"><span>◎</span>ORBITS</div>
+      <p class="pricing-desc">Full pricing tiers, Orbits currency details, and enterprise plans will be revealed at launch. Join the waitlist to get early access pricing.</p>
+      <button class="pricing-notify-btn" onclick="document.getElementById('signup').scrollIntoView({behavior:'smooth'})">GET EARLY ACCESS PRICING</button>
+    </div>
+  </section>
+
+  <!-- ── TESTIMONIALS ── -->
+
+  <section id="testimonials">
+    <div class="section-label reveal">EARLY FEEDBACK</div>
+    <h2 class="section-title reveal">What The Industry Is Saying</h2>
+    <div class="section-divider reveal"></div>
+    <div class="testimonials-grid reveal">
+      <div class="tcard tcard-placeholder">
+        <div class="tcard-stars">★★★★★</div>
+        <p class="tcard-quote">"This is what we've been missing for 20 years. A real pre-production system that thinks like we do."</p>
+        <div class="tcard-name">AV PROFESSIONAL</div>
+        <div class="tcard-role">LIVE EVENTS INDUSTRY — COMING SOON</div>
+      </div>
+      <div class="tcard tcard-placeholder">
+        <div class="tcard-stars">★★★★★</div>
+        <p class="tcard-quote">"The blueprint generation alone saves hours per event. This changes how we quote, plan, and execute."</p>
+        <div class="tcard-name">EVENT PRODUCER</div>
+        <div class="tcard-role">CORPORATE EVENTS — COMING SOON</div>
+      </div>
+      <div class="tcard tcard-placeholder">
+        <div class="tcard-stars">★★★★★</div>
+        <p class="tcard-quote">"I've never seen a platform that understands the production floor like this. NIO is something else."</p>
+        <div class="tcard-name">TECHNICAL DIRECTOR</div>
+        <div class="tcard-role">TOURING & PRODUCTION — COMING SOON</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── WAITLIST SIGNUP ── -->
+
+  <section id="signup">
+    <div class="section-label reveal">EARLY ACCESS</div>
+    <h2 class="section-title reveal">Join The Waitlist</h2>
+    <div class="section-divider reveal"></div>
+    <p class="section-sub reveal">Be first in when Cobuddy OS launches. Early access members get priority onboarding and founding member pricing.</p>
+    <form class="signup-form reveal" id="waitlistForm" onsubmit="handleSignup(event)">
+      <div class="form-row">
+        <input class="form-input" type="text"  name="firstName"    placeholder="FIRST NAME"     required/>
+        <input class="form-input" type="text"  name="lastName"     placeholder="LAST NAME"      required/>
+      </div>
+      <input class="form-input" type="email" name="email"         placeholder="BUSINESS EMAIL"  required/>
+      <input class="form-input" type="text"  name="businessName"  placeholder="BUSINESS NAME"   required/>
+      <select class="form-select" name="businessType" required>
+        <option value="" disabled selected>BUSINESS TYPE</option>
+        <option value="av">AV PRODUCTION</option>
+        <option value="event">EVENT PLANNING</option>
+        <option value="catering">CATERING</option>
+        <option value="rental">PARTY RENTALS</option>
+        <option value="venue">VENUE</option>
+        <option value="other">OTHER</option>
+      </select>
+      <input class="form-input" type="text" name="city" placeholder="CITY / STATE"/>
+      <button type="submit" class="form-submit">SECURE MY SPOT →</button>
+      <p class="form-note">No spam. No credit card. Just your spot in line.</p>
+    </form>
+    <div id="formSuccess">✦ YOU'RE ON THE LIST. WE'LL SEE YOU AT LAUNCH. ✦</div>
+  </section>
+
+  <!-- ── CONTACT ── -->
+
+  <section id="contact">
+    <div class="section-label reveal">GET IN TOUCH</div>
+    <h2 class="section-title reveal">Contact Cobuddy</h2>
+    <div class="section-divider reveal"></div>
+    <p class="section-sub reveal">Questions, partnerships, press inquiries — we want to hear from you.</p>
+    <div class="contact-links reveal">
+      <a href="mailto:hello@cobuddyos.com" class="contact-link">✉ HELLO@COBUDDYOS.COM</a>
+      <a href="#signup" class="contact-link">◎ JOIN WAITLIST</a>
+      <a href="/tenant/sign-in" class="contact-link">🪐 NEXUS LOGIN</a>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+
+  <footer id="footer">
+    <div class="footer-logo">COBUDDY <span>OS</span></div>
+    <div class="footer-links">
+      <a href="#hero">Home</a>
+      <a href="#about">About</a>
+      <a href="#oul-section">OUL</a>
+      <a href="#the-system" class="hide-mobile">System</a>
+      <a href="#publicaxis">Axis</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#signup">Sign Up</a>
+      <a href="/tenant/sign-in">Nexus</a>
+    </div>
+    <div class="footer-copy">© 2026 COBUDDY LLC — ALL RIGHTS RESERVED · PATENT PENDING · COBUDDY™</div>
+  </footer>
+
+  <script>
+    /* ── FULL PAGE STAR FIELD ── */
+    (function(){
+      const canvas=document.getElementById("heroCanvas"),ctx=canvas.getContext("2d");
+      canvas.style.position="fixed";canvas.style.inset="0";canvas.style.width="100vw";canvas.style.height="100vh";canvas.style.zIndex="0";canvas.style.pointerEvents="none";
+      function resize(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+      resize();window.addEventListener("resize",resize);
+      const layers=[
+        Array.from({length:320},()=>({x:Math.random(),y:Math.random(),r:Math.random()*.5+0.15,a:Math.random()*.25+.08,tw:Math.random()*Math.PI*2,speed:Math.random()*.00002+.000008,drift:Math.random()*.00004-.00002})),
+        Array.from({length:180},()=>({x:Math.random(),y:Math.random(),r:Math.random()*.7+0.25,a:Math.random()*.35+.15,tw:Math.random()*Math.PI*2,speed:Math.random()*.00005+.00002,drift:Math.random()*.00008-.00004})),
+        Array.from({length:60},()=>({x:Math.random(),y:Math.random(),r:Math.random()*1.2+0.4,a:Math.random()*.5+.25,tw:Math.random()*Math.PI*2,speed:Math.random()*.00008+.00004,drift:Math.random()*.00012-.00006}))
+      ];
+      const dust=Array.from({length:28},()=>({x:Math.random(),y:Math.random(),r:Math.random()*.8+0.2,a:Math.random()*.12+.03,tw:Math.random()*Math.PI*2,speed:Math.random()*.00003+.00001,drift:Math.random()*.00006-.00003}));
+      function draw(){
+        const W=canvas.width,H=canvas.height;ctx.clearRect(0,0,W,H);
+        const bg=ctx.createLinearGradient(0,0,0,H);
+        bg.addColorStop(0,"#000005");bg.addColorStop(.35,"#010008");bg.addColorStop(.7,"#000a04");bg.addColorStop(1,"#000502");
+        ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);
+        layers.forEach(layer=>{layer.forEach(s=>{s.tw+=.008;s.y+=s.speed;if(s.y>1)s.y-=1;s.x+=s.drift;if(s.x>1)s.x-=1;if(s.x<0)s.x+=1;const fl=s.a*(.65+.35*Math.sin(s.tw));ctx.beginPath();ctx.arc(s.x*W,s.y*H,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(255,255,255,${fl})`;ctx.fill();});});
+        dust.forEach(s=>{s.tw+=.006;s.y+=s.speed;if(s.y>1)s.y-=1;s.x+=s.drift;if(s.x>1)s.x-=1;if(s.x<0)s.x+=1;const fl=s.a*(.5+.5*Math.sin(s.tw));ctx.beginPath();ctx.arc(s.x*W,s.y*H,s.r,0,Math.PI*2);ctx.fillStyle=`rgba(0,255,136,${fl})`;ctx.fill();});
+        requestAnimationFrame(draw);
+      }
+      draw();
+    })();
+
+    /* ── VIDEO PLACEHOLDER ── */
+    const vid=document.getElementById("promoVideo");
+    const placeholder=document.getElementById("videoPlaceholder");
+    if(vid){
+      vid.addEventListener("error",()=>{vid.style.display="none";placeholder.style.display="flex";});
+      vid.addEventListener("loadeddata",()=>{placeholder.style.display="none";vid.style.display="block";});
+      if(vid.readyState===0){vid.style.display="none";placeholder.style.display="flex";}
+    }
+
+    /* ── SCROLL REVEAL ── */
+    const revealEls=document.querySelectorAll(".reveal");
+    const observer=new IntersectionObserver((entries)=>{
+      entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add("visible");observer.unobserve(e.target);}});
+    },{threshold:0.12});
+    revealEls.forEach(el=>observer.observe(el));
+
+    /* ── NAV ACTIVE HIGHLIGHT ── */
+    const sections=document.querySelectorAll("section[id]");
+    const navLinks=document.querySelectorAll(".nav-links a:not(.nav-signup)");
+    window.addEventListener("scroll",()=>{
+      const sy=window.scrollY;let current="";
+      sections.forEach(s=>{if(sy>=s.offsetTop-100)current=s.id;});
+      navLinks.forEach(a=>{
+        const isActive=a.getAttribute("href")==="#"+current;
+        a.style.color=isActive?"#fff":"rgba(255,255,255,.60)";
+        a.style.webkitTextFillColor=isActive?"#fff":"rgba(255,255,255,.60)";
+      });
+    });
+
+    /* ── WAITLIST FORM ── */
+    function handleSignup(e){
+      e.preventDefault();
+      document.getElementById("waitlistForm").style.display="none";
+      document.getElementById("formSuccess").style.display="block";
+    }
+  </script>
+
+  <!-- ══════════════════════════════════════════════
+       NIO — FLOATING SPACESHIP GUIDE ASSISTANT
+  ══════════════════════════════════════════════ -->
+
+  <style>
+    /* FIX: NIO ship uses nio-help-bot.png with mix-blend-mode:screen to drop white bg */
+    #nioShip{position:fixed;bottom:60px;right:30px;z-index:9999;cursor:pointer;user-select:none;}
+    #nioShipBody{
+      position:relative;width:160px;height:auto;
+      display:flex;align-items:center;justify-content:center;
+      animation:nioFloat 4s ease-in-out infinite;
+      filter:drop-shadow(0 0 18px rgba(0,255,136,.50)) drop-shadow(0 0 40px rgba(0,200,100,.25));
+      transition:filter .3s;
+    }
+    #nioShipBody:hover{filter:drop-shadow(0 0 32px rgba(0,255,136,.95)) drop-shadow(0 0 60px rgba(0,255,136,.40));}
+    /* FIX: The actual spaceship image — screen blend drops white background */
+    #nioShipImg{
+      width:160px;height:auto;display:block;
+      pointer-events:none;
+      mix-blend-mode:screen;
+    }
+    @keyframes nioFloat{0%,100%{transform:translateY(0) rotate(-2deg);}50%{transform:translateY(-12px) rotate(2deg);}}
+    #nioPulse{position:absolute;inset:-14px;border-radius:999px;border:1.5px solid rgba(0,255,136,.35);animation:nioPulseRing 2.2s ease-out infinite;pointer-events:none;}
+    @keyframes nioPulseRing{0%{opacity:.7;transform:scale(1);}100%{opacity:0;transform:scale(1.55);}}
+    #nioTip{
+      position:absolute;bottom:calc(100% + 10px);right:0;
+      background:rgba(0,0,0,.88);border:1px solid rgba(0,255,136,.30);border-radius:3px;
+      padding:7px 13px;font-family:'Orbitron',sans-serif;font-size:7px;letter-spacing:2px;
+      color:var(--green);white-space:nowrap;
+      opacity:0;transform:translateY(6px);transition:opacity .25s,transform .25s;pointer-events:none;
+    }
+    #nioShip:hover #nioTip{opacity:1;transform:translateY(0);}
+    #nioPanel{position:fixed;bottom:24px;right:24px;width:340px;max-height:520px;background:rgba(4,8,6,.97);border:1px solid rgba(0,255,136,.25);border-radius:6px;display:flex;flex-direction:column;z-index:9998;box-shadow:0 0 60px rgba(0,255,136,.10),0 20px 60px rgba(0,0,0,.80);overflow:hidden;opacity:0;transform:translateY(20px) scale(.97);pointer-events:none;transition:opacity .3s,transform .3s;}
+    #nioPanel.open{opacity:1;transform:translateY(0) scale(1);pointer-events:all;}
+    #nioPanelHeader{display:flex;align-items:center;gap:10px;padding:12px 16px;background:rgba(0,255,136,.04);border-bottom:1px solid rgba(0,255,136,.10);flex-shrink:0;}
+    #nioPanelHeader svg{flex-shrink:0;}
+    #nioPanelTitle{font-family:'Orbitron',sans-serif;font-size:9px;font-weight:800;letter-spacing:3px;color:#fff;flex:1;}
+    #nioPanelSub{font-family:'Orbitron',sans-serif;font-size:6px;letter-spacing:2px;color:rgba(0,255,136,.60);}
+    #nioClose{font-size:16px;color:rgba(255,255,255,.35);cursor:pointer;line-height:1;padding:2px 4px;transition:color .2s;}
+    #nioClose:hover{color:#fff;}
+    #nioMessages{flex:1;overflow-y:auto;padding:14px 14px 6px;display:flex;flex-direction:column;gap:10px;min-height:0;}
+    #nioMessages::-webkit-scrollbar{width:3px;}
+    #nioMessages::-webkit-scrollbar-thumb{background:rgba(0,255,136,.25);border-radius:2px;}
+    .nio-msg{font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:.8px;line-height:1.9;max-width:88%;padding:10px 13px;border-radius:4px;}
+    .nio-msg.from-nio{background:rgba(0,255,136,.06);border:1px solid rgba(0,255,136,.12);color:rgba(255,255,255,.80);align-self:flex-start;}
+    .nio-msg.from-user{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);color:rgba(255,255,255,.65);align-self:flex-end;}
+    .nio-typing{display:flex;gap:5px;align-items:center;padding:10px 13px;align-self:flex-start;}
+    .nio-typing span{width:5px;height:5px;border-radius:999px;background:var(--green);animation:nioDot .9s ease-in-out infinite;}
+    .nio-typing span:nth-child(2){animation-delay:.18s;}
+    .nio-typing span:nth-child(3){animation-delay:.36s;}
+    @keyframes nioDot{0%,80%,100%{opacity:.20;transform:scale(.8);}40%{opacity:1;transform:scale(1.2);}}
+    #nioQuickPrompts{display:flex;flex-wrap:wrap;gap:6px;padding:6px 14px 8px;flex-shrink:0;}
+    .nio-qp{font-family:'Orbitron',sans-serif;font-size:6.5px;letter-spacing:1.5px;color:rgba(0,255,136,.70);border:1px solid rgba(0,255,136,.20);background:transparent;padding:5px 9px;border-radius:2px;cursor:pointer;transition:background .2s,color .2s;}
+    .nio-qp:hover{background:rgba(0,255,136,.10);color:#fff;}
+    #nioInputBar{display:flex;gap:8px;padding:10px 12px 12px;border-top:1px solid rgba(0,255,136,.08);flex-shrink:0;}
+    #nioInput{flex:1;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.10);border-radius:2px;padding:9px 12px;color:#fff;font-family:'Orbitron',sans-serif;font-size:8px;letter-spacing:1px;outline:none;transition:border-color .2s;}
+    #nioInput::placeholder{color:rgba(255,255,255,.22);}
+    #nioInput:focus{border-color:rgba(0,255,136,.40);}
+    #nioSend{background:var(--green);border:none;border-radius:2px;width:36px;height:36px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 12px rgba(0,255,136,.30);transition:box-shadow .2s;font-size:14px;}
+    #nioSend:hover{box-shadow:0 0 22px rgba(0,255,136,.55);}
+    #nioSend:disabled{opacity:.40;cursor:not-allowed;}
+  </style>
+
+  <!-- FIX: NIO ship — uses nio-help-bot.png, mix-blend-mode:screen drops white bg -->
+
+  <div id="nioShip" onclick="nioToggle()">
+    <div id="nioShipBody">
+      <div id="nioPulse"></div>
+      <div id="nioTip">ASK NIO</div>
+      <img id="nioShipImg" src="nio-help-bot.png" alt="NIO Spaceship"/>
+    </div>
+  </div>
+
+  <div id="nioPanel">
+    <div id="nioPanelHeader">
+      <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+        <rect x="5" y="8" width="18" height="14" rx="2" fill="#111" stroke="#00ff88" stroke-width=".8"/>
+        <rect x="3" y="10" width="3" height="8" rx="1.5" fill="#00ff88"/>
+        <rect x="22" y="10" width="3" height="8" rx="1.5" fill="#00ff88"/>
+        <ellipse cx="11" cy="14" rx="2" ry="2" fill="#00ff88"/>
+        <ellipse cx="17" cy="14" rx="2" ry="2" fill="#00ff88"/>
+        <path d="M10 18.5 Q14 20.5 18 18.5" stroke="#00ff88" stroke-width=".8" fill="none" stroke-linecap="round"/>
+        <circle cx="12" cy="8.5" r="1.2" fill="#ff3333"/>
+      </svg>
+      <div>
+        <div id="nioPanelTitle">NIO</div>
+        <div id="nioPanelSub">NETWORK INTELLIGENCE OPERATOR</div>
+      </div>
+      <div id="nioClose" onclick="nioClose(event)">✕</div>
+    </div>
+    <div id="nioMessages"></div>
+    <div id="nioQuickPrompts">
+      <button class="nio-qp" onclick="nioAsk('What is Cobuddy OS?')">WHAT IS COBUDDY OS?</button>
+      <button class="nio-qp" onclick="nioAsk('What is OUL?')">WHAT IS OUL?</button>
+      <button class="nio-qp" onclick="nioAsk('When does Cobuddy OS launch?')">LAUNCH DATE?</button>
+      <button class="nio-qp" onclick="nioAsk('What is PROPRINT?')">PROPRINT?</button>
+      <button class="nio-qp" onclick="nioAsk('How do I join the waitlist?')">JOIN WAITLIST?</button>
+    </div>
+    <div id="nioInputBar">
+      <input id="nioInput" type="text" placeholder="ASK ME ANYTHING..." maxlength="200"
+             onkeydown="if(event.key==='Enter')nioSend()"/>
+      <button id="nioSend" onclick="nioSend()">➤</button>
+    </div>
+  </div>
+
+  <script>
+  (function(){
+    const panel=document.getElementById('nioPanel');
+    const msgs=document.getElementById('nioMessages');
+    const input=document.getElementById('nioInput');
+    const sendBtn=document.getElementById('nioSend');
+    let isOpen=false,isThinking=false,history=[];
+
+    const SYSTEM=`You are NIO (Network Integrity Operator) — the AI guide assistant for Cobuddy OS. You are a friendly, knowledgeable, slightly futuristic assistant. You speak in short, clear sentences. You use Orbitron-style energy — confident, precise, minimal.
+
+Here is everything you know about Cobuddy OS:
+
+COBUDDY OS is the world's first Visual Spatial Production Planning System, built for the AV and live event industry. It lets professionals Visualize, Construct, and Execute production plans before a truck is ever loaded.
+
+Tagline (LOCKED): "Visualize it. Construct it. Execute it. Before the truck is even loaded."
+
+THE PLANETS (core system modules):
+- ORB: Platform Command Center
+- NIO: Network Integrity Operator — that's you! The AI intelligence layer.
+- OUL: Occupational Utility Locator — the industry directory. Find AV companies, event producers, vendors by location and event type. OUL is pronounced like "owl" but spelled OUL. The owl is the mascot icon, but the planet/module is always OUL.
+- CUE: Calendar Under Execution — production calendar
+- ATLAS: Approved Technology & Labor Asset System — inventory
+- AXIS: Advanced Execution Integration System — the live spatial design canvas
+- LIBRA: Logistics Interpretation Bridge Routing Apparatus — logistics
+- NEXUS: Native Executive Utility System — the tenant cockpit/dashboard
+- PROPRINT: Production Blueprint output — generates your full production blueprint. It orbits LIBRA.
+- RA: The sun / memory core & vault of the ExoGalaxy
+
+COMING SOON PLANETS:
+- NOVA: AI Generator
+- APH: Presentation Driver
+- ZUZ: DMX lighting control (future)
+
+PLATFORM CURRENCY: Orbits (◎) — used for subscription tiers. Full pricing TBD at launch.
+LAUNCH: Easter Sunday, April 20, 2026. Water release — enough to show, prove, start conversations.
+COMPANY: Cobuddy LLC — Maryland. Patent pending. Trademark COBUDDY filed USPTO Class 042 (SaaS).
+WAITLIST: Users can join at cobuddyos.com to get early access and founding member pricing.
+CONTACT: hello@cobuddyos.com
+
+When someone asks something you don't know, tell them to reach out at hello@cobuddyos.com or join the waitlist. Keep responses short — 2–4 sentences max unless a question genuinely needs more. Never break character.`;
+
+    function addMsg(text,role){const div=document.createElement('div');div.className='nio-msg '+(role==='user'?'from-user':'from-nio');div.textContent=text;msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;}
+    function addTyping(){const div=document.createElement('div');div.className='nio-typing';div.id='nioTyping';div.innerHTML='<span></span><span></span><span></span>';msgs.appendChild(div);msgs.scrollTop=msgs.scrollHeight;}
+    function removeTyping(){const t=document.getElementById('nioTyping');if(t)t.remove();}
+
+    async function askNIO(userText){
+      if(isThinking)return;
+      isThinking=true;sendBtn.disabled=true;
+      history.push({role:'user',content:userText});
+      addMsg(userText,'user');addTyping();
+      try{
+        const res=await fetch('https://api.anthropic.com/v1/messages',{
+          method:'POST',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,system:SYSTEM,messages:history})
+        });
+        const data=await res.json();
+        const reply=data.content?.map(c=>c.text||'').join('')||'Signal lost. Try again.';
+        removeTyping();history.push({role:'assistant',content:reply});addMsg(reply,'nio');
+      }catch(e){removeTyping();addMsg('Signal interference. Please try again.','nio');}
+      isThinking=false;sendBtn.disabled=false;
+    }
+
+    function greet(){if(msgs.children.length===0)addMsg("Hey — I'm NIO. I run the intelligence layer for Cobuddy OS. Ask me anything about the system, the planets, the launch — I've got you.",'nio');}
+    window.nioToggle=function(){isOpen=!isOpen;panel.classList.toggle('open',isOpen);if(isOpen)greet();};
+    window.nioClose=function(e){e.stopPropagation();isOpen=false;panel.classList.remove('open');};
+    window.nioAsk=function(q){if(!isOpen){isOpen=true;panel.classList.add('open');greet();}setTimeout(()=>askNIO(q),300);};
+    window.nioSend=function(){const txt=input.value.trim();if(!txt||isThinking)return;input.value='';askNIO(txt);};
+  })();
+  </script>
+
+</body>
+</html>
