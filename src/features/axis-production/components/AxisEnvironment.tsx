@@ -1,18 +1,21 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { TableAsset } from "../types";
+import { TableAsset, CaseAsset } from "../types";
 
 interface AxisEnvironmentProps {
     tableAssets?: TableAsset[];
     onRemoveTableAsset?: (id: string) => void;
     onUpdateQuantity?: (id: string, delta: number) => void;
+    caseAssets?: CaseAsset[];
+    onRemoveCaseAsset?: (id: string) => void;
+    onUpdateCaseQuantity?: (id: string, delta: number) => void;
 }
 
 /**
  * Clean asset image extractor to avoid shotgun data mapping.
  */
-const getAssetImage = (assetData: TableAsset) => {
+const getAssetImage = (assetData: TableAsset | CaseAsset) => {
     const asset = assetData?.item?.asset;
     return asset?.image || "";
 };
@@ -27,7 +30,14 @@ const getAssetImage = (assetData: TableAsset) => {
  * ⚠ This component must be used inside a CSS Grid parent whose columns
  *   match the LAYOUT.bottom proportions.
  */
-export function AxisEnvironment({ tableAssets = [], onRemoveTableAsset, onUpdateQuantity }: AxisEnvironmentProps) {
+export function AxisEnvironment({
+    tableAssets = [],
+    onRemoveTableAsset,
+    onUpdateQuantity,
+    caseAssets = [],
+    onRemoveCaseAsset,
+    onUpdateCaseQuantity
+}: AxisEnvironmentProps) {
     return (
         <>
             {/* ─── Column 1: NIO ─── */}
@@ -107,6 +117,55 @@ export function AxisEnvironment({ tableAssets = [], onRemoveTableAsset, onUpdate
                     alt="Cable Case"
                     className="absolute inset-0 w-full h-full object-contain"
                 />
+
+                {/* Case Grid Layout - 4 Assets per Row as requested */}
+                <div className="absolute inset-x-0 top-[20%] bottom-[20%] left-[20%] right-[20%] flex items-center justify-center">
+                    <div className="grid grid-cols-4 grid-rows-3 w-full h-full gap-0">
+                        {Array.from({ length: 12 }).map((_, i) => (
+                            <div
+                                key={i}
+                                className={cn(
+                                    "relative flex items-center justify-center transition-all duration-300 group",
+                                    caseAssets[i] ? "text-emerald-400" : "opacity-0"
+                                )}
+                            >
+                                {caseAssets[i] && (
+                                    <>
+                                        <div
+                                            onClick={() => onRemoveCaseAsset?.(caseAssets[i].id)}
+                                            className="cursor-pointer hover:scale-105 active:scale-95 transition-transform"
+                                        >
+                                            <img
+                                                src={getAssetImage(caseAssets[i])}
+                                                alt={caseAssets[i]?.item?.title || "asset"}
+                                                className="w-8 h-8 object-contain drop-shadow-[0_0_8px_rgba(0,0,0,0.5)]"
+                                            />
+                                        </div>
+
+                                        {/* Quantity Controls Overlay */}
+                                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 flex items-center gap-0.5 bg-black/80 backdrop-blur-md border border-[#00ff88]/30 rounded-full px-1 py-0.5 z-10 opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-[0_0_10px_rgba(0,255,136,0.1)]">
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); onUpdateCaseQuantity?.(caseAssets[i].id, -1); }}
+                                                className="w-2.5 h-2.5 flex items-center justify-center text-[7px] text-white/70 hover:text-[#00ff88] leading-none"
+                                            >
+                                                −
+                                            </button>
+                                            <span className="text-[6px] font-black text-[#00ff88] min-w-[5px] text-center">
+                                                {caseAssets[i].quantity}
+                                            </span>
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); onUpdateCaseQuantity?.(caseAssets[i].id, 1); }}
+                                                className="w-2.5 h-2.5 flex items-center justify-center text-[7px] text-white/70 hover:text-[#00ff88] leading-none"
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
             </div>
 
             {/* ─── Column 4: Staff ─── */}

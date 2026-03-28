@@ -21,6 +21,7 @@ function AxisProductionContent() {
     selectedBallroomId,
     canvasAssets,
     tableAssets,
+    caseAssets,
     selectedAssetIds,
     infoModalOpen,
     summaryOpen,
@@ -30,14 +31,19 @@ function AxisProductionContent() {
 
   const equipmentTotal = useMemo(() => {
     const canvasTotal = canvasAssets.reduce((sum, asset) => {
-      return sum + (parseFloat(asset.item.pricing as any) || 0);
+      const price = parseFloat(asset.item.pricing as any) || 0;
+      return sum + price;
     }, 0);
     const tableTotal = tableAssets.reduce((sum, asset) => {
       const price = parseFloat(asset.item.pricing as any) || 0;
       return sum + price * (asset.quantity || 1);
     }, 0);
-    return (canvasTotal + tableTotal) * numberOfDays;
-  }, [canvasAssets, tableAssets, numberOfDays]);
+    const caseTotal = caseAssets.reduce((sum, asset) => {
+      const price = parseFloat(asset.item.pricing as any) || 0;
+      return sum + price * (asset.quantity || 1);
+    }, 0);
+    return (canvasTotal + tableTotal + caseTotal) * numberOfDays;
+  }, [canvasAssets, tableAssets, caseAssets, numberOfDays]);
 
   if (!mounted) return null;
 
@@ -156,6 +162,8 @@ function AxisProductionContent() {
           onAddAsset={(item) => {
             if (item.asset?.placement_type === 'table') {
               dispatch({ type: 'ADD_TABLE_ASSET', asset: item });
+            } else if (item.asset?.placement_type === 'case') {
+              dispatch({ type: 'ADD_CASE_ASSET', asset: item });
             } else if (item.asset?.placement_type === 'canvas') {
               dispatch({
                 type: 'ADD_CANVAS_ASSET',
@@ -189,6 +197,9 @@ function AxisProductionContent() {
           tableAssets={tableAssets}
           onRemoveTableAsset={(id) => dispatch({ type: 'REMOVE_TABLE_ASSET', id })}
           onUpdateQuantity={(id, delta) => dispatch({ type: 'UPDATE_TABLE_ASSET_QUANTITY', id, delta })}
+          caseAssets={caseAssets}
+          onRemoveCaseAsset={(id) => dispatch({ type: 'REMOVE_CASE_ASSET', id })}
+          onUpdateCaseQuantity={(id, delta) => dispatch({ type: 'UPDATE_CASE_ASSET_QUANTITY', id, delta })}
         />
       </div>
 
@@ -203,6 +214,7 @@ function AxisProductionContent() {
         numberOfDays={numberOfDays}
         canvasAssets={canvasAssets}
         tableAssets={tableAssets}
+        caseAssets={caseAssets}
       />
     </div>
   );

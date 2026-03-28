@@ -14,6 +14,7 @@ import {
 const initialState: ProductionState = {
     canvasAssets: [],
     tableAssets: [],
+    caseAssets: [],
     selectedAssetIds: [],
     leftSidebarOpen: false,
     rightSidebarOpen: false,
@@ -152,6 +153,38 @@ function productionReducer(state: ProductionState, action: ProductionAction): Pr
             return {
                 ...state,
                 tableAssets: state.tableAssets.filter(a => a.id !== action.id)
+            };
+        case 'ADD_CASE_ASSET': {
+            const existingAsset = state.caseAssets.find(a => a.item.id === action.asset.id);
+            if (existingAsset) {
+                return {
+                    ...state,
+                    caseAssets: state.caseAssets.map(a =>
+                        a.item.id === action.asset.id
+                            ? { ...a, quantity: a.quantity + 1 }
+                            : a
+                    )
+                };
+            }
+            if (state.caseAssets.length >= 12) return state;
+            return {
+                ...state,
+                caseAssets: [...state.caseAssets, { id: crypto.randomUUID(), item: action.asset, quantity: 1 }]
+            };
+        }
+        case 'UPDATE_CASE_ASSET_QUANTITY':
+            return {
+                ...state,
+                caseAssets: state.caseAssets.map(a =>
+                    a.id === action.id
+                        ? { ...a, quantity: Math.max(1, a.quantity + action.delta) }
+                        : a
+                )
+            };
+        case 'REMOVE_CASE_ASSET':
+            return {
+                ...state,
+                caseAssets: state.caseAssets.filter(a => a.id !== action.id)
             };
         case 'SET_DAYS':
             return {

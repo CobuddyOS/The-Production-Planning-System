@@ -105,7 +105,8 @@ export function AssetsSidebar({ isOpen, hasBallroom, onAddAsset }: AssetsSidebar
                             visibleInventory.map((item) => {
                                 const isCanvasItem = item.asset?.placement_type === "canvas";
                                 const isTableItem = item.asset?.placement_type === "table";
-                                const canPlace = hasBallroom && (isCanvasItem || isTableItem);
+                                const isCaseItem = item.asset?.placement_type === "case";
+                                const canPlace = hasBallroom && (isCanvasItem || isTableItem || isCaseItem);
 
                                 return (
                                     <Tooltip key={item.id}>

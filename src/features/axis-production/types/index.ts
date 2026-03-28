@@ -21,12 +21,19 @@ export interface TableAsset {
     quantity: number;
 }
 
+export interface CaseAsset {
+    id: string;
+    item: WarehouseItem;
+    quantity: number;
+}
+
 export type LayerAction = "front" | "back" | "forward" | "backward";
 export type RotationDirection = "cw" | "ccw";
 
 export interface ProductionState {
     canvasAssets: CanvasAsset[];
     tableAssets: TableAsset[];
+    caseAssets: CaseAsset[];
     selectedAssetIds: string[];
     leftSidebarOpen: boolean;
     rightSidebarOpen: boolean;
@@ -56,4 +63,7 @@ export type ProductionAction =
     | { type: 'REMOVE_TABLE_ASSET'; id: string }
     | { type: 'ADD_TABLE_ASSET'; asset: WarehouseItem }
     | { type: 'UPDATE_TABLE_ASSET_QUANTITY'; id: string, delta: number }
+    | { type: 'REMOVE_CASE_ASSET'; id: string }
+    | { type: 'ADD_CASE_ASSET'; asset: WarehouseItem }
+    | { type: 'UPDATE_CASE_ASSET_QUANTITY'; id: string, delta: number }
     | { type: 'SET_DAYS'; days: number };

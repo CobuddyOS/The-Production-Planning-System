@@ -15,6 +15,7 @@ interface ProjectEstimateModalProps {
     numberOfDays: number;
     canvasAssets: any[];
     tableAssets: any[];
+    caseAssets: any[];
 }
 
 export function ProjectEstimateModal({
@@ -23,10 +24,11 @@ export function ProjectEstimateModal({
     numberOfDays,
     canvasAssets,
     tableAssets,
+    caseAssets,
 }: ProjectEstimateModalProps) {
     const aggregatedItems = useMemo(() => {
         const itemsMap = new Map<string, any>();
-        const allAssets = [...canvasAssets, ...tableAssets];
+        const allAssets = [...canvasAssets, ...tableAssets, ...caseAssets];
 
         allAssets.forEach((asset) => {
             const item = asset.item;
