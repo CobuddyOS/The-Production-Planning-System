@@ -121,11 +121,32 @@ function productionReducer(state: ProductionState, action: ProductionAction): Pr
                 )
             };
         }
-        case 'ADD_TABLE_ASSET':
+        case 'ADD_TABLE_ASSET': {
+            const existingAsset = state.tableAssets.find(a => a.item.id === action.asset.id);
+            if (existingAsset) {
+                return {
+                    ...state,
+                    tableAssets: state.tableAssets.map(a =>
+                        a.item.id === action.asset.id
+                            ? { ...a, quantity: a.quantity + 1 }
+                            : a
+                    )
+                };
+            }
             if (state.tableAssets.length >= 6) return state;
             return {
                 ...state,
-                tableAssets: [...state.tableAssets, { id: crypto.randomUUID(), item: action.asset }]
+                tableAssets: [...state.tableAssets, { id: crypto.randomUUID(), item: action.asset, quantity: 1 }]
+            };
+        }
+        case 'UPDATE_TABLE_ASSET_QUANTITY':
+            return {
+                ...state,
+                tableAssets: state.tableAssets.map(a =>
+                    a.id === action.id
+                        ? { ...a, quantity: Math.max(1, a.quantity + action.delta) }
+                        : a
+                )
             };
         case 'REMOVE_TABLE_ASSET':
             return {

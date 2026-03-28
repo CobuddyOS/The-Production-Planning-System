@@ -29,10 +29,14 @@ function AxisProductionContent() {
   } = useProduction();
 
   const equipmentTotal = useMemo(() => {
-    const unitTotal = [...canvasAssets, ...tableAssets].reduce((sum, asset) => {
+    const canvasTotal = canvasAssets.reduce((sum, asset) => {
       return sum + (parseFloat(asset.item.pricing as any) || 0);
     }, 0);
-    return unitTotal * numberOfDays;
+    const tableTotal = tableAssets.reduce((sum, asset) => {
+      const price = parseFloat(asset.item.pricing as any) || 0;
+      return sum + price * (asset.quantity || 1);
+    }, 0);
+    return (canvasTotal + tableTotal) * numberOfDays;
   }, [canvasAssets, tableAssets, numberOfDays]);
 
   if (!mounted) return null;
@@ -184,6 +188,7 @@ function AxisProductionContent() {
         <AxisEnvironment
           tableAssets={tableAssets}
           onRemoveTableAsset={(id) => dispatch({ type: 'REMOVE_TABLE_ASSET', id })}
+          onUpdateQuantity={(id, delta) => dispatch({ type: 'UPDATE_TABLE_ASSET_QUANTITY', id, delta })}
         />
       </div>
 

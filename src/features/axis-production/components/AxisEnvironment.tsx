@@ -6,6 +6,7 @@ import { TableAsset } from "../types";
 interface AxisEnvironmentProps {
     tableAssets?: TableAsset[];
     onRemoveTableAsset?: (id: string) => void;
+    onUpdateQuantity?: (id: string, delta: number) => void;
 }
 
 /**
@@ -26,7 +27,7 @@ const getAssetImage = (assetData: TableAsset) => {
  * ⚠ This component must be used inside a CSS Grid parent whose columns
  *   match the LAYOUT.bottom proportions.
  */
-export function AxisEnvironment({ tableAssets = [], onRemoveTableAsset }: AxisEnvironmentProps) {
+export function AxisEnvironment({ tableAssets = [], onRemoveTableAsset, onUpdateQuantity }: AxisEnvironmentProps) {
     return (
         <>
             {/* ─── Column 1: NIO ─── */}
@@ -52,21 +53,46 @@ export function AxisEnvironment({ tableAssets = [], onRemoveTableAsset }: AxisEn
                         {Array.from({ length: 6 }).map((_, i) => (
                             <div
                                 key={i}
-                                onClick={() => tableAssets[i] && onRemoveTableAsset?.(tableAssets[i].id)}
                                 className={cn(
-                                    "w-14 h-14 flex items-center justify-center overflow-hidden transition-all duration-300",
-                                    tableAssets[i] ? "cursor-pointer hover:scale-110 active:scale-95 text-sky-400" : "opacity-0"
+                                    "w-14 h-14 relative flex items-center justify-center transition-all duration-300 group",
+                                    tableAssets[i] ? "text-sky-400" : "opacity-0"
                                 )}
                                 style={{
                                     transform: `translateY(${i * 6}px) scale(${1 - i * 0.03})`
                                 }}
                             >
                                 {tableAssets[i] && (
-                                    <img
-                                        src={getAssetImage(tableAssets[i])}
-                                        alt={tableAssets[i]?.item?.title || "asset"}
-                                        className="w-12 h-12 object-contain"
-                                    />
+                                    <>
+                                        <div
+                                            onClick={() => tableAssets[i] && onRemoveTableAsset?.(tableAssets[i].id)}
+                                            className="cursor-pointer hover:scale-110 active:scale-95 transition-transform"
+                                        >
+                                            <img
+                                                src={getAssetImage(tableAssets[i])}
+                                                alt={tableAssets[i]?.item?.title || "asset"}
+                                                className="w-12 h-12 object-contain"
+                                            />
+                                        </div>
+
+                                        {/* Quantity Controls Overlay */}
+                                        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 flex items-center gap-1.5 bg-black/80 backdrop-blur-md border border-[#00ff88]/30 rounded-full px-1.5 py-0.5 z-10 opacity-0 group-hover:opacity-100 transition-all duration-200 shadow-[0_0_10px_rgba(0,255,136,0.1)]">
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); onUpdateQuantity?.(tableAssets[i].id, -1); }}
+                                                className="w-3.5 h-3.5 flex items-center justify-center text-[10px] text-white/70 hover:text-[#00ff88] transition-colors leading-none"
+                                            >
+                                                −
+                                            </button>
+                                            <span className="text-[8px] font-black text-[#00ff88] tracking-tighter min-w-[8px] text-center">
+                                                {tableAssets[i].quantity}
+                                            </span>
+                                            <button
+                                                onClick={(e) => { e.stopPropagation(); onUpdateQuantity?.(tableAssets[i].id, 1); }}
+                                                className="w-3.5 h-3.5 flex items-center justify-center text-[10px] text-white/70 hover:text-[#00ff88] transition-colors leading-none"
+                                            >
+                                                +
+                                            </button>
+                                        </div>
+                                    </>
                                 )}
                             </div>
                         ))}

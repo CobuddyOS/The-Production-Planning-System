@@ -18,6 +18,7 @@ export interface CanvasAsset {
 export interface TableAsset {
     id: string;
     item: WarehouseItem;
+    quantity: number;
 }
 
 export type LayerAction = "front" | "back" | "forward" | "backward";
@@ -54,4 +55,5 @@ export type ProductionAction =
     | { type: 'ROTATE_ASSETS'; ids: string[], direction: RotationDirection }
     | { type: 'REMOVE_TABLE_ASSET'; id: string }
     | { type: 'ADD_TABLE_ASSET'; asset: WarehouseItem }
+    | { type: 'UPDATE_TABLE_ASSET_QUANTITY'; id: string, delta: number }
     | { type: 'SET_DAYS'; days: number };

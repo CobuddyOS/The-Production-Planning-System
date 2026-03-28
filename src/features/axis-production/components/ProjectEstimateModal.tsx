@@ -31,10 +31,11 @@ export function ProjectEstimateModal({
         allAssets.forEach((asset) => {
             const item = asset.item;
             const itemId = item.id;
+            const quantityToAdd = asset.quantity || 1;
 
             if (itemsMap.has(itemId)) {
                 const existing = itemsMap.get(itemId);
-                existing.quantity += 1;
+                existing.quantity += quantityToAdd;
                 existing.total = existing.quantity * (parseFloat(item.pricing) || 0) * numberOfDays;
             } else {
                 itemsMap.set(itemId, {
@@ -42,8 +43,8 @@ export function ProjectEstimateModal({
                     name: item.title || item.asset?.name || "Unknown Item",
                     image: item.asset?.image || item.asset?.thumbnail_url || item.asset?.image_url,
                     price: parseFloat(item.pricing) || 0,
-                    quantity: 1,
-                    total: (parseFloat(item.pricing) || 0) * numberOfDays,
+                    quantity: quantityToAdd,
+                    total: quantityToAdd * (parseFloat(item.pricing) || 0) * numberOfDays,
                 });
             }
         });
