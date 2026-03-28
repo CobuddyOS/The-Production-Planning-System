@@ -64,21 +64,29 @@ export function AssetsSidebar({ isOpen, hasBallroom, onAddAsset }: AssetsSidebar
             <div className="p-2 border-t border-white/5">
                 <div className="grid grid-cols-6 gap-1">
                     {categories.map((cat) => {
-                        const Icon = CATEGORY_ICONS[cat.name] || LayoutGrid;
+                        // Resilient icon lookup: try exact match, then case-insensitive match, then fallback
+                        const iconKey = Object.keys(CATEGORY_ICONS).find(
+                            (key) => key.toLowerCase() === cat.name?.toLowerCase()
+                        );
+                        const Icon = (iconKey ? CATEGORY_ICONS[iconKey] : CATEGORY_ICONS[cat.name]) || LayoutGrid;
                         const isActive = activeCategoryId === cat.id;
+
                         return (
                             <button
                                 key={cat.id}
                                 onClick={() => setActiveCategoryId(cat.id)}
                                 title={cat.name}
                                 className={cn(
-                                    "h-8 w-8 rounded-xl transition-all flex items-center justify-center",
+                                    "h-8 w-8 rounded-xl transition-all flex items-center justify-center relative group",
                                     isActive
                                         ? "bg-white/15 text-white shadow-[0_0_16px_rgba(56,189,248,0.35)]"
                                         : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white"
                                 )}
                             >
-                                {Icon && <Icon className="size-4" />}
+                                <Icon className="size-4 relative z-10" />
+                                {isActive && (
+                                    <div className="absolute inset-0 rounded-xl bg-sky-500/10 animate-pulse pointer-events-none" />
+                                )}
                                 <span className="sr-only">{cat.name}</span>
                             </button>
                         );

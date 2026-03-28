@@ -15,13 +15,18 @@ export function useAtlasCategories() {
     useEffect(() => {
         async function fetchCategories() {
             setLoading(true);
-            const { data } = await supabase
+            const { data, error } = await supabase
                 .from("atlas_categories")
                 .select("id, name")
                 .eq("status", "active")
                 .order("name");
 
-            if (data) {
+            if (error) {
+                console.error("Atlas Categories Fetch Error:", error);
+                // Try fetching without active filter as fallback for diagnostic
+                const { data: allData } = await supabase.from("atlas_categories").select("id, name").order("name");
+                if (allData) setCategories(allData);
+            } else if (data) {
                 setCategories(data);
                 if (data.length > 0) {
                     setActiveCategoryId(data[0].id);
