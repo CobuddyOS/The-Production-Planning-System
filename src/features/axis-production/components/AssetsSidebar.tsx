@@ -61,37 +61,52 @@ export function AssetsSidebar({ isOpen, hasBallroom, onAddAsset }: AssetsSidebar
                 </div>
             </div>
 
-            <div className="p-2 border-t border-white/5">
-                <div className="grid grid-cols-6 gap-1">
-                    {categories.map((cat) => {
-                        // Resilient icon lookup: try exact match, then case-insensitive match, then fallback
-                        const iconKey = Object.keys(CATEGORY_ICONS).find(
-                            (key) => key.toLowerCase() === cat.name?.toLowerCase()
-                        );
-                        const Icon = (iconKey ? CATEGORY_ICONS[iconKey] : CATEGORY_ICONS[cat.name]) || LayoutGrid;
-                        const isActive = activeCategoryId === cat.id;
+            {/* Categories Section - Clean and Floating Icons */}
+            <div className="py-2 ml-4 flex items-center gap-6">
+                {categories.map((cat) => {
+                    const isActive = activeCategoryId === cat.id;
 
-                        return (
-                            <button
-                                key={cat.id}
-                                onClick={() => setActiveCategoryId(cat.id)}
-                                title={cat.name}
-                                className={cn(
-                                    "h-8 w-8 rounded-xl transition-all flex items-center justify-center relative group",
-                                    isActive
-                                        ? "bg-white/15 text-white shadow-[0_0_16px_rgba(56,189,248,0.35)]"
-                                        : "bg-white/5 text-white/60 hover:bg-white/10 hover:text-white"
+                    // Fallback icon logic
+                    const iconKey = Object.keys(CATEGORY_ICONS).find(
+                        (key) => key.toLowerCase() === cat.name?.toLowerCase()
+                    );
+                    const FallbackIcon = (iconKey ? CATEGORY_ICONS[iconKey] : CATEGORY_ICONS[cat.name]) || LayoutGrid;
+
+                    return (
+                        <button
+                            key={cat.id}
+                            onClick={() => setActiveCategoryId(cat.id)}
+                            title={cat.name}
+                            className={cn(
+                                "relative flex flex-col items-center justify-center transition-all group pb-2 cursor-pointer",
+                                isActive ? "text-white" : "text-white/60 hover:text-white/90"
+                            )}
+                        >
+                            <div className="relative">
+                                {cat.icon_url ? (
+                                    <img
+                                        src={cat.icon_url}
+                                        alt=""
+                                        className={cn(
+                                            "size-8 object-contain transition-all duration-300",
+                                            isActive ? "scale-110" : "opacity-80 group-hover:opacity-100 group-hover:scale-110"
+                                        )}
+                                    />
+                                ) : (
+                                    <FallbackIcon className={cn(
+                                        "size-6 transition-all",
+                                        isActive ? "scale-110" : "group-hover:scale-110"
+                                    )} />
                                 )}
-                            >
-                                <Icon className="size-4 relative z-10" />
-                                {isActive && (
-                                    <div className="absolute inset-0 rounded-xl bg-sky-500/10 animate-pulse pointer-events-none" />
-                                )}
-                                <span className="sr-only">{cat.name}</span>
-                            </button>
-                        );
-                    })}
-                </div>
+                            </div>
+
+                            {/* Orange Underline for Active state */}
+                            {isActive && (
+                                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-0.5 bg-orange-500 rounded-full" />
+                            )}
+                        </button>
+                    );
+                })}
             </div>
 
             <div className="flex-1 overflow-y-auto scrollbar-hide p-4">

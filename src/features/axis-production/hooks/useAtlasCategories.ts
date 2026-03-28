@@ -4,6 +4,8 @@ import { createClient } from "@/lib/supabase/client";
 export type AtlasCategory = {
     id: string;
     name: string;
+    icon_url: string | null;
+    sort_order: number;
 };
 
 export function useAtlasCategories() {
@@ -17,17 +19,20 @@ export function useAtlasCategories() {
             setLoading(true);
             const { data, error } = await supabase
                 .from("atlas_categories")
-                .select("id, name")
+                .select("id, name, icon_url, sort_order")
                 .eq("status", "active")
-                .order("name");
+                .order("sort_order", { ascending: true });
 
             if (error) {
                 console.error("Atlas Categories Fetch Error:", error);
                 // Try fetching without active filter as fallback for diagnostic
-                const { data: allData } = await supabase.from("atlas_categories").select("id, name").order("name");
-                if (allData) setCategories(allData);
+                const { data: allData } = await supabase
+                    .from("atlas_categories")
+                    .select("id, name, icon_url, sort_order")
+                    .order("sort_order", { ascending: true });
+                if (allData) setCategories(allData as AtlasCategory[]);
             } else if (data) {
-                setCategories(data);
+                setCategories(data as AtlasCategory[]);
                 if (data.length > 0) {
                     setActiveCategoryId(data[0].id);
                 }
