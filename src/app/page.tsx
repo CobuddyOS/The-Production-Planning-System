@@ -294,8 +294,8 @@ export default function ExoGalaxyLanding() {
           </div>
           <input className="bg-white/[.04] border border-white/10 rounded-sm p-4 text-[9px] tracking-[2px] outline-none focus:border-[#00ff88]/40 text-white placeholder:text-white/25" placeholder="BUSINESS EMAIL" />
           <input className="bg-white/[.04] border border-white/10 rounded-sm p-4 text-[9px] tracking-[2px] outline-none focus:border-[#00ff88]/40 text-white placeholder:text-white/25" placeholder="BUSINESS NAME" />
-          <select className="bg-white/[.04] border border-white/10 rounded-sm p-4 text-[9px] tracking-[2px] outline-none focus:border-[#00ff88]/40 text-white/70 cursor-pointer appearance-none">
-            <option value="" disabled selected>BUSINESS TYPE</option>
+          <select className="bg-white/[.04] border border-white/10 rounded-sm p-4 text-[9px] tracking-[2px] outline-none focus:border-[#00ff88]/40 text-white/70 cursor-pointer appearance-none" defaultValue="">
+            <option value="" disabled>BUSINESS TYPE</option>
             <option value="av">AV PRODUCTION</option>
             <option value="event">EVENT PLANNING</option>
             <option value="catering">CATERING</option>
