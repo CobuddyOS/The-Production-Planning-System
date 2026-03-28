@@ -276,4 +276,119 @@ body {
   html {
     @apply font-sans;
   }
+
+  /* ExoGalaxy Custom Animations */
+  @keyframes nio-float {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-12px) rotate(2deg); }
+  }
+  .animate-nio-float {
+    animation: nio-float 4s ease-in-out infinite;
+  }
+  
+  @keyframes nio-pulse-ring {
+    0% { opacity: 0.7; transform: scale(1); }
+    100% { opacity: 0; transform: scale(1.55); }
+  }
+  .animate-nio-pulse-ring {
+    animation: nio-pulse-ring 2.2s ease-out infinite;
+  }
+
+  @keyframes boot-drop {
+    0% { opacity: 0; transform: translateY(-200px); }
+    80% { transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+  .animate-boot-drop {
+    animation: boot-drop 0.6s forwards;
+  }
+
+  @keyframes boot-fly-in {
+    0% { left: -200px; opacity: 0; }
+    100% { left: 45%; opacity: 1; }
+  }
+  .animate-boot-fly-in {
+    animation: boot-fly-in 2s forwards;
+    animation-delay: 2s;
+  }
+
+  @keyframes boot-draw-path {
+    to { stroke-dashoffset: 0; }
+  }
+  .animate-boot-draw-path {
+    animation: boot-draw-path 2s forwards;
+    animation-delay: 5s;
+  }
+
+  @keyframes boot-pulse-move {
+    0% { opacity: 1; transform: scale(1); }
+    100% { opacity: 0; transform: scale(45); }
+  }
+  .animate-boot-pulse-move {
+    animation: boot-pulse-move 2s forwards;
+    animation-delay: 6.5s;
+  }
+
+  @keyframes ra-breath { 
+    0%, 100% { box-shadow: 0 0 28px rgba(255,125,0,0.55); opacity: 0.84; } 
+    50% { box-shadow: 0 0 42px rgba(255,140,0,0.70); opacity: 0.96; } 
+  }
+  .animate-ra-breath { 
+    animation: ra-breath 4s ease-in-out infinite; 
+  }
+
+  @keyframes ring-pulse { 
+    0%, 100% { opacity: 0.24; } 
+    50% { opacity: 0.58; } 
+  }
+  .animate-ring-pulse { 
+    animation: ring-pulse 3s ease-in-out infinite; 
+  }
+
+  @keyframes orbit-bubble-hover { 
+    0%, 100% { transform: translate(-50%, -50%) translateY(0); } 
+    50% { transform: translate(-50%, -50%) translateY(-18px); } 
+  }
+  .animate-orbit-bubble-hover { 
+    animation: orbit-bubble-hover 3.8s ease-in-out infinite; 
+  }
+
+  @keyframes orbit-bubble-launch { 
+    0% { transform: translate(-50%, -50%) translateY(0) scale(1); opacity: 1; } 
+    100% { transform: translate(-50%, -50%) translate(500px, -500px) scale(0.05); opacity: 0; } 
+  }
+  .animate-orbit-bubble-launch { 
+    animation: orbit-bubble-launch 2.2s cubic-bezier(0.22, 0.61, 0.36, 1) forwards; 
+  }
+
+  @keyframes section-fade-up { 
+    from { opacity: 0; transform: translateY(24px); } 
+    to { opacity: 1; transform: translateY(0); } 
+  }
+  .animate-section-fade-up { 
+    animation: section-fade-up 1s ease both; 
+  }
+
+  @keyframes orbit-spin-slow { 
+    to { transform: rotate(360deg); } 
+  }
+  .animate-orbit-spin-slow { 
+    animation: orbit-spin-slow 25s linear infinite; 
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  .animate-fade-in {
+    animation: fadeIn 1.5s ease;
+  }
+  @keyframes floating-slow { 
+    0%, 100% { transform: translateY(0); } 
+    50% { transform: translateY(-16px); } 
+  }
+  .animate-floating-slow { 
+    animation: floating-slow 5s ease-in-out infinite; 
+  }
 }
+
