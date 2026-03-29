@@ -31,7 +31,6 @@ width:80%;
 max-width:700px;
 font-size:18px;
 line-height:32px;
-z-index:10;
 }
 
 .boot span{
@@ -39,31 +38,7 @@ display:block;
 opacity:0;
 }
 
-/* Video Intro Hidden Initially */
-
-.video-intro{
-position:absolute;
-top:0;
-left:0;
-width:100%;
-height:100%;
-opacity:0;
-transition:opacity 1.5s ease;
-background:black;
-display:flex;
-justify-content:center;
-align-items:center;
-z-index:5;
-}
-
-.video-intro video{
-width:100%;
-height:100%;
-object-fit:cover;
-background:black;
-}
-
-/* Fallback Intro Hidden Initially */
+/* Intro Hidden Initially */
 
 .intro{
 opacity:0;
@@ -75,7 +50,6 @@ display:flex;
 justify-content:center;
 align-items:center;
 flex-direction:column;
-z-index:1;
 }
 
 /* Stage */
@@ -213,15 +187,8 @@ animation:pulseMove 2s forwards;
 
 </div>
 
-<!-- Video Intro -->
 
-<div class="video-intro" id="videoIntro">
-  <video id="introVideo" autoplay muted playsinline>
-    <source src="./logo-intro.MP4" type="video/mp4">
-  </video>
-</div>
-
-<!-- Fallback Intro -->
+<!-- Intro -->
 
 <div class="intro">
 
@@ -266,28 +233,15 @@ document.getElementById(id).style.opacity=1
 },i*700)
 })
 
-/* Start intro after boot */
+/* Start cinematic */
 
 setTimeout(()=>{
 
 document.querySelector(".boot").style.display="none"
 
-const videoWrap = document.getElementById("videoIntro")
-const video = document.getElementById("introVideo")
+document.querySelector(".intro").style.opacity=1
 
-videoWrap.style.opacity = 1
-
-/* If video fails, use fallback intro */
-video.addEventListener("error", () => {
-  videoWrap.style.display = "none"
-  document.querySelector(".intro").style.opacity = 1
-  startIntro()
-})
-
-/* If video ends, go to next page or fallback intro */
-video.addEventListener("ended", () => {
-  window.location.href = "./orbitsway.html"
-})
+startIntro()
 
 },5000)
 
