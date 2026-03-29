@@ -1,5 +1,6 @@
 {
   "rewrites": [
-    { "source": "/orbitsway", "destination": "/orbitsway.html" }
+    { "source": "/orbitsway", "destination": "/orbitsway.html" },
+    { "source": "/exogalaxy", "destination": "/exogalaxy.html" }
   ]
 }
